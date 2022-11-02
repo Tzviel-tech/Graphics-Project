@@ -252,14 +252,26 @@ void Renderer::Render(const Scene& scene)
 	{
 		
 		ChangePoints(glm::ivec2(650, 400), glm::ivec2(650 + r*sin((360*i)/a), 400+ r * cos((360 * i) / a)), glm::ivec3(0, 0, 1));
+		ChangePoints(glm::ivec2(250, 400), glm::ivec2(250 + r * sin((360 * i) / a), 400 + r * cos((360 * i) / a)), glm::ivec3(0, 0, 1));
 
 
 	}
 	ChangePoints(glm::ivec2(650,400), glm::ivec2(650,50), glm::ivec3(0, 0, 1));
-	ChangePoints(glm::ivec2(650, 200), glm::ivec2(450, 200), glm::ivec3(0, 0, 1));
+	ChangePoints(glm::ivec2(650, 225), glm::ivec2(500, 200), glm::ivec3(0, 0, 1));
+	ChangePoints(glm::ivec2(650, 200), glm::ivec2(500, 200), glm::ivec3(0, 0, 1));
+	ChangePoints(glm::ivec2(250, 400), glm::ivec2(250, 50), glm::ivec3(0, 0, 1));
+	ChangePoints(glm::ivec2(250, 215), glm::ivec2(150, 300), glm::ivec3(0, 0, 1));
+	ChangePoints(glm::ivec2(250, 215), glm::ivec2(350, 300), glm::ivec3(0, 0, 1));
 
 
+	for (int i = 0;i <25;i++)
+	{
+		ChangePoints(glm::ivec2(500, 200+i), glm::ivec2(485, 200+i), glm::ivec3(0, 0, 1));
+		
 
+	}
+	for(int i=0;i<12;i++)
+	ChangePoints(glm::ivec2(500, 225 - i), glm::ivec2(460, 225 - i), glm::ivec3(0, 0, 1));
 }
 
 
