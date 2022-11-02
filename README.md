@@ -1,9 +1,9 @@
 # Computer Graphics 203.3710
 ## Students Team data
 
-Name: 
+Name: TZVIEL SOLODAR
 
-Student Number: 
+Student Number: 206890097
 
 
 Name: 

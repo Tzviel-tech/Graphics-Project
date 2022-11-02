@@ -13,11 +13,11 @@ public:
 	void ClearColorBuffer(const glm::vec3& color);
 	int GetViewportWidth() const;
 	int GetViewportHeight() const;
-	
+
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);
-	void DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color);
-
+	void DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color, int flag);
+	void ChangePoints(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color);
 	void CreateBuffers(int w, int h);
 	void CreateOpenglBuffer();
 	void InitOpenglRendering();
