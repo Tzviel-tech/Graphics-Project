@@ -246,13 +246,18 @@ void Renderer::Render(const Scene& scene)
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
-	int r = 200;
-	for (int i = 0;i < 200;i++)
+	int r = 100,a=2,half=180*r;
+	
+	for (int i = 0;i<360*r;i++)
 	{
-		ChangePoints(glm::ivec2(650, 400 - i), glm::ivec2(650 + r, 400 - i), glm::ivec3(0, 0, 1));
+		
+		ChangePoints(glm::ivec2(650, 400), glm::ivec2(650 + r*sin((360*i)/a), 400+ r * cos((360 * i) / a)), glm::ivec3(0, 0, 1));
 
 
 	}
+	ChangePoints(glm::ivec2(650,400), glm::ivec2(650,50), glm::ivec3(0, 0, 1));
+	ChangePoints(glm::ivec2(650, 200), glm::ivec2(450, 200), glm::ivec3(0, 0, 1));
+
 
 
 }
