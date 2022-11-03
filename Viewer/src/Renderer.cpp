@@ -256,10 +256,10 @@ void Renderer::Render(const Scene& scene)
 
 
 	}
-	ChangePoints(glm::ivec2(650,400), glm::ivec2(650,50), glm::ivec3(1, 1, 1));
+	ChangePoints(glm::ivec2(650,400), glm::ivec2(650,0), glm::ivec3(1, 1, 1));
 	ChangePoints(glm::ivec2(650, 225), glm::ivec2(500, 200), glm::ivec3(1, 1, 1));
 	ChangePoints(glm::ivec2(650, 200), glm::ivec2(500, 200), glm::ivec3(1, 1, 1));
-	ChangePoints(glm::ivec2(250, 400), glm::ivec2(250, 50), glm::ivec3(0, 0, 0));
+	ChangePoints(glm::ivec2(250, 400), glm::ivec2(250, 0), glm::ivec3(0, 0, 0));
 	ChangePoints(glm::ivec2(250, 215), glm::ivec2(150, 300), glm::ivec3(0, 0, 0));
 	ChangePoints(glm::ivec2(250, 215), glm::ivec2(350, 300), glm::ivec3(0, 0, 0));
 
@@ -273,21 +273,19 @@ void Renderer::Render(const Scene& scene)
 	for(int i=0;i<12;i++)
 	ChangePoints(glm::ivec2(500, 225 - i), glm::ivec2(460, 225 - i), glm::ivec3(0, 0, 0));
 
+	for (int i = 0;i < 120;i++)
+	{
+		ChangePoints(glm::ivec2(1000 - i, 550 - i), glm::ivec2(1000 + i, 550 - i), glm::ivec3(0, 1, 0));
+		ChangePoints(glm::ivec2(1000 - i, 500 - i), glm::ivec2(1000 + i, 500 - i), glm::ivec3(0, 1, 0));
+		ChangePoints(glm::ivec2(1000 - i, 450 - i), glm::ivec2(1000 + i, 450 - i), glm::ivec3(0, 1, 0));
+		ChangePoints(glm::ivec2(1000 - i, 400 - i), glm::ivec2(1000 + i, 400 - i), glm::ivec3(0, 1, 0));
+		ChangePoints(glm::ivec2(1000 - i, 370 - i), glm::ivec2(1000 + i, 370 - i), glm::ivec3(0, 1, 0));
 
-	ChangePoints(glm::ivec2(1000,500), glm::ivec2(950, 400 ), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(1000, 500), glm::ivec2(1050, 400), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(950, 400), glm::ivec2(875, 350), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(1050, 400), glm::ivec2(1125, 350), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(875, 350), glm::ivec2(950,350), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(1125, 350), glm::ivec2(1050,350), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(950, 350), glm::ivec2(875, 300), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(1050, 350), glm::ivec2(1125, 300), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(875, 300), glm::ivec2(950, 300), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(1125, 300), glm::ivec2(1050, 300), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(950, 300), glm::ivec2(875, 250), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(1050, 300), glm::ivec2(1125, 250), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(875, 250), glm::ivec2(950, 250), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(1125, 250), glm::ivec2(1050, 250), glm::ivec3(0, 0, 0));
+
+	}
+
+	for(int i=0;i<250;i++)
+	ChangePoints(glm::ivec2(970, 250-i), glm::ivec2(1030, 250-i), glm::ivec3(0, 0, 0));
 
 	
 	
