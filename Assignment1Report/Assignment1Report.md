@@ -1,5 +1,5 @@
 
-
+```
 void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color, int flag)
 {
 
@@ -76,6 +76,6 @@ void Renderer::ChangePoints(const glm::ivec2& p1, const glm::ivec2& p2, const gl
 			DrawLine(p1, p2, color, 1);
 	}
 }
-
+```
 ![breakingbads_drawing](breakingbadsdrawing.png "drawing")
 ![sanity_check](sanity_check.png "sanity_check")
