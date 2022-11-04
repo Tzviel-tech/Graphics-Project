@@ -77,5 +77,5 @@ void Renderer::ChangePoints(const glm::ivec2& p1, const glm::ivec2& p2, const gl
 	}
 }
 ```
-![breakingbads_drawing](breakingbadsdrawing.png "drawing")
+![breakingbads_drawing](breakingbadsdrawing.png "breaking_bads")
 ![sanity_check](sanity_check.png "sanity_check")
