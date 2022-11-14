@@ -21,9 +21,9 @@ public:
 		std::vector<glm::vec3>vec = thi.GetVertecies();
 		for (auto a : vec)
 			out << glm::to_string(a) << "\n";
-		for (int i = 1;i < thi.GetFacesCount();i++)
+		for (int i = 0;i < thi.GetFacesCount();i++)
 		{
-			out << "face" << i << " : ";
+			out << "face" << i+1 << " : ";
 			for (int j = 0;j < 3;j++)
 				out << thi.GetFace(i).GetVertexIndex(j) << " ";
 			out << "\n";

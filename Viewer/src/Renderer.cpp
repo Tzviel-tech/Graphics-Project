@@ -246,7 +246,7 @@ void Renderer::Render(const Scene& scene)
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
-	int r = 100,a=2,half=180*r;
+	/*int r = 100,a=2,half=180*r;
 	
 	for (int i = 0;i<360*r;i++)
 	{
@@ -306,9 +306,22 @@ void Renderer::Render(const Scene& scene)
 	for(int i=0;i<250;i++)
 	ChangePoints(glm::ivec2(970, 250-i), glm::ivec2(1030, 250-i), glm::ivec3(0, 0, 0));
 
-	
-	
-	
+	*/
+	MeshModel mod = scene.GetActiveModel();
+	std::vector<glm::vec3>vec = mod.GetVertecies();
+	for (int i = 0;i < mod.GetFacesCount();i++)
+	{
+		int a = mod.GetFace(i).GetVertexIndex(0);
+		int b= mod.GetFace(i).GetVertexIndex(1);
+		int c = mod.GetFace(i).GetVertexIndex(2);
+		glm::vec2 p1 = vec.at(a-1);
+		glm::vec2 p2 = vec.at(b-1);
+		glm::vec2 p3 = vec.at(c-1);
+		ChangePoints(p1, p2,glm::vec3(1,0,0));
+		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
+		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
+	}
+
 
 		
 
