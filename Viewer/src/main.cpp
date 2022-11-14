@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
-	std::cout << "hello";
+	
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
