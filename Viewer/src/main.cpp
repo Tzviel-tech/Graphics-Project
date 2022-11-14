@@ -40,39 +40,38 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 	// TODO: Handle mouse scroll here
 }
-MeshModel& load(const char* filename)
-{
-	    std::vector<glm::vec3> vertices;
-		std::vector<Face> faces;
-		std::string line;
-		std::vector<std::string> lines;
-		std::ifstream in(filename);
-		if (!in.is_open()) {
-			printf("Cannot load model %s\n", filename);
-			exit;
-		}
-		while (!in.eof()) {
-			std::getline(in, line);
-			lines.push_back(line);
-		}
-		in.close();
-		float a, b, c;
-		for (std::string& line : lines) 
-		{
-			if (line[0] == 'v') {
-				sscanf(line.c_str(), "v %f %f %f", &a, &b, &c);
-				vertices.push_back(glm::vec3( a, b, c));
-			}
-			else if (line[0] == 'f') {
-				std::string b("123");
-				
-				faces.push_back(Face(std::istringstream(line)));
-			}
-		}
-		string name=lines.at(0);
-		MeshModel * model = new MeshModel(faces, vertices,vertices,name);
-		return *model;
-}
+//MeshModel& load(const char* filename)
+//{
+//	    std::vector<glm::vec3> vertices;
+//		std::vector<Face> faces;
+//		std::string line;
+//		std::vector<std::string> lines;
+//		std::ifstream in(filename);
+//		if (!in.is_open()) {
+//			printf("Cannot load model %s\n", filename);
+//			exit;
+//		}
+//		while (!in.eof()) {
+//			std::getline(in, line);
+//			lines.push_back(line);
+//		}
+//		in.close();
+//		float a, b, c;
+//		for (std::string& line : lines) 
+//		{
+//			if (line[0] == 'v') {
+//				sscanf(line.c_str(), "v %f %f %f", &a, &b, &c);
+//				vertices.push_back(glm::vec3( a, b, c));
+//			}
+//			else if (line[0] == 'f') {
+//			
+//				faces.push_back(Face(std::istringstream(line)));
+//			}
+//		}
+//		string name=lines.at(0);
+//		MeshModel * model = new MeshModel(faces, vertices,vertices,name);
+//		return *model;
+//}
 int main(int argc, char** argv)
 {
 	int windowWidth = 1280, windowHeight = 720;
@@ -89,16 +88,18 @@ int main(int argc, char** argv)
 
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
-	MeshModel model = load("C:/Users/Tzviel/Desktop/MODELS/pyramid.obj");
-	std::cout << "Model is: " << model.GetModelName() << std::endl;
-	vector<glm::vec3>vec = model.GetVertecies();
+	Utils u;
+	shared_ptr<MeshModel> model=u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/pyramid.obj");
+
+	std::cout << "Model is: " <<model->GetModelName() << std::endl;
+	vector<glm::vec3>vec = model->GetVertecies();
 	for(auto a:vec)
 		std::cout << glm::to_string(a) << std::endl;
-	for (int i = 1;i <model.GetFacesCount();i++)
+	for (int i = 1;i <model->GetFacesCount();i++)
 	{
 		std::cout << "face" << i << " : ";
 		for (int j = 0;j < 3;j++)
-			std::cout << model.GetFace(i).GetVertexIndex(j) << " ";
+			std::cout << model->GetFace(i).GetVertexIndex(j) << " ";
 		std::cout << "\n";
 
 
