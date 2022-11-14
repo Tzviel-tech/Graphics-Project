@@ -14,6 +14,8 @@
 #include "Utils.h"
 #include <sstream>
 #include "glm/gtx/string_cast.hpp"
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 /**
  * Fields
  */
@@ -90,20 +92,26 @@ int main(int argc, char** argv)
 	glfwSetScrollCallback(window, ScrollCallback);
 	Utils u;
 	shared_ptr<MeshModel> model=u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/pyramid.obj");
-	/*std::cout << "Model is: " <<model->GetModelName() << std::endl;
-	vector<glm::vec3>vec = model->GetVertecies();
-	for(auto a:vec)
-		std::cout << glm::to_string(a) << std::endl;
-	for (int i = 1;i <model->GetFacesCount();i++)
-	{
-		std::cout << "face" << i << " : ";
-		for (int j = 0;j < 3;j++)
-			std::cout << model->GetFace(i).GetVertexIndex(j) << " ";
-		std::cout << "\n";
-	}*/
-	
 	std::cout << *model;
-	
+
+	vector<glm::vec3> &modelVer = model->GetVertecies();
+	glm::mat4 myMatrix = glm::translate(glm::mat4(1), glm::vec3(2.0f, 2.0f, 0.0f));
+	//glm::vec4 myVector(10.0f, 10.0f, 10.0f, 1.0f);
+	//glm::vec4 transformedVector = myMatrix * myVector; // guess the result
+	 std::cout << to_string(myMatrix);
+	//glm::mat4 myScalingMatrix = glm::scale(glm::mat4(1), glm::vec3(2.0f, 2.0f, 2.0f));
+	for (int i = 0;i < modelVer.size();i++)
+	{
+		glm::vec4 vec(modelVer.at(i), 01.f);
+		vec = myMatrix * vec;
+		modelVer.at(i) = vec;
+		
+	}
+	std::cout << *model;
+
+
+
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
