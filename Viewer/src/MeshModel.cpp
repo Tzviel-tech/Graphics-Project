@@ -4,6 +4,8 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	faces(faces),
 	vertices(vertices),
 	normals(normals)
+	,
+	model_name(model_name)
 {
 
 }

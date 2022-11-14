@@ -13,7 +13,7 @@
 #include "Scene.h"
 #include "Utils.h"
 #include <sstream>
-
+#include "glm/ext.hpp"
 /**
  * Fields
  */
@@ -88,7 +88,13 @@ int main(int argc, char** argv)
 
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
-	
+	MeshModel model = load("C:/Users/Tzviel/Desktop/MODELS/cube.obj");
+	std::cout << "Model is: " << model.GetModelName() << std::endl;
+	for (int i = 0;i < 8;i++)
+	{
+
+	}
+	std::cout << model.GetFacesCount();
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
