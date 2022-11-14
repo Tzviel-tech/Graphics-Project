@@ -95,17 +95,16 @@ int main(int argc, char** argv)
 	std::cout << *model;
 
 	vector<glm::vec3> &modelVer = model->GetVertecies();
-	glm::mat4 myMatrix = glm::translate(glm::mat4(1), glm::vec3(2.0f, 2.0f, 0.0f));
+	glm::mat4 myTranslateMatrix = glm::translate(glm::mat4(1), glm::vec3(2.0f, 2.0f, 0.0f));
 	//glm::vec4 myVector(10.0f, 10.0f, 10.0f, 1.0f);
 	//glm::vec4 transformedVector = myMatrix * myVector; // guess the result
-	 std::cout << to_string(myMatrix);
-	//glm::mat4 myScalingMatrix = glm::scale(glm::mat4(1), glm::vec3(2.0f, 2.0f, 2.0f));
+	// std::cout << to_string(myMatrix);
+	glm::mat4 myScalingMatrix = glm::scale(glm::mat4(1), glm::vec3(2.0f, 2.0f, 2.0f));
 	for (int i = 0;i < modelVer.size();i++)
 	{
 		glm::vec4 vec(modelVer.at(i), 01.f);
-		vec = myMatrix * vec;
+		vec = myTranslateMatrix*myScalingMatrix * vec;//sacle *2 the translate x&y by 2(+2)
 		modelVer.at(i) = vec;
-		
 	}
 	std::cout << *model;
 
