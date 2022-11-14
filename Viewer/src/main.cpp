@@ -90,8 +90,7 @@ int main(int argc, char** argv)
 	glfwSetScrollCallback(window, ScrollCallback);
 	Utils u;
 	shared_ptr<MeshModel> model=u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/pyramid.obj");
-
-	std::cout << "Model is: " <<model->GetModelName() << std::endl;
+	/*std::cout << "Model is: " <<model->GetModelName() << std::endl;
 	vector<glm::vec3>vec = model->GetVertecies();
 	for(auto a:vec)
 		std::cout << glm::to_string(a) << std::endl;
@@ -101,9 +100,9 @@ int main(int argc, char** argv)
 		for (int j = 0;j < 3;j++)
 			std::cout << model->GetFace(i).GetVertexIndex(j) << " ";
 		std::cout << "\n";
-
-
-	}
+	}*/
+	
+	std::cout << *model;
 	
 	while (!glfwWindowShouldClose(window))
 	{
