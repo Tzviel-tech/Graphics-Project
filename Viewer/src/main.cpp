@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <nfd.h>
-
+#include <iostream>
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
@@ -42,7 +42,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 
 int main(int argc, char** argv)
 {
-	int windowWidth = 1280, windowHeight = 720;
+	/*int windowWidth = 1280, windowHeight = 720;
 	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
 	if (!window)
 		return 1;
@@ -60,11 +60,13 @@ int main(int argc, char** argv)
 	{
 		glfwPollEvents();
 		StartFrame();
-		DrawImguiMenus(io, scene);
-		RenderFrame(window, scene, renderer, io);
-	}
-	renderer.Render(scene);
-	Cleanup(window);
+		DrawImguiMenus(io, scene);*/
+	//	RenderFrame(window, scene, renderer, io);
+	//}
+	//renderer.Render(scene);
+	std::cout << "hello world";
+	
+	//Cleanup(window);
 	return 0;
 }
 
