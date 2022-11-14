@@ -13,7 +13,7 @@
 #include "Scene.h"
 #include "Utils.h"
 #include <sstream>
-#include "glm/ext.hpp"
+#include "glm/gtx/string_cast.hpp"
 /**
  * Fields
  */
@@ -69,7 +69,8 @@ MeshModel& load(const char* filename)
 				faces.push_back(Face(std::istringstream(line)));
 			}
 		}
-		MeshModel * model = new MeshModel(faces, vertices,vertices,"cube");
+		string name=lines.at(0);
+		MeshModel * model = new MeshModel(faces, vertices,vertices,name);
 		return *model;
 }
 int main(int argc, char** argv)
@@ -88,13 +89,21 @@ int main(int argc, char** argv)
 
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
-	MeshModel model = load("C:/Users/Tzviel/Desktop/MODELS/cube.obj");
+	MeshModel model = load("C:/Users/Tzviel/Desktop/MODELS/pyramid.obj");
 	std::cout << "Model is: " << model.GetModelName() << std::endl;
-	for (int i = 0;i < 8;i++)
+	vector<glm::vec3>vec = model.GetVertecies();
+	for(auto a:vec)
+		std::cout << glm::to_string(a) << std::endl;
+	for (int i = 1;i <model.GetFacesCount();i++)
 	{
+		std::cout << "face" << i << " : ";
+		for (int j = 0;j < 3;j++)
+			std::cout << model.GetFace(i).GetVertexIndex(j) << " ";
+		std::cout << "\n";
+
 
 	}
-	std::cout << model.GetFacesCount();
+	
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
