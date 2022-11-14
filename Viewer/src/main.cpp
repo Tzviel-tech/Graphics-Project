@@ -8,10 +8,11 @@
 #include <iostream>
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-
+#include <fstream>
 #include "Renderer.h"
 #include "Scene.h"
 #include "Utils.h"
+#include <sstream>
 
 /**
  * Fields
@@ -39,14 +40,45 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 	// TODO: Handle mouse scroll here
 }
-
+MeshModel& load(const char* filename)
+{
+	    std::vector<glm::vec3> vertices;
+		std::vector<Face> faces;
+		std::string line;
+		std::vector<std::string> lines;
+		std::ifstream in(filename);
+		if (!in.is_open()) {
+			printf("Cannot load model %s\n", filename);
+			exit;
+		}
+		while (!in.eof()) {
+			std::getline(in, line);
+			lines.push_back(line);
+		}
+		in.close();
+		float a, b, c;
+		for (std::string& line : lines) 
+		{
+			if (line[0] == 'v') {
+				sscanf(line.c_str(), "v %f %f %f", &a, &b, &c);
+				vertices.push_back(glm::vec3( a, b, c));
+			}
+			else if (line[0] == 'f') {
+				std::string b("123");
+				
+				faces.push_back(Face(std::istringstream(line)));
+			}
+		}
+		MeshModel * model = new MeshModel(faces, vertices,vertices,"cube");
+		return *model;
+}
 int main(int argc, char** argv)
 {
-	/*int windowWidth = 1280, windowHeight = 720;
+	int windowWidth = 1280, windowHeight = 720;
 	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
 	if (!window)
 		return 1;
-
+	
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
@@ -56,19 +88,27 @@ int main(int argc, char** argv)
 
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
+	std::cout << "hello";
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 		StartFrame();
-		DrawImguiMenus(io, scene);*/
-	//	RenderFrame(window, scene, renderer, io);
-	//}
-	//renderer.Render(scene);
-	std::cout << "hello world";
+		DrawImguiMenus(io, scene);
+		RenderFrame(window, scene, renderer, io);
+	}
 	
-	//Cleanup(window);
+	
+	Cleanup(window);
+	
 	return 0;
 }
+
+
+
+
+
+
+
 
 static void GlfwErrorCallback(int error, const char* description)
 {
