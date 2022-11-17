@@ -246,67 +246,7 @@ void Renderer::Render(const Scene& scene)
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
-	/*int r = 100,a=2,half=180*r;
 	
-	for (int i = 0;i<360*r;i++)
-	{
-		
-		ChangePoints(glm::ivec2(650, 400), glm::ivec2(650 + r*sin((360*i)/a), 400+ r * cos((360 * i) / a)), glm::ivec3(1, 1, 1));
-		ChangePoints(glm::ivec2(250, 400), glm::ivec2(250 + r * sin((360 * i) / a), 400 + r * cos((360 * i) / a)), glm::ivec3(0, 0, 0));
-		ChangePoints(glm::ivec2(1200,700), glm::ivec2(1200 + r * sin((360 * i) / a), 700 + r * cos((360 * i) / a)), glm::ivec3(1, 0, 0));
-
-
-
-	} 
-	r = 200;
-	for (int i = 0;i < 30;i++)
-	{
-		ChangePoints(glm::ivec2(1200, 700), glm::ivec2(1200 + r * sin((360 * i) / a), 700 + r * cos((360 * i) / a)), glm::ivec3(1, 0, 0));
-
-
-	}
-	for (int i = 0;i < 15;i++)
-	{
-		ChangePoints(glm::ivec2(545, 490 + i), glm::ivec2(745, 490 + i), glm::ivec3(0, 0, 0));
-	}
-	for (int i = 0;i <30;i++)
-	{
-		ChangePoints(glm::ivec2(610, 505 + i), glm::ivec2(680, 505 + i), glm::ivec3(0, 0, 0));
-	}
-
-	ChangePoints(glm::ivec2(650,400), glm::ivec2(650,0), glm::ivec3(1, 1, 1));
-	ChangePoints(glm::ivec2(650, 225), glm::ivec2(500, 200), glm::ivec3(1, 1, 1));
-	ChangePoints(glm::ivec2(650, 200), glm::ivec2(500, 200), glm::ivec3(1, 1, 1));
-	ChangePoints(glm::ivec2(250, 400), glm::ivec2(250, 0), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(250, 215), glm::ivec2(150, 300), glm::ivec3(0, 0, 0));
-	ChangePoints(glm::ivec2(250, 215), glm::ivec2(350, 300), glm::ivec3(0, 0, 0));
-
-
-	for (int i = 0;i <25;i++)
-	{
-		ChangePoints(glm::ivec2(500, 200+i), glm::ivec2(485, 200+i), glm::ivec3(0, 0, 0));
-		
-
-	}
-	for(int i=0;i<12;i++)
-	ChangePoints(glm::ivec2(500, 225 - i), glm::ivec2(460, 225 - i), glm::ivec3(0, 0, 0));
-
-
-	for (int i = 0;i < 120;i++)
-	{
-		ChangePoints(glm::ivec2(1000 - i, 550 - i), glm::ivec2(1000 + i, 550 - i), glm::ivec3(0, 1, 0));
-		ChangePoints(glm::ivec2(1000 - i, 500 - i), glm::ivec2(1000 + i, 500 - i), glm::ivec3(0, 1, 0));
-		ChangePoints(glm::ivec2(1000 - i, 450 - i), glm::ivec2(1000 + i, 450 - i), glm::ivec3(0, 1, 0));
-		ChangePoints(glm::ivec2(1000 - i, 400 - i), glm::ivec2(1000 + i, 400 - i), glm::ivec3(0, 1, 0));
-		ChangePoints(glm::ivec2(1000 - i, 370 - i), glm::ivec2(1000 + i, 370 - i), glm::ivec3(0, 1, 0));
-
-
-	}
-
-	for(int i=0;i<250;i++)
-	ChangePoints(glm::ivec2(970, 250-i), glm::ivec2(1030, 250-i), glm::ivec3(0, 0, 0));
-
-	*/
 	MeshModel mod = scene.GetActiveModel();
 	std::vector<glm::vec3>vec = mod.GetVertecies();
 	for (int i = 0;i < mod.GetFacesCount();i++)
@@ -324,7 +264,6 @@ void Renderer::Render(const Scene& scene)
 
 
 		
-
 
 
 }

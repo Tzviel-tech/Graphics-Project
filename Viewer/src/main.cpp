@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	shared_ptr<MeshModel> model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/banana.obj");
+	shared_ptr<MeshModel> model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/teapot.obj");
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 
 	Scene scene = Scene();
@@ -96,18 +96,15 @@ int main(int argc, char** argv)
 	std::cout << *model;
 
 	vector<glm::vec3> &modelVer = model->GetVertecies();
-	glm::mat4 myTranslateMatrix = glm::translate(glm::mat4(1), glm::vec3(350.0f, 300.0f, 0.0f));
-	//glm::vec4 myVector(10.0f, 10.0f, 10.0f, 1.0f);
-	//glm::vec4 transformedVector = myMatrix * myVector; // guess the result
-	// std::cout << to_string(myMatrix);
-	glm::mat4 myScalingMatrix = glm::scale(glm::mat4(1), glm::vec3(2500.0f, 2500.0f, 2.0f));
+	glm::mat4 myTranslateMatrix = glm::translate(glm::mat4(1), glm::vec3(600.0f, 300.0f, 0.0f));
+	glm::mat4 myScalingMatrix = glm::scale(glm::mat4(1), glm::vec3(150.0f, 150.0f, 150.f));
 	for (int i = 0;i < modelVer.size();i++)
 	{
 		glm::vec4 vec(modelVer.at(i), 01.f);
 		vec = myTranslateMatrix*myScalingMatrix * vec;//sacle *2 the translate x&y by 2(+2)
 		modelVer.at(i) = vec;
 	}
-	std::cout << *model;
+	
 
 
 
@@ -181,11 +178,18 @@ void StartFrame()
 
 void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io)
 {
+	
+	ImGui::Begin("decide angle!");
+	static float f;
+	ImGui::Text("decide how how far your banana will go");
+	ImGui::SliderFloat("float", &f, 0.0f, 180.0f);
+	ImGui::End();
+
 	ImGui::Render();
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-
+	
 	if (frameBufferWidth != renderer.GetViewportWidth() || frameBufferHeight != renderer.GetViewportHeight())
 	{
 		// TODO: Set new aspect ratio
@@ -206,8 +210,26 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 		// TODO: Handle mouse events here
 		if (io.MouseDown[0])
 		{
-			// Left mouse button is down
+			glm::mat4 myTranslateMatrix2 = glm::inverse(glm::translate(glm::mat4(1), glm::vec3(600.0f, 300.0f, 0.0f)));
+			glm::mat4 myTranslateMatrix = glm::translate(glm::mat4(1), glm::vec3(600.0f, 300.0f, 0.0f));
+			glm::mat4 trans = glm::mat4(1.0f);
+			trans = glm::rotate(trans, glm::radians(glm::radians(f)), glm::vec3(0.0f, 1.0f, 1.0f));
+			
+		    
+			MeshModel &model=scene.GetActiveModel();
+			vector<glm::vec3>&modelVer = model.GetVertecies();
+			
+				for (int i = 0;i < modelVer.size();i++)
+				{
+					glm::vec4 vec(modelVer.at(i), 01.f);
+					vec = myTranslateMatrix * trans * myTranslateMatrix2 * vec;
+					modelVer.at(i) = vec;
+				}
+		
+			
+			
 		}
+
 	}
 
 	renderer.ClearColorBuffer(clear_color);
@@ -290,7 +312,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Another Window", &show_another_window);
 
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		//ImGui::SliderFloat("float", &f, 0.0f, 5.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
 		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
@@ -311,4 +333,5 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			show_another_window = false;
 		ImGui::End();
 	}
+	
 }
