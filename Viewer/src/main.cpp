@@ -16,6 +16,13 @@
 #include "glm/gtx/string_cast.hpp"
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+static float scalex=0;
+static float translatex=0;
+static float translatey=0;
+static float translatez=0;
+static float rotatex=0;
+static float rotatey=0;
+static float rotatez=0;
 /**
  * Fields
  */
@@ -95,16 +102,14 @@ int main(int argc, char** argv)
 	
 	std::cout << *model;
 
-	vector<glm::vec3> &modelVer = model->GetVertecies();
-	glm::mat4 myTranslateMatrix = glm::translate(glm::mat4(1), glm::vec3(600.0f, 300.0f, 0.0f));
-	glm::mat4 myScalingMatrix = glm::scale(glm::mat4(1), glm::vec3(150.0f, 150.0f, 150.f));
-	for (int i = 0;i < modelVer.size();i++)
-	{
-		glm::vec4 vec(modelVer.at(i), 01.f);
-		vec = myTranslateMatrix*myScalingMatrix * vec;//sacle *2 the translate x&y by 2(+2)
-		modelVer.at(i) = vec;
-	}
-	
+	//vector<glm::vec3> &modelVer = model->GetVertecies();
+	//for (int i = 0;i < modelVer.size();i++)
+	//{
+	//	glm::vec4 vec(modelVer.at(i), 01.f);
+	//	vec =model->object_trans* vec;//sacle *2 the translate x&y by 2(+2)
+	//	modelVer.at(i) = vec;
+	//}
+	//
 
 
 
@@ -114,7 +119,17 @@ int main(int argc, char** argv)
 		glfwPollEvents();
 		StartFrame();
 		DrawImguiMenus(io, scene);
+		renderer.rotatex = rotatex;
+		renderer.rotatey = rotatey;
+		renderer.rotatez = rotatez;
+		renderer.translatex = translatex;
+		renderer.translatey = translatey;
+		renderer.translatez = translatez;
+		renderer.scalex = scalex;
+
 		RenderFrame(window, scene, renderer, io);
+		
+
 	}
 	
 	
@@ -179,11 +194,14 @@ void StartFrame()
 void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io)
 {
 	
-	ImGui::Begin("decide angle!");
+	/*ImGui::Begin("decide angle!");
 	static float f;
-	ImGui::Text("decide how how far your banana will go");
+	static float f1;
+	ImGui::Text("decide rotation degree");
 	ImGui::SliderFloat("float", &f, 0.0f, 180.0f);
-	ImGui::End();
+	ImGui::Text("decide scale");
+	ImGui::SliderFloat2("float", &f1, 0.0f, 2.0f);
+	ImGui::End();*/
 
 	ImGui::Render();
 	int frameBufferWidth, frameBufferHeight;
@@ -195,42 +213,42 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 		// TODO: Set new aspect ratio
 	}
 
-	if (!io.WantCaptureKeyboard)
-	{
-		// TODO: Handle keyboard events here
-		if (io.KeysDown[65])
-		{
-			// A key is down
-			// Use the ASCII table for more key codes (https://www.asciitable.com/)
-		}
-	}
+	//if (!io.WantCaptureKeyboard)
+	//{
+	//	// TODO: Handle keyboard events here
+	//	if (io.KeysDown[65])
+	//	{
+	//		glm::mat4 myScalingMatrix = glm::scale(glm::mat4(1), glm::vec3(f1, f1, f1));
+	//		MeshModel& model = scene.GetActiveModel();
+	//		vector<glm::vec3>& modelVer = model.GetVertecies();
 
-	if (!io.WantCaptureMouse)
-	{
-		// TODO: Handle mouse events here
-		if (io.MouseDown[0])
-		{
-			glm::mat4 myTranslateMatrix2 = glm::inverse(glm::translate(glm::mat4(1), glm::vec3(600.0f, 300.0f, 0.0f)));
-			glm::mat4 myTranslateMatrix = glm::translate(glm::mat4(1), glm::vec3(600.0f, 300.0f, 0.0f));
-			glm::mat4 trans = glm::mat4(1.0f);
-			trans = glm::rotate(trans, glm::radians(glm::radians(f)), glm::vec3(0.0f, 1.0f, 1.0f));
-			
-		    
-			MeshModel &model=scene.GetActiveModel();
-			vector<glm::vec3>&modelVer = model.GetVertecies();
-			
-				for (int i = 0;i < modelVer.size();i++)
-				{
-					glm::vec4 vec(modelVer.at(i), 01.f);
-					vec = myTranslateMatrix * trans * myTranslateMatrix2 * vec;
-					modelVer.at(i) = vec;
-				}
-		
-			
-			
-		}
+	//		for (int i = 0;i < modelVer.size();i++)
+	//		{
+	//			glm::vec4 vec(modelVer.at(i), 01.f);
+	//			vec = model.object_trans*myScalingMatrix*glm::inverse(model.object_trans)* vec;
+	//			modelVer.at(i) = vec;
+	//		}
+	//	}
+	//}
 
-	}
+	//if (!io.WantCaptureMouse)
+	//{
+	//	// TODO: Handle mouse events here
+	//	if (io.MouseDown[0])
+	//	{
+	//		glm::mat4 trans = glm::mat4(1.0f);
+	//		trans = glm::rotate(trans, glm::radians(glm::radians(f)), glm::vec3(0.0f, 1.0f, 1.0f));
+	//		MeshModel &model=scene.GetActiveModel();
+	//		vector<glm::vec3>&modelVer = model.GetVertecies();
+	//		
+	//			for (int i = 0;i < modelVer.size();i++)
+	//			{
+	//				glm::vec4 vec(modelVer.at(i), 01.f);
+	//				vec = model.object_trans* trans*glm::inverse(model.object_trans) * vec;
+	//				modelVer.at(i) = vec;
+	//			}
+	//	}
+	//}
 
 	renderer.ClearColorBuffer(clear_color);
 	renderer.Render(scene);
@@ -333,5 +351,27 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			show_another_window = false;
 		ImGui::End();
 	}
-	
+
+
+
+
+	ImGui::SliderFloat("scale", &scalex, 0, 500);
+	ImGui::SliderFloat("translatex", &translatex, -2000, 2000);
+	ImGui::SliderFloat("translatey", &translatey, -1000, 1000);
+	ImGui::SliderFloat("translatez", &translatez, -1000, 1000);
+	ImGui::SliderFloat("rotatex", &rotatex, -360, 360);
+	ImGui::SliderFloat("rotatey", &rotatey, -360, 360);
+	ImGui::SliderFloat("rotatez", &rotatez, -360, 360);
+	if (ImGui::Button("reset"))  //this button make reset values
+	{
+		rotatex = 0;
+		rotatey = 0;
+		rotatez = 0;
+		translatex = 0;
+		translatey = 0;
+		translatez = 0;
+		scalex = 1;
+
+
+	}
 }

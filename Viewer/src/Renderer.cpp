@@ -246,21 +246,34 @@ void Renderer::Render(const Scene& scene)
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
-	
+	glm::mat4 scalemat = glm::scale(glm::mat4(1), glm::vec3(scalex, scalex, scalex));
+	glm::mat4 transmat = glm::translate(glm::mat4(1), glm::vec3(translatex, translatey, translatez));
+	glm::mat4 rotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotatex), glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat4 rotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotatey), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 rotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotatez), glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::mat4 rotation = rotationMatrixz * rotationMatrixy * rotationMatrixx;
+	glm::mat4 Tlocal = transmat * rotation * scalemat;
 	MeshModel mod = scene.GetActiveModel();
 	std::vector<glm::vec3>vec = mod.GetVertecies();
+	for (int i = 0;i < vec.size();i++)
+	{
+		glm::vec4 temp(vec.at(i), 1.0f);
+		temp = Tlocal * temp;
+		vec.at(i) = temp;
+	}
 	for (int i = 0;i < mod.GetFacesCount();i++)
 	{
 		int a = mod.GetFace(i).GetVertexIndex(0);
-		int b= mod.GetFace(i).GetVertexIndex(1);
+		int b = mod.GetFace(i).GetVertexIndex(1);
 		int c = mod.GetFace(i).GetVertexIndex(2);
-		glm::vec2 p1 = vec.at(a-1);
-		glm::vec2 p2 = vec.at(b-1);
-		glm::vec2 p3 = vec.at(c-1);
-		ChangePoints(p1, p2,glm::vec3(1,0,0));
+		glm::vec2 p1=vec.at(a - 1);
+		glm::vec2 p2=vec.at(b - 1);
+		glm::vec2 p3=vec.at(c - 1);
+		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
 	}
+	
 
 
 		

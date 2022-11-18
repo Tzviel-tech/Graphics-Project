@@ -31,9 +31,13 @@ public:
 		
 		return out;
 	}
+
+	//glm::mat4 object_trans = glm::translate(glm::mat4(1), glm::vec3(600.0f, 300.0f, 0.0f));
 private:
 	std::vector<Face> faces;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
 	std::string model_name;
+	glm::mat4 local;
+	glm::mat4 world;
 };
