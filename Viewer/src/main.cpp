@@ -16,13 +16,9 @@
 #include "glm/gtx/string_cast.hpp"
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-static float scalex=0;
-static float translatex=0;
-static float translatey=0;
-static float translatez=0;
-static float rotatex=0;
-static float rotatey=0;
-static float rotatez=0;
+
+
+bool WORLD_TRANSFOM;
 /**
  * Fields
  */
@@ -91,42 +87,22 @@ int main(int argc, char** argv)
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	shared_ptr<MeshModel> model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/teapot.obj");
+	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/teapot.obj");
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 
 	Scene scene = Scene();
 	scene.AddModel(model);
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
-	
-	
-	std::cout << *model;
 
-	//vector<glm::vec3> &modelVer = model->GetVertecies();
-	//for (int i = 0;i < modelVer.size();i++)
-	//{
-	//	glm::vec4 vec(modelVer.at(i), 01.f);
-	//	vec =model->object_trans* vec;//sacle *2 the translate x&y by 2(+2)
-	//	modelVer.at(i) = vec;
-	//}
-	//
-
-
-
-
+	//std::cout << *model;
+	model->setLocal();
+	std::cout << to_string(model->getLocal());
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 		StartFrame();
 		DrawImguiMenus(io, scene);
-		renderer.rotatex = rotatex;
-		renderer.rotatey = rotatey;
-		renderer.rotatez = rotatez;
-		renderer.translatex = translatex;
-		renderer.translatey = translatey;
-		renderer.translatez = translatez;
-		renderer.scalex = scalex;
-
 		RenderFrame(window, scene, renderer, io);
 		
 
@@ -194,14 +170,7 @@ void StartFrame()
 void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io)
 {
 	
-	/*ImGui::Begin("decide angle!");
-	static float f;
-	static float f1;
-	ImGui::Text("decide rotation degree");
-	ImGui::SliderFloat("float", &f, 0.0f, 180.0f);
-	ImGui::Text("decide scale");
-	ImGui::SliderFloat2("float", &f1, 0.0f, 2.0f);
-	ImGui::End();*/
+	
 
 	ImGui::Render();
 	int frameBufferWidth, frameBufferHeight;
@@ -271,6 +240,7 @@ void Cleanup(GLFWwindow* window)
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 {
+	MeshModel& model = scene.GetActiveModel();
 	/**
 	 * MeshViewer menu
 	 */
@@ -351,27 +321,41 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			show_another_window = false;
 		ImGui::End();
 	}
+	
+	
 
 
-
-
-	ImGui::SliderFloat("scale", &scalex, 0, 500);
-	ImGui::SliderFloat("translatex", &translatex, -2000, 2000);
-	ImGui::SliderFloat("translatey", &translatey, -1000, 1000);
-	ImGui::SliderFloat("translatez", &translatez, -1000, 1000);
-	ImGui::SliderFloat("rotatex", &rotatex, -360, 360);
-	ImGui::SliderFloat("rotatey", &rotatey, -360, 360);
-	ImGui::SliderFloat("rotatez", &rotatez, -360, 360);
-	if (ImGui::Button("reset"))  //this button make reset values
+	ImGui::Begin("decide local or world transfom:");
+	ImGui::SliderFloat("scale", &model.scalex, 0, 500);
+	ImGui::SliderFloat("translate x asix", &model.translatex, -1000, 1500);
+	ImGui::SliderFloat("translate y asix", &model.translatey, -1000, 1000);
+	ImGui::SliderFloat("translate z asix", &model.translatez, -1000, 1000);
+	ImGui::SliderFloat("rotate x asix", &model.rotatex, -360, 360);
+	ImGui::SliderFloat("rotate y asix", &model.rotatey, -360, 360);
+	ImGui::SliderFloat("rotate z asix", &model.rotatez, -360, 360);
+	ImGui::Checkbox("World transfom", &WORLD_TRANSFOM);
+	if (ImGui::Button("Reset all to zero"))  
 	{
-		rotatex = 0;
-		rotatey = 0;
-		rotatez = 0;
-		translatex = 0;
-		translatey = 0;
-		translatez = 0;
-		scalex = 1;
-
-
+		model.rotatex = 0;
+		model.rotatey = 0;
+	    model.rotatez = 0;
+		model.translatex = 0;
+		model.translatey = 0;
+		model.translatez = 0;
+		model.scalex = 1;
 	}
+	if(WORLD_TRANSFOM)
+	{
+		ImGui::Begin("decide world transfom:");
+		ImGui::SliderFloat("scale", &model.scalex, 0, 500);
+		ImGui::SliderFloat("translate x asix", &model.translatex, -1000, 1500);
+		ImGui::SliderFloat("translate y asix", &model.translatey, -1000, 1000);
+		ImGui::SliderFloat("translate z asix", &model.translatez, -1000, 1000);
+		ImGui::SliderFloat("rotate x asix", &model.rotatex, -360, 360);
+		ImGui::SliderFloat("rotate y asix", &model.rotatey, -360, 360);
+		ImGui::SliderFloat("rotate z asix", &model.rotatez, -360, 360);
+		ImGui::End();
+	}
+	
+	ImGui::End();
 }

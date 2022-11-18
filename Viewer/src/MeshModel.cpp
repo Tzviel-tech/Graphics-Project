@@ -9,7 +9,34 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 {
 
 }
+void MeshModel::setLocalTranslate()
+{
+	localtransmat= glm::translate(glm::mat4(1), glm::vec3(translatex, translatey, translatez));
+}
 
+void MeshModel::setlocalScale()
+{
+	localscalemat=glm::scale(glm::mat4(1), glm::vec3(scalex, scalex, scalex));
+}
+void MeshModel::setLocalRotation()
+{
+	glm::mat4 rotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotatex), glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat4 rotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotatey), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 rotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotatez), glm::vec3(0.0f, 0.0f, 1.0f));
+	localrotation = localrotationMatrixz * localrotationMatrixy * localrotationMatrixx;
+}
+void MeshModel::setLocal()
+{
+	setLocalRotation();
+	setlocalScale();
+	setLocalTranslate();
+	local = localtransmat * localscalemat * localrotation;
+	
+}
+//glm::mat4 &MeshModel::getLocal() 
+//{
+//	return local;
+//}
 MeshModel::~MeshModel()
 {
 }
