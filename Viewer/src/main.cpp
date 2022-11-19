@@ -325,33 +325,33 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 	ImGui::Begin("decide local or world transfom:");
 	ImGui::SliderFloat("scale", &model.scalex, 0, 500);
-	ImGui::SliderFloat("translate x asix", &model.translatex, -1000, 1500);
-	ImGui::SliderFloat("translate y asix", &model.translatey, -1000, 1000);
-	ImGui::SliderFloat("translate z asix", &model.translatez, -1000, 1000);
-	ImGui::SliderFloat("rotate x asix", &model.rotatex, -360, 360);
-	ImGui::SliderFloat("rotate y asix", &model.rotatey, -360, 360);
-	ImGui::SliderFloat("rotate z asix", &model.rotatez, -360, 360);
+	ImGui::SliderFloat("translate x asix", &model.trans.x, -1000, 1500);
+	ImGui::SliderFloat("translate y asix", &model.trans.y, -1000, 1000);
+	ImGui::SliderFloat("translate z asix", &model.trans.z, -1000, 1000);
+	ImGui::SliderFloat("rotate x asix", &model.rotate.x, -360, 360);
+	ImGui::SliderFloat("rotate y asix", &model.rotate.y, -360, 360);
+	ImGui::SliderFloat("rotate z asix", &model.rotate.z, -360, 360);
 	ImGui::Checkbox("World transfom", &WORLD_TRANSFOM);
 	if (ImGui::Button("Reset all to zero"))  
 	{
-		model.rotatex = 0;
-		model.rotatey = 0;
-	    model.rotatez = 0;
-		model.translatex = 0;
-		model.translatey = 0;
-		model.translatez = 0;
+		model.rotate.x = 0;
+		model.rotate.y = 0;
+	    model.rotate.z = 0;
+		model.trans.x = 0;
+		model.trans.y = 0;
+		model.trans.z = 0;
 		model.scalex = 1;
 	}
 	if(WORLD_TRANSFOM)
 	{
 		ImGui::Begin("decide world transfom:");
 		ImGui::SliderFloat("scale", &model.scalexW, 0, 2);
-		ImGui::SliderFloat("translate x asix", &model.translatexW, -1000, 1500);
-		ImGui::SliderFloat("translate y asix", &model.translateyW, -1000, 1000);
-		ImGui::SliderFloat("translate z asix", &model.translatezW, -1000, 1000);
-		ImGui::SliderFloat("rotate x asix", &model.rotatexW, -360, 360);
-		ImGui::SliderFloat("rotate y asix", &model.rotateyW, -360, 360);
-		ImGui::SliderFloat("rotate z asix", &model.rotatezW, -360, 360);
+		ImGui::SliderFloat("translate x asix", &model.transW.x, -1000, 1500);
+		ImGui::SliderFloat("translate y asix", &model.transW.y, -1000, 1000);
+		ImGui::SliderFloat("translate z asix", &model.transW.z, -1000, 1000);
+		ImGui::SliderFloat("rotate x asix", &model.rotateW.x, -360, 360);
+		ImGui::SliderFloat("rotate y asix", &model.rotateW.y, -360, 360);
+		ImGui::SliderFloat("rotate z asix", &model.rotateW.z, -360, 360);
 		ImGui::End();
 	}
 	

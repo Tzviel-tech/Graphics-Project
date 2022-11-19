@@ -11,7 +11,7 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 }
 void MeshModel::setLocalTranslate()
 {
-	localtransmat= glm::translate(glm::mat4(1), glm::vec3(translatex, translatey, translatez));
+	localtransmat= glm::translate(glm::mat4(1), glm::vec3(trans.x, trans.y, trans.z));
 }
 
 void MeshModel::setlocalScale()
@@ -20,9 +20,9 @@ void MeshModel::setlocalScale()
 }
 void MeshModel::setLocalRotation()
 {
-	localrotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotatex), glm::vec3(1.0f, 0.0f, 0.0f));
-	localrotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotatey), glm::vec3(0.0f, 1.0f, 0.0f));
-	localrotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotatez), glm::vec3(0.0f, 0.0f, 1.0f));
+	localrotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotate.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	localrotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotate.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	localrotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotate.z), glm::vec3(0.0f, 0.0f, 1.0f));
 	localrotation = localrotationMatrixz * localrotationMatrixy * localrotationMatrixx;
 }
 void MeshModel::setLocal()
@@ -35,7 +35,7 @@ void MeshModel::setLocal()
 }
 void MeshModel::setWorldTranslate()
 {
-	Wtransmat = glm::translate(glm::mat4(1), glm::vec3(translatexW, translateyW, translatezW));
+	Wtransmat = glm::translate(glm::mat4(1), glm::vec3(transW.x, transW.y, transW.z));
 }
 
 void MeshModel::setWorldScale()
@@ -44,9 +44,9 @@ void MeshModel::setWorldScale()
 }
 void MeshModel::setWorldRotation()
 {
-	 WrotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotatexW), glm::vec3(1.0f, 0.0f, 0.0f));
-	 WrotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotateyW), glm::vec3(0.0f, 1.0f, 0.0f));
-	 WrotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotatezW), glm::vec3(0.0f, 0.0f, 1.0f));
+	 WrotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotateW.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	 WrotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotateW.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	 WrotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotateW.z), glm::vec3(0.0f, 0.0f, 1.0f));
 	 Wrotation = WrotationMatrixz * WrotationMatrixy * WrotationMatrixx;
 }
 void MeshModel::setWorld()

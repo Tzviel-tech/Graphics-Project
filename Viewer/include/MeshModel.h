@@ -44,20 +44,14 @@ public:
 	}
 	//local running prameters
 	float scalex=1;
-	float translatex=0;
-	float translatey=0;
-	float translatez=0;
-	float rotatex=0;
-	float rotatey=0;
-	float rotatez=0;
+	glm::vec3 trans = glm::vec3(0.0f);
+	glm::vec3 rotate = glm::vec3(0.0f);
+	
 	//world running pramaters
 	float scalexW = 1;
-	float translatexW = 0;
-	float translateyW = 0;
-	float translatezW = 0;
-	float rotatexW = 0;
-	float rotateyW = 0;
-	float rotatezW = 0;
+	glm::vec3 transW=glm::vec3(0.0f);
+	glm::vec3 rotateW = glm::vec3(0.0f);
+	
 	
 private:
 	glm::mat4 local=glm::mat4(1);
