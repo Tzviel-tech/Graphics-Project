@@ -345,7 +345,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	if(WORLD_TRANSFOM)
 	{
 		ImGui::Begin("decide world transfom:");
-		ImGui::SliderFloat("scale", &model.scalexW, 0, 500);
+		ImGui::SliderFloat("scale", &model.scalexW, 0, 2);
 		ImGui::SliderFloat("translate x asix", &model.translatexW, -1000, 1500);
 		ImGui::SliderFloat("translate y asix", &model.translateyW, -1000, 1000);
 		ImGui::SliderFloat("translate z asix", &model.translatezW, -1000, 1000);

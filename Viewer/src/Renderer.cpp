@@ -253,7 +253,7 @@ void Renderer::Render(const Scene& scene)
 	for (int i = 0;i < vec.size();i++)
 	{
 		glm::vec4 temp(vec.at(i), 1.0f);
-		temp =  matrix* temp;
+		temp = matrix * temp;
 		vec.at(i) = temp;
 	}
 	for (int i = 0;i < mod.GetFacesCount();i++)

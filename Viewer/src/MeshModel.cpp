@@ -20,9 +20,9 @@ void MeshModel::setlocalScale()
 }
 void MeshModel::setLocalRotation()
 {
-	glm::mat4 rotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotatex), glm::vec3(1.0f, 0.0f, 0.0f));
-	glm::mat4 rotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotatey), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 rotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotatez), glm::vec3(0.0f, 0.0f, 1.0f));
+	localrotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotatex), glm::vec3(1.0f, 0.0f, 0.0f));
+	localrotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotatey), glm::vec3(0.0f, 1.0f, 0.0f));
+	localrotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotatez), glm::vec3(0.0f, 0.0f, 1.0f));
 	localrotation = localrotationMatrixz * localrotationMatrixy * localrotationMatrixx;
 }
 void MeshModel::setLocal()
@@ -44,10 +44,10 @@ void MeshModel::setWorldScale()
 }
 void MeshModel::setWorldRotation()
 {
-	glm::mat4 rotationMatrixxW = glm::rotate(glm::mat4(1.0f), glm::radians(rotatexW), glm::vec3(1.0f, 0.0f, 0.0f));
-	glm::mat4 rotationMatrixyW = glm::rotate(glm::mat4(1.0f), glm::radians(rotateyW), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 rotationMatrixzW = glm::rotate(glm::mat4(1.0f), glm::radians(rotatezW), glm::vec3(0.0f, 0.0f, 1.0f));
-	Wrotation = glm::mat4(1);
+	 WrotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotatexW), glm::vec3(1.0f, 0.0f, 0.0f));
+	 WrotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotateyW), glm::vec3(0.0f, 1.0f, 0.0f));
+	 WrotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotatezW), glm::vec3(0.0f, 0.0f, 1.0f));
+	 Wrotation = WrotationMatrixz * WrotationMatrixy * WrotationMatrixx;
 }
 void MeshModel::setWorld()
 {
