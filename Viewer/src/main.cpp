@@ -96,8 +96,6 @@ int main(int argc, char** argv)
 	glfwSetScrollCallback(window, ScrollCallback);
 
 	//std::cout << *model;
-	model->setLocal();
-	std::cout << to_string(model->getLocal());
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
@@ -347,13 +345,13 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	if(WORLD_TRANSFOM)
 	{
 		ImGui::Begin("decide world transfom:");
-		ImGui::SliderFloat("scale", &model.scalex, 0, 500);
-		ImGui::SliderFloat("translate x asix", &model.translatex, -1000, 1500);
-		ImGui::SliderFloat("translate y asix", &model.translatey, -1000, 1000);
-		ImGui::SliderFloat("translate z asix", &model.translatez, -1000, 1000);
-		ImGui::SliderFloat("rotate x asix", &model.rotatex, -360, 360);
-		ImGui::SliderFloat("rotate y asix", &model.rotatey, -360, 360);
-		ImGui::SliderFloat("rotate z asix", &model.rotatez, -360, 360);
+		ImGui::SliderFloat("scale", &model.scalexW, 0, 500);
+		ImGui::SliderFloat("translate x asix", &model.translatexW, -1000, 1500);
+		ImGui::SliderFloat("translate y asix", &model.translateyW, -1000, 1000);
+		ImGui::SliderFloat("translate z asix", &model.translatezW, -1000, 1000);
+		ImGui::SliderFloat("rotate x asix", &model.rotatexW, -360, 360);
+		ImGui::SliderFloat("rotate y asix", &model.rotateyW, -360, 360);
+		ImGui::SliderFloat("rotate z asix", &model.rotatezW, -360, 360);
 		ImGui::End();
 	}
 	

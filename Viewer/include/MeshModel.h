@@ -17,8 +17,14 @@ public:
 	void setLocalTranslate();
 	void setlocalScale();
 	void setLocalRotation();
+	void setWorld();
+	void setWorldTranslate();
+	void setWorldScale();
+	void setWorldRotation();
 	void setLocal();
-	glm::mat4& getLocal() { return local; };
+	glm::mat4& getLocal() { setLocal();return local; };
+	glm::mat4& getWorld() { setWorld();return world; };
+	glm::mat4 getTransform() { return getWorld()*getLocal();};
 	
 	friend std::ostream& operator<<(std::ostream& out, MeshModel &thi)
 	{
@@ -36,13 +42,21 @@ public:
 		
 		return out;
 	}
-	float scalex=0;
+	float scalex=1;
 	float translatex=0;
 	float translatey=0;
 	float translatez=0;
 	float rotatex=0;
 	float rotatey=0;
 	float rotatez=0;
+	float scalexW = 1;
+	float translatexW = 0;
+	float translateyW = 0;
+	float translatezW = 0;
+	float rotatexW = 0;
+	float rotateyW = 0;
+	float rotatezW = 0;
+	
 private:
 	glm::mat4 local=glm::mat4(1);
 	glm::mat4 world = glm::mat4(1);
@@ -52,6 +66,12 @@ private:
 	glm::mat4 localrotationMatrixy = glm::mat4(1);
 	glm::mat4 localrotationMatrixz = glm::mat4(1);
 	glm::mat4 localrotation = glm::mat4(1);
+	glm::mat4 Wscalemat = glm::mat4(1);
+	glm::mat4 Wtransmat = glm::mat4(1);
+	glm::mat4 WrotationMatrixx = glm::mat4(1);
+	glm::mat4 WrotationMatrixy = glm::mat4(1);
+	glm::mat4 WrotationMatrixz = glm::mat4(1);
+	glm::mat4 Wrotation = glm::mat4(1);
 	std::vector<Face> faces;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;

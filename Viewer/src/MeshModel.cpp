@@ -33,10 +33,31 @@ void MeshModel::setLocal()
 	local = localtransmat * localscalemat * localrotation;
 	
 }
-//glm::mat4 &MeshModel::getLocal() 
-//{
-//	return local;
-//}
+void MeshModel::setWorldTranslate()
+{
+	Wtransmat = glm::translate(glm::mat4(1), glm::vec3(translatexW, translateyW, translatezW));
+}
+
+void MeshModel::setWorldScale()
+{
+	Wscalemat = glm::scale(glm::mat4(1), glm::vec3(scalexW, scalexW, scalexW));
+}
+void MeshModel::setWorldRotation()
+{
+	glm::mat4 rotationMatrixxW = glm::rotate(glm::mat4(1.0f), glm::radians(rotatexW), glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat4 rotationMatrixyW = glm::rotate(glm::mat4(1.0f), glm::radians(rotateyW), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 rotationMatrixzW = glm::rotate(glm::mat4(1.0f), glm::radians(rotatezW), glm::vec3(0.0f, 0.0f, 1.0f));
+	Wrotation = glm::mat4(1);
+}
+void MeshModel::setWorld()
+{
+	setWorldRotation();
+	setWorldScale();
+	setWorldTranslate();
+	world = Wtransmat * Wscalemat * Wrotation;
+
+}
+
 MeshModel::~MeshModel()
 {
 }

@@ -248,12 +248,12 @@ void Renderer::Render(const Scene& scene)
 	int half_height = viewport_height / 2;
 	
 	MeshModel mod = scene.GetActiveModel();
-	mod.setLocal();
+	glm::mat4 matrix = mod.getTransform();
 	std::vector<glm::vec3>vec = mod.GetVertecies();
 	for (int i = 0;i < vec.size();i++)
 	{
 		glm::vec4 temp(vec.at(i), 1.0f);
-		temp = mod.getLocal() * temp;
+		temp =  matrix* temp;
 		vec.at(i) = temp;
 	}
 	for (int i = 0;i < mod.GetFacesCount();i++)
