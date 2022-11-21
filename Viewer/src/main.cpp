@@ -169,7 +169,7 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 {
 	
 	
-
+	MeshModel& model = scene.GetActiveModel();
 	ImGui::Render();
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
@@ -180,42 +180,61 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 		// TODO: Set new aspect ratio
 	}
 
-	//if (!io.WantCaptureKeyboard)
-	//{
-	//	// TODO: Handle keyboard events here
-	//	if (io.KeysDown[65])
-	//	{
-	//		glm::mat4 myScalingMatrix = glm::scale(glm::mat4(1), glm::vec3(f1, f1, f1));
-	//		MeshModel& model = scene.GetActiveModel();
-	//		vector<glm::vec3>& modelVer = model.GetVertecies();
+	if (!io.WantCaptureKeyboard)
+	{
+		// TODO: Handle keyboard events here
+		if (io.KeysDown['A'])
+		{
+			
+			model.trans.x -= 5;
+		}
+		if (io.KeysDown['D'])
+		{
 
-	//		for (int i = 0;i < modelVer.size();i++)
-	//		{
-	//			glm::vec4 vec(modelVer.at(i), 01.f);
-	//			vec = model.object_trans*myScalingMatrix*glm::inverse(model.object_trans)* vec;
-	//			modelVer.at(i) = vec;
-	//		}
-	//	}
-	//}
+			model.trans.x += 5;
+		}
+		if (io.KeysDown['W'])
+		{
 
-	//if (!io.WantCaptureMouse)
-	//{
-	//	// TODO: Handle mouse events here
-	//	if (io.MouseDown[0])
-	//	{
-	//		glm::mat4 trans = glm::mat4(1.0f);
-	//		trans = glm::rotate(trans, glm::radians(glm::radians(f)), glm::vec3(0.0f, 1.0f, 1.0f));
-	//		MeshModel &model=scene.GetActiveModel();
-	//		vector<glm::vec3>&modelVer = model.GetVertecies();
-	//		
-	//			for (int i = 0;i < modelVer.size();i++)
-	//			{
-	//				glm::vec4 vec(modelVer.at(i), 01.f);
-	//				vec = model.object_trans* trans*glm::inverse(model.object_trans) * vec;
-	//				modelVer.at(i) = vec;
-	//			}
-	//	}
-	//}
+			model.trans.y += 5;
+		}
+		if (io.KeysDown['S'])
+		{
+
+			model.trans.y -= 5;
+		}
+		if (io.KeysDown['H'])
+		{
+
+			model.transW.x -= 5;
+		}
+		if (io.KeysDown['K'])
+		{
+
+			model.transW.x += 5;
+		}
+		if (io.KeysDown['U'])
+		{
+
+			model.transW.y += 5;
+		}
+		if (io.KeysDown['J'])
+		{
+
+			model.transW.y -= 5;
+		}
+	}
+
+	if (!io.WantCaptureMouse)
+	{
+		// TODO: Handle mouse events here
+		if (io.MouseDown[0])
+		{
+			
+			model.rotate.x++;
+			
+		}
+	}
 
 	renderer.ClearColorBuffer(clear_color);
 	renderer.Render(scene);
