@@ -182,7 +182,7 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 
 	if (!io.WantCaptureKeyboard)
 	{
-		// TODO: Handle keyboard events here
+		// Controll translation
 		if (io.KeysDown['A'])
 		{
 			
@@ -343,6 +343,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 
 	ImGui::Begin("decide local or world transfom:");
+	ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'W' to move up\n press 'S' to move down\n press 'D' to move left\n press 'A' to move right");
 	ImGui::SliderFloat("scale", &model.scalex, 0, 500);
 	ImGui::SliderFloat("translate x asix", &model.trans.x, -1000, 1500);
 	ImGui::SliderFloat("translate y asix", &model.trans.y, -1000, 1000);
@@ -364,6 +365,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	if(WORLD_TRANSFOM)
 	{
 		ImGui::Begin("decide world transfom:");
+		ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'U' to move up\n press 'J' to move down\n press 'H' to move left\n press 'K' to move right");
 		ImGui::SliderFloat("scale", &model.scalexW, 0, 2);
 		ImGui::SliderFloat("translate x asix", &model.transW.x, -1000, 1500);
 		ImGui::SliderFloat("translate y asix", &model.transW.y, -1000, 1000);
@@ -371,6 +373,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::SliderFloat("rotate x asix", &model.rotateW.x, -360, 360);
 		ImGui::SliderFloat("rotate y asix", &model.rotateW.y, -360, 360);
 		ImGui::SliderFloat("rotate z asix", &model.rotateW.z, -360, 360);
+		if (ImGui::Button("Reset all to zero"))
+		{
+			model.rotateW.x = 0;
+			model.rotateW.y = 0;
+			model.rotateW.z = 0;
+			model.transW.x = 0;
+			model.transW.y = 0;
+			model.transW.z = 0;
+			model.scalexW = 1;
+		}
 		ImGui::End();
 	}
 	
