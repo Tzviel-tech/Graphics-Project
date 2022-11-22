@@ -28,7 +28,10 @@ MeshModel& Scene::GetActiveModel() const
 {
 	return *mesh_models[active_model_index];
 }
-
+void Scene::AddModelAtindex0(const shared_ptr<MeshModel>& mesh_model)
+{
+	mesh_models.at(0) = mesh_model;
+}
 void Scene::AddCamera(const std::shared_ptr<Camera>& camera)
 {
 	cameras.push_back(camera);

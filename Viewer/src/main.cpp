@@ -169,7 +169,7 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 {
 	
 	
-	MeshModel& model = scene.GetActiveModel();
+	MeshModel& model = scene.GetModel(0);
 	ImGui::Render();
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
@@ -257,7 +257,7 @@ void Cleanup(GLFWwindow* window)
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 {
-	MeshModel& model = scene.GetActiveModel();
+	
 	/**
 	 * MeshViewer menu
 	 */
@@ -274,7 +274,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				nfdresult_t result = NFD_OpenDialog("obj;", NULL, &outPath);
 				if (result == NFD_OKAY)
 				{
-					scene.AddModel(Utils::LoadMeshModel(outPath));
+					scene.AddModelAtindex0(Utils::LoadMeshModel(outPath));
 					free(outPath);
 				}
 				else if (result == NFD_CANCEL)
@@ -291,7 +291,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		// TODO: Add more menubar items (if you want to)
 		ImGui::EndMainMenuBar();
 	}
-
+	MeshModel& model = scene.GetModel(0);
 	// Controls
 	ImGui::ColorEdit3("Clear Color", (float*)&clear_color);
 	// TODO: Add more controls as needed

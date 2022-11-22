@@ -13,6 +13,7 @@ public:
 	Scene();
 
 	void AddModel(const shared_ptr<MeshModel>& mesh_model);
+	void AddModelAtindex0(const shared_ptr<MeshModel>& mesh_model);
 	int GetModelCount() const;
 	MeshModel& GetModel(int index) const;
 	MeshModel& GetActiveModel() const;

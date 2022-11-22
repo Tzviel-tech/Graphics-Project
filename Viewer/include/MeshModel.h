@@ -23,7 +23,7 @@ public:
 	void setWorldRotation();
 	void setLocal();
 	glm::mat4& getLocal() { setLocal();return local; };
-	glm::mat4& getWorld() { setWorld();return world; };
+	glm::mat4& getWorld() { setWorld();return world; }; 
 	glm::mat4 getTransform() { return getWorld() * getLocal(); };
 	
 	friend std::ostream& operator<<(std::ostream& out, MeshModel &thi)
