@@ -17,7 +17,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-
+bool x = false, y = false, z = false,xW=false,yW=false,zW=false;
 bool WORLD_TRANSFOM;
 /**
  * Fields
@@ -168,7 +168,7 @@ void StartFrame()
 void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io)
 {
 	
-	
+
 	MeshModel& model = scene.GetModel(0);
 	ImGui::Render();
 	int frameBufferWidth, frameBufferHeight;
@@ -228,11 +228,41 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	if (!io.WantCaptureMouse)
 	{
 		// TODO: Handle mouse events here
-		if (io.MouseDown[0])
+		if (io.MouseDown[0] && x)
 		{
-			
+
 			model.rotate.x++;
-			
+
+		}
+		if (io.MouseDown[0] && y)
+		{
+
+			model.rotate.y++;
+
+		}
+		if (io.MouseDown[0] && z)
+		{
+
+			model.rotate.z++;
+
+		}
+		if (io.MouseDown[0] && xW)
+		{
+
+			model.rotateW.x++;
+
+		}
+		if (io.MouseDown[0] && yW)
+		{
+
+			model.rotateW.y++;
+
+		}
+		if (io.MouseDown[0] && zW)
+		{
+
+			model.rotateW.z++;
+
 		}
 	}
 
@@ -341,7 +371,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	
 	
 
-
+	
 	ImGui::Begin("decide local or world transfom:");
 	ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'W' to move up\n press 'S' to move down\n press 'D' to move left\n press 'A' to move right");
 	ImGui::SliderFloat("scale", &model.scalex, 0, 500);
@@ -351,6 +381,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::SliderFloat("rotate x asix", &model.rotate.x, -360, 360);
 	ImGui::SliderFloat("rotate y asix", &model.rotate.y, -360, 360);
 	ImGui::SliderFloat("rotate z asix", &model.rotate.z, -360, 360);
+	ImGui::Text("Press left mouse to rotate and decide rotation:");
+	ImGui::Checkbox("Rotate x", &x);
+	ImGui::Checkbox("Rotate y", &y);
+	ImGui::Checkbox("Rotate z", &z);
 	ImGui::Checkbox("World transfom", &WORLD_TRANSFOM);
 	if (ImGui::Button("Reset all to zero"))  
 	{
@@ -373,6 +407,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::SliderFloat("rotate x asix", &model.rotateW.x, -360, 360);
 		ImGui::SliderFloat("rotate y asix", &model.rotateW.y, -360, 360);
 		ImGui::SliderFloat("rotate z asix", &model.rotateW.z, -360, 360);
+		ImGui::Text("Press left mouse to rotate and decide rotation:");
+		ImGui::Checkbox("Rotate x", &xW);
+		ImGui::Checkbox("Rotate y", &yW);
+		ImGui::Checkbox("Rotate z", &zW);
 		if (ImGui::Button("Reset all to zero"))
 		{
 			model.rotateW.x = 0;
@@ -385,6 +423,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		}
 		ImGui::End();
 	}
+	
 	
 	ImGui::End();
 }
