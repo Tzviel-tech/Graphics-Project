@@ -87,14 +87,14 @@ int main(int argc, char** argv)
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/teapot.obj");
+	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/cube.obj");
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 
 	Scene scene = Scene();
 	scene.AddModel(model);
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
-
+	std::cout << *model;
 	//std::cout << *model;
 	while (!glfwWindowShouldClose(window))
 	{

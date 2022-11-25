@@ -58,15 +58,9 @@ private:
 	glm::mat4 world = glm::mat4(1);
 	glm::mat4 localscalemat = glm::mat4(1);
 	glm::mat4 localtransmat = glm::mat4(1);
-	glm::mat4 localrotationMatrixx = glm::mat4(1);
-	glm::mat4 localrotationMatrixy = glm::mat4(1);
-	glm::mat4 localrotationMatrixz = glm::mat4(1);
 	glm::mat4 localrotation = glm::mat4(1);
 	glm::mat4 Wscalemat = glm::mat4(1);
 	glm::mat4 Wtransmat = glm::mat4(1);
-	glm::mat4 WrotationMatrixx = glm::mat4(1);
-	glm::mat4 WrotationMatrixy = glm::mat4(1);
-	glm::mat4 WrotationMatrixz = glm::mat4(1);
 	glm::mat4 Wrotation = glm::mat4(1);
 	std::vector<Face> faces;
 	std::vector<glm::vec3> vertices;
