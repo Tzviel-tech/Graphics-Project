@@ -1,9 +1,13 @@
 
 ----------------------------------------part 1----------------------------------------------------------------
+
+
 here is the output of the vertices and faces of the simple model of "cube" i saw at lecture:
 
 ![vertices&&faces](cube.png "vertices&&faces")
 ----------------------------------------part 2+3----------------------------------------------------------------
+
+
 To move the model to place where we can see it on screen i have preformed a transformation on the model like this:
 i set 4x4 scale matrix by using glm::Scale and scaled all model's axes by 80,than i set up 4x4 translation matrix 
 by using glm::tanslate, and translated model to x=635 and y=330. 
@@ -39,6 +43,8 @@ Also i have "reset all to zero" bottom to easly return the model to initial posi
 
 
 ----------------------------------------part 5----------------------------------------------------------------
+
+
 Here is localtranslation of x by 100 than world rotation in respect of y by 74:
 ![WrLt](Tranlocalby100_world_yRotate74.png "rotatetranslate")
 
@@ -46,4 +52,6 @@ Here is worldranslation of x by 100 than local rotation in respect of y by 74:
 ![WrLt](translate_world100_rotate_yLOCAL74.png "rotatetranslate")
 
 ----------------------------------------part 7----------------------------------------------------------------
+
+
 part 7 is described at part 4.
