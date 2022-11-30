@@ -89,9 +89,11 @@ int main(int argc, char** argv)
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/cube.obj");
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
-
+	shared_ptr<Camera>c(new Camera());
 	Scene scene = Scene();
 	scene.AddModel(model);
+	scene.AddCamera(c);
+	scene.SetActiveCameraIndex(0);
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
 	std::cout << *model;

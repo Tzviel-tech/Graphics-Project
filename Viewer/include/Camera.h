@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-
+#include <glm/gtx/transform.hpp>
 class Camera
 {
 public:
@@ -13,6 +13,6 @@ public:
 	const glm::mat4x4& GetViewTransformation() const;
 
 private:
-	glm::mat4x4 view_transformation;
-	glm::mat4x4 projection_transformation;
+	glm::mat4x4 view_transformation = glm::mat4(1);;
+	glm::mat4x4 projection_transformation = glm::mat4(1);
 };

@@ -241,20 +241,22 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	}
 }
 
-void Renderer::Render(const Scene& scene)
+void Renderer::Render( const Scene& scene)
 {
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
-	
-
+	    Scene s = scene;
+	    Camera camera = s.GetCamera(0);
 		MeshModel mod = scene.GetModel(0);
+	    camera.SetCameraLookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		glm::mat4 view = camera.GetViewTransformation();
 		glm::mat4 matrix = mod.getTransform();
 		std::vector<glm::vec3>vec = mod.GetVertecies();
 		for (int i = 0;i < vec.size();i++)
 		{
 			glm::vec4 temp(vec.at(i), 1.0f);
-			temp = matrix * temp;
+			temp = view*matrix * temp;
 			vec.at(i) = temp;
 		}
 		for (int i = 0;i < mod.GetFacesCount();i++)
