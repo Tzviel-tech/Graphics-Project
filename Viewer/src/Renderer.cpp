@@ -249,14 +249,12 @@ void Renderer::Render( const Scene& scene)
 	    Scene s = scene;
 	    Camera camera = s.GetCamera(0);
 		MeshModel mod = scene.GetModel(0);
-	    camera.SetCameraLookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-		glm::mat4 view = camera.GetViewTransformation();
 		glm::mat4 matrix = mod.getTransform();
 		std::vector<glm::vec3>vec = mod.GetVertecies();
 		for (int i = 0;i < vec.size();i++)
 		{
 			glm::vec4 temp(vec.at(i), 1.0f);
-			temp = view*matrix * temp;
+			temp = camera.GetProjectionTransformation()*matrix * temp;
 			vec.at(i) = temp;
 		}
 		for (int i = 0;i < mod.GetFacesCount();i++)
@@ -271,11 +269,6 @@ void Renderer::Render( const Scene& scene)
 			ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 			ChangePoints(p3, p2, glm::vec3(1, 0, 0));
 		}
-
-	
-
-		
-
 
 }
 

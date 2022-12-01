@@ -17,8 +17,16 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+
+static float cleft = -1;
+static float cright = 1;
+static float down = -1;
+static float up = 1;
+static float cnear = 1;
+static float cfar = 1;
 bool x = false, y = false, z = false,xW=false,yW=false,zW=false;
 bool WORLD_TRANSFOM;
+bool orthogonalP;
 /**
  * Fields
  */
@@ -87,7 +95,7 @@ int main(int argc, char** argv)
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/cube.obj");
+	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/teapot.obj");
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	shared_ptr<Camera>c(new Camera());
 	Scene scene = Scene();
@@ -96,13 +104,15 @@ int main(int argc, char** argv)
 	scene.SetActiveCameraIndex(0);
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
-	std::cout << *model;
+	//std::cout << *model;
 	//std::cout << *model;
 	while (!glfwWindowShouldClose(window))
 	{
+		
 		glfwPollEvents();
 		StartFrame();
 		DrawImguiMenus(io, scene);
+		c->SetPTransform(cleft, cright, down, up, cnear, cfar);
 		RenderFrame(window, scene, renderer, io);
 		
 
@@ -323,6 +333,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		// TODO: Add more menubar items (if you want to)
 		ImGui::EndMainMenuBar();
 	}
+	Camera& c = scene.GetActiveCamera();
 	MeshModel& model = scene.GetModel(0);
 	// Controls
 	ImGui::ColorEdit3("Clear Color", (float*)&clear_color);
@@ -388,6 +399,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("Rotate y", &y);
 	ImGui::Checkbox("Rotate z", &z);
 	ImGui::Checkbox("World transfom", &WORLD_TRANSFOM);
+	ImGui::Checkbox("view volume", &orthogonalP);
 	if (ImGui::Button("Reset all to zero"))  
 	{
 		model.rotate.x = 0;
@@ -425,6 +437,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		}
 		ImGui::End();
 	}
+	if (orthogonalP)
+{
+	ImGui::Begin("decide view volume");
+	ImGui::SliderFloat("left", &cleft, -1, -100);
+	ImGui::SliderFloat("right", &cright, 1, 100);
+	ImGui::SliderFloat("down", &down, -1, -100);
+	ImGui::SliderFloat("up", &up, 1, 100);
+	ImGui::SliderFloat("near", &cnear, -360, 360);
+	ImGui::SliderFloat("far", &cfar, -360, 360);
+	ImGui::End();
+}
 	
 	
 	ImGui::End();
