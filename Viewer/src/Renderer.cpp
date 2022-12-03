@@ -246,15 +246,18 @@ void Renderer::Render( const Scene& scene)
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
+	glm::vec3 y1(half_width, viewport_height, 0),y2(half_width,0, 0),x1(0,half_height,0),x2(viewport_width,half_height,0);
+	ChangePoints(y1, y2,glm::vec3(0,0,0)), ChangePoints(x1, x2, glm::vec3(0, 0, 0));
 	    Scene s = scene;
 	    Camera camera = s.GetCamera(0);
+		camera.SetCameraLookAt(glm::vec3(camera.a, camera.b, camera.c), glm::vec3(0, 0, 0), glm::vec3(0, 1,0));
 		MeshModel mod = scene.GetModel(0);
 		glm::mat4 matrix = mod.getTransform();
 		std::vector<glm::vec3>vec = mod.GetVertecies();
 		for (int i = 0;i < vec.size();i++)
 		{
 			glm::vec4 temp(vec.at(i), 1.0f);
-			temp = camera.GetProjectionTransformation()*matrix * temp;
+			temp = camera.GetProjectionTransformation()* camera.GetViewTransformation() * matrix * temp;
 			vec.at(i) = temp;
 		}
 		for (int i = 0;i < mod.GetFacesCount();i++)
@@ -265,6 +268,12 @@ void Renderer::Render( const Scene& scene)
 			glm::vec2 p1 = vec.at(a - 1);
 			glm::vec2 p2 = vec.at(b - 1);
 			glm::vec2 p3 = vec.at(c - 1);
+			p1.x += half_width;
+			p1.y += half_height;
+			p2.x += half_width;
+			p2.y += half_height;
+			p3.x +=half_width;
+			p3.y += half_height;
 			ChangePoints(p1, p2, glm::vec3(1, 0, 0));
 			ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 			ChangePoints(p3, p2, glm::vec3(1, 0, 0));

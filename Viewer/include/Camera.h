@@ -8,12 +8,43 @@ public:
 	virtual ~Camera();
 
 	void SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up);
-
 	const glm::mat4x4& GetProjectionTransformation()const;
 	void SetPTransform(float left, float right, float up, float down, float near, float far);
-	const glm::mat4x4& GetViewTransformation() const;
-	
+	const glm::mat4x4& GetViewTransformation();
+	float a=0;
+	float b=0;
+	float c=1;
+	void setLocalTranslate();
+	void setlocalScale();
+	void setLocalRotation();
+	void setWorld();
+	void setWorldTranslate();
+	void setWorldScale();
+	void setWorldRotation();
+	void setLocal();
+	glm::mat4& getLocal() { setLocal();return local; };
+	glm::mat4& getWorld() { setWorld();return world; };
+	glm::mat4 getTransform() { return getWorld() * getLocal(); };
+	//local running prameters
+	float scalex = 1;
+	glm::vec3 trans = glm::vec3(0.0f);
+	glm::vec3 rotate = glm::vec3(0.0f);
+
+	//world running pramaters
+	float scalexW = 1;
+	glm::vec3 transW = glm::vec3(0.0f);
+	glm::vec3 rotateW = glm::vec3(0.0f);
+
 private:
 	glm::mat4 view_transformation;
 	glm::mat4 projection_transformation = glm::mat4(1);
+	glm::mat4 local = glm::mat4(1);
+	glm::mat4 world = glm::mat4(1);
+	glm::mat4 localscalemat = glm::mat4(1);
+	glm::mat4 localtransmat = glm::mat4(1);
+	glm::mat4 localrotation = glm::mat4(1);
+	glm::mat4 Wscalemat = glm::mat4(1);
+	glm::mat4 Wtransmat = glm::mat4(1);
+	glm::mat4 Wrotation = glm::mat4(1);
+	
 };

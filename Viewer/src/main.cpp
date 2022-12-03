@@ -27,6 +27,9 @@ static float cfar = 1;
 bool x = false, y = false, z = false,xW=false,yW=false,zW=false;
 bool WORLD_TRANSFOM;
 bool orthogonalP;
+bool movecamera;
+bool cameraworld;
+bool cameralocal;
 /**
  * Fields
  */
@@ -87,7 +90,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 //}
 int main(int argc, char** argv)
 {
-	int windowWidth = 1280, windowHeight = 720;
+	int windowWidth = 1920, windowHeight = 1080;
 	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
 	if (!window)
 		return 1;
@@ -400,6 +403,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("Rotate z", &z);
 	ImGui::Checkbox("World transfom", &WORLD_TRANSFOM);
 	ImGui::Checkbox("view volume", &orthogonalP);
+	ImGui::Checkbox("move camera", &movecamera);
+	ImGui::Checkbox("local cameraT", &cameralocal);
+	ImGui::Checkbox("world cameraT", &cameraworld);
 	if (ImGui::Button("Reset all to zero"))  
 	{
 		model.rotate.x = 0;
@@ -440,14 +446,82 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	if (orthogonalP)
 {
 	ImGui::Begin("decide view volume");
-	ImGui::SliderFloat("left", &cleft, -1, -100);
-	ImGui::SliderFloat("right", &cright, 1, 100);
-	ImGui::SliderFloat("down", &down, -1, -100);
-	ImGui::SliderFloat("up", &up, 1, 100);
+	ImGui::SliderFloat("left", &cleft, -10, 10);
+	ImGui::SliderFloat("right", &cright, -10, 10);
+	ImGui::SliderFloat("down", &down, -10, 10);
+	ImGui::SliderFloat("up", &up, -10,10);
 	ImGui::SliderFloat("near", &cnear, -360, 360);
 	ImGui::SliderFloat("far", &cfar, -360, 360);
 	ImGui::End();
 }
+	if (movecamera)
+	{
+		ImGui::Begin("move camera");
+		ImGui::SliderFloat("a", &c.a, -10, 10);
+		ImGui::SliderFloat("b", &c.b, -10, 10);
+		ImGui::SliderFloat("c", &c.c, -10, 10);
+		ImGui::End();
+	}
+	
+		//if (ImGui::BeginMenu("camera"))
+		//{
+			if (cameraworld)
+			{
+
+				ImGui::Begin("decide camera world transfom:");
+				ImGui::SliderFloat("scale", &c.scalexW, 0, 2);
+				ImGui::SliderFloat("translate x asix", &c.transW.x, -1000, 1500);
+				ImGui::SliderFloat("translate y asix", &c.transW.y, -1000, 1000);
+				ImGui::SliderFloat("translate z asix", &c.transW.z, -1000, 1000);
+				ImGui::SliderFloat("rotate x asix", &c.rotateW.x, -360, 360);
+				ImGui::SliderFloat("rotate y asix", &c.rotateW.y, -360, 360);
+				ImGui::SliderFloat("rotate z asix", &c.rotateW.z, -360, 360);
+				ImGui::Text("Press left mouse to rotate and decide rotation:");
+				ImGui::Checkbox("Rotate x", &xW);
+				ImGui::Checkbox("Rotate y", &yW);
+				ImGui::Checkbox("Rotate z", &zW);
+				if (ImGui::Button("Reset all to zero"))
+				{
+					c.rotateW.x = 0;
+					c.rotateW.y = 0;
+					c.rotateW.z = 0;
+					c.transW.x = 0;
+					c.transW.y = 0;
+					c.transW.z = 0;
+					c.scalexW = 1;
+				}
+				ImGui::End();
+
+			}
+			if (cameralocal)
+			{
+
+				ImGui::Begin("decide camera local transfom:");
+				ImGui::SliderFloat("scale", &c.scalex, 0, 2);
+				ImGui::SliderFloat("translate x asix", &c.trans.x, -1000, 1500);
+				ImGui::SliderFloat("translate y asix", &c.trans.y, -1000, 1000);
+				ImGui::SliderFloat("translate z asix", &c.trans.z, -1000, 1000);
+				ImGui::SliderFloat("rotate x asix", &c.rotate.x, -360, 360);
+				ImGui::SliderFloat("rotate y asix", &c.rotate.y, -360, 360);
+				ImGui::SliderFloat("rotate z asix", &c.rotate.z, -360, 360);
+				ImGui::Text("Press left mouse to rotate and decide rotation:");
+				ImGui::Checkbox("Rotate x", &x);
+				ImGui::Checkbox("Rotate y", &y);
+				ImGui::Checkbox("Rotate z", &z);
+				ImGui::End();
+				if (ImGui::Button("Reset all to zero"))
+				{
+					c.rotate.x = 0;
+					c.rotate.y = 0;
+					c.rotate.z = 0;
+					c.trans.x = 0;
+					c.trans.y = 0;
+					c.trans.z = 0;
+					c.scalex = 1;
+				}
+			}
+	//	}
+	
 	
 	
 	ImGui::End();

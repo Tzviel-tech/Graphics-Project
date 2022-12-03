@@ -47,7 +47,7 @@ void MeshModel::setWorldRotation()
 	glm::mat4  WrotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotateW.x), glm::vec3(1.0f, 0.0f, 0.0f));
 	glm::mat4  WrotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotateW.y), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4  WrotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotateW.z), glm::vec3(0.0f, 0.0f, 1.0f));
-	 Wrotation = WrotationMatrixz * WrotationMatrixy * WrotationMatrixx;
+	Wrotation = WrotationMatrixz * WrotationMatrixy * WrotationMatrixx;
 }
 void MeshModel::setWorld()
 {
