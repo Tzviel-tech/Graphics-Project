@@ -81,3 +81,23 @@ std::vector<glm::vec3>& MeshModel:: GetVertecies()
 	return vertices;
 }
 
+glm::vec4 MeshModel::center()
+{
+	    float minx = vertices[0].x;
+		float miny = vertices[0].y;
+		float maxx = vertices[0].x;
+		float maxy = vertices[0].x;
+		for (int i = 0;i < vertices.size();i++)
+		{
+			if (vertices[i].x < minx)
+				minx = vertices[i].x;
+			if (vertices[i].x > maxx)
+				maxx = vertices[i].x;
+			if (vertices[i].y < miny)
+				miny = vertices[i].y;
+			if (vertices[i].y > maxy)
+				maxy = vertices[i].y;
+		}
+		
+		return glm::vec4((minx + maxx) / 2.0f, (miny + maxy) / 2.0f, 0, 0);
+}

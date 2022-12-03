@@ -25,7 +25,7 @@ public:
 	glm::mat4& getLocal() { setLocal();return local; };
 	glm::mat4& getWorld() { setWorld();return world; }; 
 	glm::mat4 getTransform() { return getWorld() * getLocal(); };
-	
+	glm::vec4 center();
 	friend std::ostream& operator<<(std::ostream& out, MeshModel &thi)
 	{
 		out << "Model is: " << thi.GetModelName() << "\n";
