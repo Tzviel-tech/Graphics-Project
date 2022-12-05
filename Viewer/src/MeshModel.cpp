@@ -98,6 +98,10 @@ glm::vec4 MeshModel::center()
 			if (vertices[i].y > maxy)
 				maxy = vertices[i].y;
 		}
-		
-		return glm::vec4((minx + maxx) / 2.0f, (miny + maxy) / 2.0f, 0, 0);
+		maxX = maxx;
+		maxY = maxy;
+		minX = minx;
+		minY = miny;
+
+		return glm::vec4((minx + maxx) / 2.0f, (miny + maxy) / 2.0f, 1, 1);
 }

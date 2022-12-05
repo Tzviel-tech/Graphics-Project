@@ -22,6 +22,10 @@ public:
 	void setWorldScale();
 	void setWorldRotation();
 	void setLocal();
+	glm::mat4 & getsacle()
+	{
+		return localscalemat;
+	}
 	glm::mat4& getLocal() { setLocal();return local; };
 	glm::mat4& getWorld() { setWorld();return world; }; 
 	glm::mat4 getTransform() { return getWorld() * getLocal(); };
@@ -51,7 +55,10 @@ public:
 	float scalexW = 1;
 	glm::vec3 transW=glm::vec3(0.0f);
 	glm::vec3 rotateW = glm::vec3(0.0f);
-	
+	float maxX;
+	float minX;
+	float minY;
+	float maxY;
 	
 private:
 	glm::mat4 local=glm::mat4(1);

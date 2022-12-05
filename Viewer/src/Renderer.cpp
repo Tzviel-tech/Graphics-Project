@@ -247,7 +247,7 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
 	glm::vec3 y1(half_width, viewport_height, 0), y2(half_width, 0, 0), x1(0, half_height, 0), x2(viewport_width, half_height, 0);
-	//ChangePoints(y1, y2, glm::vec3(0, 0, 0)), ChangePoints(x1, x2, glm::vec3(0, 0, 0));
+	ChangePoints(y1, y2, glm::vec3(0, 0, 0)), ChangePoints(x1, x2, glm::vec3(0, 0, 0));
 	glm::vec4 centerM;
 	Scene s = scene;
 	Camera camera = s.GetCamera(0);
@@ -283,8 +283,24 @@ void Renderer::Render(const Scene& scene)
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
 	}
-	centerM = matrix * centerM;
-	ChangePoints(glm::vec2(centerM.x,0),glm::vec2(centerM.x,viewport_height), glm::vec3(1, 0, 0));
+	glm::vec4 x11(centerM.x , mod.minY, 1, 1);
+	glm::vec4 x22(centerM.x, mod.maxY , 1, 1);
+	glm::vec4 x33(mod.minX, centerM.y, 1, 1);
+	glm::vec4 x44(mod.maxX, centerM.y, 1, 1);
+	x22 = camera.GetProjectionTransformation() * camera.GetViewTransformation()*mod.getWorld() * mod.getsacle() * x22;
+	x11 = camera.GetProjectionTransformation() * camera.GetViewTransformation()* mod.getWorld() * mod.getsacle() * x11;
+	x22.x += half_width;
+	x11.x += half_width;
+	x22.y += half_height;
+	x11.y += half_height;
+	x33 = camera.GetProjectionTransformation() * camera.GetViewTransformation() * mod.getWorld()*mod.getsacle() * x33;
+	x44 = camera.GetProjectionTransformation() * camera.GetViewTransformation() * mod.getWorld() * mod.getsacle() * x44;
+	x33.x += half_width;
+	x44.x += half_width;
+	x33.y += half_height;
+	x44.y += half_height;
+	ChangePoints(x11,x22, glm::vec3(1, 1, 1));
+	ChangePoints(x33, x44, glm::vec3(1, 1, 1));
 
 }
 int Renderer::GetViewportWidth() const
