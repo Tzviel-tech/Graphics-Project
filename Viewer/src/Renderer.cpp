@@ -246,7 +246,7 @@ void Renderer::Render(const Scene& scene)
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
-
+	glm::vec4 viewportvec(half_width, half_height, 0, 0);
 	glm::vec4 normalx, normaly, normalz,facenormal;
 	glm::vec3 y1(half_width, viewport_height, 0), y2(half_width, 0, 0), x1(0, half_height, 0), x2(viewport_width, half_height, 0);
 	ChangePoints(y1, y2, glm::vec3(0, 0, 0)), ChangePoints(x1, x2, glm::vec3(0, 0, 0));
@@ -257,8 +257,8 @@ void Renderer::Render(const Scene& scene)
 	MeshModel mod = scene.GetModel(0);
 	glm::mat4 matrix = mod.getTransform();
 	centerM = mod.center();
-	std::vector<glm::vec3>normals = mod.getNormals();
-	std::vector<glm::vec3>vec = mod.GetVertecies();
+	std::vector<glm::vec3>&normals = mod.getNormals();
+	std::vector<glm::vec3>&vec = mod.GetVertecies();
 	for (int i = 0;i < vec.size();i++)
 	{ 
 		glm::vec4 temp(vec.at(i), 1.0f);
@@ -273,6 +273,7 @@ void Renderer::Render(const Scene& scene)
 	}
 	for (int i = 0;i < mod.GetFacesCount();i++)
 	{   
+		glm::vec4 facecenter = mod.getFaceCenter(i);
 		int a = mod.GetFace(i).GetVertexIndex(0);
 		int b = mod.GetFace(i).GetVertexIndex(1);
 		int c = mod.GetFace(i).GetVertexIndex(2);
@@ -283,21 +284,33 @@ void Renderer::Render(const Scene& scene)
 		b = mod.GetFace(i).GetNormalIndex(1);
 		c = mod.GetFace(i).GetNormalIndex(2);
 		normalx = glm::vec4 (normals.at(a - 1), 1.0f);
-		normalx = glm::vec4(normals.at(a - 1), 1.0f);
-		normalx = glm::vec4(normals.at(a - 1), 1.0f);
+		normaly = glm::vec4(normals.at(b- 1), 1.0f);
+		normalz = glm::vec4(normals.at(c - 1), 1.0f);
 		facenormal = glm::vec4(glm::cross(p3 - p1, p2 - p1), 1.0f);
-
+		normalx = normalx;
+		normaly = normaly;
+		normalz = normalz;
+		facenormal += mod.getFaceCenter(i);
+		normalx += viewportvec;
+		normaly += viewportvec;
+		normalz += viewportvec;
+		facenormal += viewportvec;
 		p1.x += half_width;
 		p1.y += half_height;
 		p2.x += half_width;
 		p2.y += half_height;
 		p3.x += half_width;
 		p3.y += half_height;
-		
+	
 
 		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
+		//draw normals
+		ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
+		ChangePoints(p2, normaly, glm::vec3(1, 1, 0));
+		ChangePoints(p3, normalz, glm::vec3(1, 1, 0));
+		//ChangePoints(mod.getFaceCenter(i)+viewportvec , facenormal, glm::vec3(0, 0, 1));
 	}
 	//model asexs
 	glm::vec4 x11(centerM.x , mod.minY, 1, 1);
@@ -319,7 +332,7 @@ void Renderer::Render(const Scene& scene)
 	ChangePoints(x11,x22, glm::vec3(1, 1, 1));
 	ChangePoints(x33, x44, glm::vec3(1, 1, 1));
 	//bounding box
-	glm::vec4 viewportvec(half_width, half_height, 0, 0);
+	
 	glm::vec4 top1 = matrix*glm::vec4(mod.maxX, mod.maxY, mod.minZ, 1.f);
 	glm::vec4 top2 = matrix * glm::vec4(mod.maxX, mod.maxY, mod.maxZ, 1.f);
 	glm::vec4 top3 = matrix * glm::vec4(mod.minX, mod.maxY, mod.minZ, 1.f);
@@ -337,7 +350,7 @@ void Renderer::Render(const Scene& scene)
 	bottom3 += viewportvec;
 	bottom4 += viewportvec;
 	//draw bounding box
-	ChangePoints(top1, bottom4, glm::vec3(1, 1, 1));
+	/*ChangePoints(top1, bottom4, glm::vec3(1, 1, 1));
 	ChangePoints(top1, top2, glm::vec3(1, 1, 1));
 	ChangePoints(top4, top3, glm::vec3(1, 1, 1));
 	ChangePoints(top1, top3, glm::vec3(1, 1, 1));
@@ -348,7 +361,7 @@ void Renderer::Render(const Scene& scene)
 	ChangePoints(bottom1, bottom2, glm::vec3(1, 1, 1));
 	ChangePoints(bottom1, bottom3, glm::vec3(1, 1, 1));
 	ChangePoints(bottom3, bottom4, glm::vec3(1, 1, 1));
-	ChangePoints(bottom2, bottom4, glm::vec3(1, 1, 1));
+	ChangePoints(bottom2, bottom4, glm::vec3(1, 1, 1));*/
 	
 	
 
