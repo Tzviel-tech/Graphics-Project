@@ -59,7 +59,8 @@ public:
 	float minX;
 	float minY;
 	float maxY;
-	
+	float maxZ;
+	float minZ;
 private:
 	glm::mat4 local=glm::mat4(1);
 	glm::mat4 world = glm::mat4(1);

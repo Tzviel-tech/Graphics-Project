@@ -283,6 +283,7 @@ void Renderer::Render(const Scene& scene)
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
 	}
+	//model asexs
 	glm::vec4 x11(centerM.x , mod.minY, 1, 1);
 	glm::vec4 x22(centerM.x, mod.maxY , 1, 1);
 	glm::vec4 x33(mod.minX, centerM.y, 1, 1);
@@ -301,6 +302,28 @@ void Renderer::Render(const Scene& scene)
 	x44.y += half_height;
 	ChangePoints(x11,x22, glm::vec3(1, 1, 1));
 	ChangePoints(x33, x44, glm::vec3(1, 1, 1));
+	//bounding box
+	glm::vec4 viewportvec(half_width, half_height, 0, 0);
+	glm::vec4 top1 = matrix*glm::vec4(mod.maxX, mod.maxY, mod.minZ, 1.f);
+	glm::vec4 top2 = matrix * glm::vec4(mod.maxX, mod.maxY, mod.maxZ, 1.f);
+	glm::vec4 top3 = matrix * glm::vec4(mod.minX, mod.maxY, mod.minZ, 1.f);
+	glm::vec4 top4 = matrix * glm::vec4(mod.minX, mod.maxY, mod.maxZ, 1.f);
+	glm::vec4 bottom1 = matrix * glm::vec4(mod.minX, mod.minY, mod.maxZ, 1.f);
+	glm::vec4 bottom2 = matrix * glm::vec4(mod.maxX, mod.minY,mod.maxZ, 1.f);
+	glm::vec4 bottom3 = matrix * glm::vec4(mod.minX, mod.minY, mod.minZ, 1.f);
+	glm::vec4 bottom4 = matrix *glm::vec4(mod.maxX, mod.minY, mod.minZ, 1.f);
+	top1 += viewportvec;
+	top2 += viewportvec;
+	top3 += viewportvec;
+	top4 += viewportvec;
+	bottom1 += viewportvec;
+	bottom2 += viewportvec;
+	bottom3 += viewportvec;
+	bottom4 += viewportvec;
+	//draw bounding box
+	
+	
+
 
 }
 int Renderer::GetViewportWidth() const

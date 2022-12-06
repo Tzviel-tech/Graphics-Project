@@ -87,6 +87,8 @@ glm::vec4 MeshModel::center()
 		float miny = vertices[0].y;
 		float maxx = vertices[0].x;
 		float maxy = vertices[0].x;
+		float maxz = vertices[0].z;
+		float minz = vertices[0].z;
 		for (int i = 0;i < vertices.size();i++)
 		{
 			if (vertices[i].x < minx)
@@ -97,11 +99,17 @@ glm::vec4 MeshModel::center()
 				miny = vertices[i].y;
 			if (vertices[i].y > maxy)
 				maxy = vertices[i].y;
+			if (vertices[i].x < minz)
+				minz = vertices[i].z;
+			if (vertices[i].x > maxz)
+				maxz = vertices[i].z;
 		}
 		maxX = maxx;
 		maxY = maxy;
 		minX = minx;
 		minY = miny;
+		maxZ = maxz;
+		minZ = minz;
 
 		return glm::vec4((minx + maxx) / 2.0f, (miny + maxy) / 2.0f, 1, 1);
 }
