@@ -22,6 +22,11 @@ public:
 	void setWorldScale();
 	void setWorldRotation();
 	void setLocal();
+	glm::vec4 getFaceCenter(int index);
+	std::vector<glm::vec3>&getNormals()
+	{
+		return normals;
+	}
 	glm::mat4 & getsacle()
 	{
 		return localscalemat;

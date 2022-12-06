@@ -113,3 +113,17 @@ glm::vec4 MeshModel::center()
 
 		return glm::vec4((minx + maxx) / 2.0f, (miny + maxy) / 2.0f, 1, 1);
 }
+
+glm::vec4 MeshModel::getFaceCenter(int index)
+{
+	int a= faces.at(index).GetVertexIndex(0);
+	int b = faces.at(index).GetVertexIndex(1);
+	int c = faces.at(index).GetVertexIndex(2);
+	glm::vec3 center = vertices.at(a - 1) + vertices.at(b - 1) + vertices.at(c - 1);
+	center.x /= 3;
+	center.y /= 3;
+	center.z /= 3;
+	glm::vec4 ret = glm::vec4(center, 1.0f);
+	return ret;
+
+}

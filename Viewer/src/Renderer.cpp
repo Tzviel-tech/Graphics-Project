@@ -246,6 +246,8 @@ void Renderer::Render(const Scene& scene)
 	// TODO: Replace this code with real scene rendering code
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
+
+	glm::vec4 normalx, normaly, normalz,facenormal;
 	glm::vec3 y1(half_width, viewport_height, 0), y2(half_width, 0, 0), x1(0, half_height, 0), x2(viewport_width, half_height, 0);
 	ChangePoints(y1, y2, glm::vec3(0, 0, 0)), ChangePoints(x1, x2, glm::vec3(0, 0, 0));
 	glm::vec4 centerM;
@@ -255,22 +257,36 @@ void Renderer::Render(const Scene& scene)
 	MeshModel mod = scene.GetModel(0);
 	glm::mat4 matrix = mod.getTransform();
 	centerM = mod.center();
+	std::vector<glm::vec3>normals = mod.getNormals();
 	std::vector<glm::vec3>vec = mod.GetVertecies();
 	for (int i = 0;i < vec.size();i++)
-	{
+	{ 
 		glm::vec4 temp(vec.at(i), 1.0f);
 		temp = camera.GetProjectionTransformation() * camera.GetViewTransformation() * matrix * temp;
 		vec.at(i) = temp;
 	}
-	for (int i = 0;i < mod.GetFacesCount();i++)
+	for (int i = 0;i < normals.size();i++)
 	{
+		glm::vec4 temp(normals.at(i), 1.0f);
+		temp = camera.GetProjectionTransformation() * camera.GetViewTransformation() * matrix * temp;
+		normals.at(i) = temp;
+	}
+	for (int i = 0;i < mod.GetFacesCount();i++)
+	{   
 		int a = mod.GetFace(i).GetVertexIndex(0);
 		int b = mod.GetFace(i).GetVertexIndex(1);
 		int c = mod.GetFace(i).GetVertexIndex(2);
-		glm::vec2 p1 = vec.at(a - 1);
-		glm::vec2 p2 = vec.at(b - 1);
-		glm::vec2 p3 = vec.at(c - 1);
-	
+		glm::vec3 p1 = vec.at(a - 1);
+		glm::vec3 p2 = vec.at(b - 1);
+		glm::vec3 p3 = vec.at(c - 1);
+		a = mod.GetFace(i).GetNormalIndex(0);
+		b = mod.GetFace(i).GetNormalIndex(1);
+		c = mod.GetFace(i).GetNormalIndex(2);
+		normalx = glm::vec4 (normals.at(a - 1), 1.0f);
+		normalx = glm::vec4(normals.at(a - 1), 1.0f);
+		normalx = glm::vec4(normals.at(a - 1), 1.0f);
+		facenormal = glm::vec4(glm::cross(p3 - p1, p2 - p1), 1.0f);
+
 		p1.x += half_width;
 		p1.y += half_height;
 		p2.x += half_width;

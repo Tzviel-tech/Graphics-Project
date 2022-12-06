@@ -10,7 +10,7 @@ public:
 	int GetVertexIndex(int index) const;
 	int GetNormalIndex(int index) const;
 	int GetTextureIndex(int index) const;
-
+	
 private:
 	std::vector<int> vertex_indices;
 	std::vector<int> normal_indices;
