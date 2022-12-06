@@ -321,6 +321,18 @@ void Renderer::Render(const Scene& scene)
 	bottom3 += viewportvec;
 	bottom4 += viewportvec;
 	//draw bounding box
+	ChangePoints(top1, bottom4, glm::vec3(1, 1, 1));
+	ChangePoints(top1, top2, glm::vec3(1, 1, 1));
+	ChangePoints(top4, top3, glm::vec3(1, 1, 1));
+	ChangePoints(top1, top3, glm::vec3(1, 1, 1));
+	ChangePoints(top2, bottom2, glm::vec3(1, 1, 1));
+	ChangePoints(top2, top4, glm::vec3(1, 1, 1));
+	ChangePoints(top3, bottom3, glm::vec3(1, 1, 1));
+	ChangePoints(top4, bottom1, glm::vec3(1, 1, 1));
+	ChangePoints(bottom1, bottom2, glm::vec3(1, 1, 1));
+	ChangePoints(bottom1, bottom3, glm::vec3(1, 1, 1));
+	ChangePoints(bottom3, bottom4, glm::vec3(1, 1, 1));
+	ChangePoints(bottom2, bottom4, glm::vec3(1, 1, 1));
 	
 	
 

@@ -99,9 +99,9 @@ glm::vec4 MeshModel::center()
 				miny = vertices[i].y;
 			if (vertices[i].y > maxy)
 				maxy = vertices[i].y;
-			if (vertices[i].x < minz)
+			if (vertices[i].z < minz)
 				minz = vertices[i].z;
-			if (vertices[i].x > maxz)
+			if (vertices[i].z > maxz)
 				maxz = vertices[i].z;
 		}
 		maxX = maxx;
