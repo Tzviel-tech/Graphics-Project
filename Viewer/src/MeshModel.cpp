@@ -114,16 +114,32 @@ glm::vec4 MeshModel::center()
 		return glm::vec4((minx + maxx) / 2.0f, (miny + maxy) / 2.0f, 1, 1);
 }
 
-glm::vec4 MeshModel::getFaceCenter(int index)
+//glm::vec4 MeshModel::getFaceCenter(int index)
+//{
+//	int a= faces.at(index).GetVertexIndex(0);
+//	int b = faces.at(index).GetVertexIndex(1);
+//	int c = faces.at(index).GetVertexIndex(2);
+//	glm::vec3 center = vertices.at(a - 1) + vertices.at(b - 1) + vertices.at(c - 1);
+//	center.x /= 3;
+//	center.y /= 3;
+//	center.z /= 3;
+//	glm::vec4 ret = glm::vec4(center, 1.0f);
+//	return ret;
+//
+//}
+
+glm::vec4 MeshModel::getFaceNormal(int index)
 {
-	int a= faces.at(index).GetVertexIndex(0);
-	int b = faces.at(index).GetVertexIndex(1);
-	int c = faces.at(index).GetVertexIndex(2);
-	glm::vec3 center = vertices.at(a - 1) + vertices.at(b - 1) + vertices.at(c - 1);
-	center.x /= 3;
-	center.y /= 3;
-	center.z /= 3;
-	glm::vec4 ret = glm::vec4(center, 1.0f);
-	return ret;
+	glm::vec3 v1 = vertices.at(faces.at(index).GetVertexIndex(0) - 1);
+	glm::vec3 v2 = vertices.at(faces.at(index).GetVertexIndex(1) - 1);
+	glm::vec3 v3 = vertices.at(faces.at(index).GetVertexIndex(2) - 1);
+
+	 glm::vec4 ret=glm::vec4(glm::cross(v3 - v1, v2 - v1), 1.f);
+	 double norm = sqrt(pow(ret[0], 2) + pow(ret[1], 2) + pow(ret[2], 2));
+
+	 ret[0] /= norm;
+	 ret[1] /= norm;
+	 ret[2] /= norm;
+	 return ret;
 
 }

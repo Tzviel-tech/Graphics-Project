@@ -21,7 +21,8 @@ private:
 	void CreateBuffers(int w, int h);
 	void CreateOpenglBuffer();
 	void InitOpenglRendering();
-
+	
+	
 	float* color_buffer;
 	int viewport_width;
 	int viewport_height;
