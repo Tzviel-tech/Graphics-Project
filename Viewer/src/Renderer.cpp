@@ -310,10 +310,13 @@ void Renderer::Render(const Scene& scene)
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
 		//draw normals
-		ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
-	    ChangePoints(p2, normaly, glm::vec3(1, 1, 0));
-		ChangePoints(p3, normalz, glm::vec3(1, 1, 0));
-		ChangePoints(glm::vec4(centerF,1.f)+viewportvec , facenormal, glm::vec3(0, 0, 1));
+		if (drawnormals)
+		{
+			ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
+			ChangePoints(p2, normaly, glm::vec3(1, 1, 0));
+			ChangePoints(p3, normalz, glm::vec3(1, 1, 0));
+			ChangePoints(glm::vec4(centerF, 1.f) + viewportvec, facenormal, glm::vec3(0, 0, 1));
+		}
 	}
 	//model asexs
 	glm::vec4 x11(centerM.x , mod.minY, 1, 1);
