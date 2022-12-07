@@ -134,7 +134,7 @@ glm::vec4 MeshModel::getFaceNormal(int index)
 	glm::vec3 v2 = vertices.at(faces.at(index).GetVertexIndex(1) - 1);
 	glm::vec3 v3 = vertices.at(faces.at(index).GetVertexIndex(2) - 1);
 
-	 glm::vec4 ret=glm::vec4(glm::cross(v3 - v1, v2 - v1), 1.f);
+	 glm::vec4 ret=glm::vec4(glm::cross(v2 - v1, v3 - v1), 1.f);
 	 double norm = sqrt(pow(ret[0], 2) + pow(ret[1], 2) + pow(ret[2], 2));
 
 	 ret[0] /= norm;

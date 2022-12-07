@@ -281,7 +281,6 @@ void Renderer::Render(const Scene& scene)
 		normalx = glm::vec4 (normals.at(a - 1), 1.0f);
 		normaly = glm::vec4(normals.at(b- 1), 1.0f);
 		normalz = glm::vec4(normals.at(c - 1), 1.0f);
-		
 		facenormal = mod.getFaceNormal(i);
 		facenormal= finaltran * facenormal;
 		normalx = finaltran * normalx;
@@ -312,9 +311,9 @@ void Renderer::Render(const Scene& scene)
 		//draw normals
 		if (drawnormals)
 		{
-			ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
+			/*ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
 			ChangePoints(p2, normaly, glm::vec3(1, 1, 0));
-			ChangePoints(p3, normalz, glm::vec3(1, 1, 0));
+			ChangePoints(p3, normalz, glm::vec3(1, 1, 0));*/
 			ChangePoints(glm::vec4(centerF, 1.f) + viewportvec, facenormal, glm::vec3(0, 0, 1));
 		}
 	}
