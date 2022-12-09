@@ -18,6 +18,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 bool normals;
+bool box;
 static float cleft = -1;
 static float cright = 1;
 static float down = -1;
@@ -116,6 +117,7 @@ int main(int argc, char** argv)
 		StartFrame();
 		DrawImguiMenus(io, scene);
 		renderer.drawnormals = normals;
+		renderer.drawboundingbox = box;
 		c->SetPTransform(cleft, cright, down, up, cnear, cfar);
 		RenderFrame(window, scene, renderer, io);
 		
@@ -408,6 +410,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("local cameraT", &cameralocal);
 	ImGui::Checkbox("world cameraT", &cameraworld);
 	ImGui::Checkbox("normals", &normals);
+	ImGui::Checkbox("bounding_box", &box);
 	if (ImGui::Button("Reset all to zero"))  
 	{
 		model.rotate.x = 0;

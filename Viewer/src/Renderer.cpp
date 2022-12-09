@@ -311,9 +311,9 @@ void Renderer::Render(const Scene& scene)
 		//draw normals
 		if (drawnormals)
 		{
-			/*ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
+			ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
 			ChangePoints(p2, normaly, glm::vec3(1, 1, 0));
-			ChangePoints(p3, normalz, glm::vec3(1, 1, 0));*/
+			ChangePoints(p3, normalz, glm::vec3(1, 1, 0));
 			ChangePoints(glm::vec4(centerF, 1.f) + viewportvec, facenormal, glm::vec3(0, 0, 1));
 		}
 	}
@@ -337,37 +337,38 @@ void Renderer::Render(const Scene& scene)
 	ChangePoints(x11,x22, glm::vec3(1, 1, 1));
 	ChangePoints(x33, x44, glm::vec3(1, 1, 1));
 	//bounding box
-	
-	glm::vec4 top1 = matrix*glm::vec4(mod.maxX, mod.maxY, mod.minZ, 1.f);
-	glm::vec4 top2 = matrix * glm::vec4(mod.maxX, mod.maxY, mod.maxZ, 1.f);
-	glm::vec4 top3 = matrix * glm::vec4(mod.minX, mod.maxY, mod.minZ, 1.f);
-	glm::vec4 top4 = matrix * glm::vec4(mod.minX, mod.maxY, mod.maxZ, 1.f);
-	glm::vec4 bottom1 = matrix * glm::vec4(mod.minX, mod.minY, mod.maxZ, 1.f);
-	glm::vec4 bottom2 = matrix * glm::vec4(mod.maxX, mod.minY,mod.maxZ, 1.f);
-	glm::vec4 bottom3 = matrix * glm::vec4(mod.minX, mod.minY, mod.minZ, 1.f);
-	glm::vec4 bottom4 = matrix *glm::vec4(mod.maxX, mod.minY, mod.minZ, 1.f);
-	top1 += viewportvec;
-	top2 += viewportvec;
-	top3 += viewportvec;
-	top4 += viewportvec;
-	bottom1 += viewportvec;
-	bottom2 += viewportvec;
-	bottom3 += viewportvec;
-	bottom4 += viewportvec;
-	//draw bounding box
-	/*ChangePoints(top1, bottom4, glm::vec3(1, 1, 1));
-	ChangePoints(top1, top2, glm::vec3(1, 1, 1));
-	ChangePoints(top4, top3, glm::vec3(1, 1, 1));
-	ChangePoints(top1, top3, glm::vec3(1, 1, 1));
-	ChangePoints(top2, bottom2, glm::vec3(1, 1, 1));
-	ChangePoints(top2, top4, glm::vec3(1, 1, 1));
-	ChangePoints(top3, bottom3, glm::vec3(1, 1, 1));
-	ChangePoints(top4, bottom1, glm::vec3(1, 1, 1));
-	ChangePoints(bottom1, bottom2, glm::vec3(1, 1, 1));
-	ChangePoints(bottom1, bottom3, glm::vec3(1, 1, 1));
-	ChangePoints(bottom3, bottom4, glm::vec3(1, 1, 1));
-	ChangePoints(bottom2, bottom4, glm::vec3(1, 1, 1));*/
-	
+	if (drawboundingbox)
+	{
+		glm::vec4 top1 = matrix * glm::vec4(mod.maxX, mod.maxY, mod.minZ, 1.f);
+		glm::vec4 top2 = matrix * glm::vec4(mod.maxX, mod.maxY, mod.maxZ, 1.f);
+		glm::vec4 top3 = matrix * glm::vec4(mod.minX, mod.maxY, mod.minZ, 1.f);
+		glm::vec4 top4 = matrix * glm::vec4(mod.minX, mod.maxY, mod.maxZ, 1.f);
+		glm::vec4 bottom1 = matrix * glm::vec4(mod.minX, mod.minY, mod.maxZ, 1.f);
+		glm::vec4 bottom2 = matrix * glm::vec4(mod.maxX, mod.minY, mod.maxZ, 1.f);
+		glm::vec4 bottom3 = matrix * glm::vec4(mod.minX, mod.minY, mod.minZ, 1.f);
+		glm::vec4 bottom4 = matrix * glm::vec4(mod.maxX, mod.minY, mod.minZ, 1.f);
+		top1 += viewportvec;
+		top2 += viewportvec;
+		top3 += viewportvec;
+		top4 += viewportvec;
+		bottom1 += viewportvec;
+		bottom2 += viewportvec;
+		bottom3 += viewportvec;
+		bottom4 += viewportvec;
+		//draw bounding box
+		ChangePoints(top1, bottom4, glm::vec3(1, 1, 1));
+		ChangePoints(top1, top2, glm::vec3(1, 1, 1));
+		ChangePoints(top4, top3, glm::vec3(1, 1, 1));
+		ChangePoints(top1, top3, glm::vec3(1, 1, 1));
+		ChangePoints(top2, bottom2, glm::vec3(1, 1, 1));
+		ChangePoints(top2, top4, glm::vec3(1, 1, 1));
+		ChangePoints(top3, bottom3, glm::vec3(1, 1, 1));
+		ChangePoints(top4, bottom1, glm::vec3(1, 1, 1));
+		ChangePoints(bottom1, bottom2, glm::vec3(1, 1, 1));
+		ChangePoints(bottom1, bottom3, glm::vec3(1, 1, 1));
+		ChangePoints(bottom3, bottom4, glm::vec3(1, 1, 1));
+		ChangePoints(bottom2, bottom4, glm::vec3(1, 1, 1));
+	}
 	
 
 
