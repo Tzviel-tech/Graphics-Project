@@ -66,7 +66,9 @@ void Camera:: SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const g
 }
 void Camera::SetPTransform(float left, float right, float down, float up, float near, float far)
 {
-	projection_transformation = glm::ortho(left, right, down, up, near, far);
+	float aspect = 1280 / 720;
+	//projection_transformation = glm::ortho(left, right, down, up, near, far);
+	projection_transformation = glm::perspective(glm::radians(45.0f), aspect, near, far);
 }
 const glm::mat4& Camera::GetProjectionTransformation()const
 {

@@ -254,16 +254,24 @@ void Renderer::Render(const Scene& scene)
 	Scene s = scene;
 	Camera camera = s.GetCamera(0);
 	camera.SetCameraLookAt(glm::vec3(camera.a, camera.b, camera.c), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	
 	MeshModel mod = scene.GetModel(0);
 	glm::mat4 matrix = mod.getTransform();
 	centerM = mod.center();
 	std::vector<glm::vec3>normals = mod.getNormals();
 	std::vector<glm::vec3>vec = mod.GetVertecies();
-	glm::mat4 finaltran =  camera.GetProjectionTransformation() * camera.GetViewTransformation() * matrix;
+	glm::mat4 finaltran =   camera.GetViewTransformation() * matrix;
 	for (int i = 0;i < vec.size();i++)
 	{ 
 		glm::vec4 temp(vec.at(i), 1.0f);
-		temp = finaltran *temp;
+		temp = finaltran*temp;
+		if (temp.w != 0)
+		{
+			vec.at(i).x = temp.x/temp.w;
+			vec.at(i).y = temp.y/temp.w;
+			vec.at(i).z = temp.z/temp.w;
+		}
+		else
 		vec.at(i) = temp;
 	}
 	
