@@ -253,26 +253,25 @@ void Renderer::Render(const Scene& scene)
 	glm::vec4 centerM;
 	Scene s = scene;
 	Camera camera = s.GetCamera(0);
-	camera.SetCameraLookAt(glm::vec3(camera.a, camera.b, camera.c), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	camera.SetCameraLookAt(glm::vec3(camera.a, camera.b, camera.c), glm::vec3(0, 0,0), glm::vec3(0, 1, 0));
 	
 	MeshModel mod = scene.GetModel(0);
 	glm::mat4 matrix = mod.getTransform();
 	centerM = mod.center();
 	std::vector<glm::vec3>normals = mod.getNormals();
 	std::vector<glm::vec3>vec = mod.GetVertecies();
-	glm::mat4 finaltran =   camera.GetViewTransformation() * matrix;
+	glm::mat4 finaltran =  camera.GetProjectionTransformation() * camera.GetViewTransformation() * matrix;
+
 	for (int i = 0;i < vec.size();i++)
 	{ 
 		glm::vec4 temp(vec.at(i), 1.0f);
 		temp = finaltran*temp;
-		if (temp.w != 0)
-		{
-			vec.at(i).x = temp.x/temp.w;
-			vec.at(i).y = temp.y/temp.w;
-			vec.at(i).z = temp.z/temp.w;
-		}
-		else
-		vec.at(i) = temp;
+		
+			vec[i].x = temp.x/temp.w;
+			vec[i].y = temp.y/temp.w;
+			vec[i].z = temp.z/temp.w;
+		
+	
 	}
 	
 	for (int i = 0;i < mod.GetFacesCount();i++)
@@ -294,24 +293,33 @@ void Renderer::Render(const Scene& scene)
 		normalx = finaltran * normalx;
 		normaly = finaltran * normaly;
 		normalz = finaltran* normalz;
-		normalx = normalx + glm::vec4(p1, 1.f);
-		normaly = normaly + glm::vec4(p2, 1.f);
-		normalz = normalz + glm::vec4(p3, 1.f);
+		
+		
+	    
+		normalx.x *= half_width+half_height;
+		normaly.x *=  half_width + half_width;
+		normalz.x *=  half_width + half_width;
+		normalx.y *= half_height + half_height;
+		normaly.y *= half_height + half_height;
+		normalz.y *= half_height + half_height;
+     	
+		p1.x =p1.x*half_width+half_width;
+		p1.y =p1.y*half_height + half_height;
+		p2.x =p2.x*half_width + half_width;
+		p2.y =p2.y* half_height + half_height;
+		p3.x = p3.x * half_width + half_width;
+		p3.y = p3.y*half_height + half_height;
 		glm::vec3 centerF = p1 + p2 + p3;
 		centerF.x /= 3;
 		centerF.y /= 3;
 		centerF.z /= 3;
-	    facenormal =facenormal+ glm::vec4(centerF,1.f);
-		normalx += viewportvec;
-		normaly += viewportvec;
-		normalz += viewportvec;
-     	facenormal += viewportvec;
-		p1.x += half_width;
-		p1.y += half_height;
-		p2.x += half_width;
-		p2.y += half_height;
-		p3.x += half_width;
-		p3.y += half_height;
+		normalx = normalx + glm::vec4(p1, 1.f);
+		normaly = normaly + glm::vec4(p2, 1.f);
+		normalz = normalz + glm::vec4(p3, 1.f);
+		facenormal.x *= half_width;
+		facenormal.y *= half_height;
+		facenormal = facenormal + glm::vec4(centerF, 1.f);
+		
 	   
 		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
@@ -322,7 +330,7 @@ void Renderer::Render(const Scene& scene)
 			ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
 			ChangePoints(p2, normaly, glm::vec3(1, 1, 0));
 			ChangePoints(p3, normalz, glm::vec3(1, 1, 0));
-			ChangePoints(glm::vec4(centerF, 1.f) + viewportvec, facenormal, glm::vec3(0, 0, 1));
+			ChangePoints(glm::vec4(centerF, 1.f), facenormal, glm::vec3(0, 0, 1));
 		}
 	}
 	//model asexs

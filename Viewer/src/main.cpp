@@ -393,10 +393,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	
 	ImGui::Begin("decide local or world transfom:");
 	ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'W' to move up\n press 'S' to move down\n press 'D' to move left\n press 'A' to move right");
-	ImGui::SliderFloat("scale", &model.scalex, 0, 500);
-	ImGui::SliderFloat("translate x asix", &model.trans.x, -1000, 1500);
-	ImGui::SliderFloat("translate y asix", &model.trans.y, -1000, 1000);
-	ImGui::SliderFloat("translate z asix", &model.trans.z, -1000, 1000);
+	ImGui::SliderFloat("scale", &model.scalex, 1, 10);
+	ImGui::SliderFloat("translate x asix", &model.trans.x, -10, 15);
+	ImGui::SliderFloat("translate y asix", &model.trans.y, -10, 10);
+	ImGui::SliderFloat("translate z asix", &model.trans.z, -10, 10);
 	ImGui::SliderFloat("rotate x asix", &model.rotate.x, -360, 360);
 	ImGui::SliderFloat("rotate y asix", &model.rotate.y, -360, 360);
 	ImGui::SliderFloat("rotate z asix", &model.rotate.z, -360, 360);
@@ -410,6 +410,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("local cameraT", &cameralocal);
 	ImGui::Checkbox("world cameraT", &cameraworld);
 	ImGui::Checkbox("normals", &normals);
+	ImGui::Checkbox("prespective projection", &c.pres);
 	ImGui::Checkbox("bounding_box", &box);
 	if (ImGui::Button("Reset all to zero"))  
 	{
@@ -426,9 +427,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::Begin("decide world transfom:");
 		ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'U' to move up\n press 'J' to move down\n press 'H' to move left\n press 'K' to move right");
 		ImGui::SliderFloat("scale", &model.scalexW, 0, 2);
-		ImGui::SliderFloat("translate x asix", &model.transW.x, -1000, 1500);
-		ImGui::SliderFloat("translate y asix", &model.transW.y, -1000, 1000);
-		ImGui::SliderFloat("translate z asix", &model.transW.z, -1000, 1000);
+		ImGui::SliderFloat("translate x asix", &model.transW.x, -10, 15);
+		ImGui::SliderFloat("translate y asix", &model.transW.y, -10, 10);
+		ImGui::SliderFloat("translate z asix", &model.transW.z, -10, 10);
 		ImGui::SliderFloat("rotate x asix", &model.rotateW.x, -360, 360);
 		ImGui::SliderFloat("rotate y asix", &model.rotateW.y, -360, 360);
 		ImGui::SliderFloat("rotate z asix", &model.rotateW.z, -360, 360);
@@ -475,9 +476,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 				ImGui::Begin("decide camera world transfom:");
 				ImGui::SliderFloat("scale", &c.scalexW, 0, 2);
-				ImGui::SliderFloat("translate x asix", &c.transW.x, -1000, 1500);
-				ImGui::SliderFloat("translate y asix", &c.transW.y, -1000, 1000);
-				ImGui::SliderFloat("translate z asix", &c.transW.z, -1000, 1000);
+				ImGui::SliderFloat("translate x asix", &c.transW.x, -10, 15);
+				ImGui::SliderFloat("translate y asix", &c.transW.y, -10, 10);
+				ImGui::SliderFloat("translate z asix", &c.transW.z, -10, 10);
 				ImGui::SliderFloat("rotate x asix", &c.rotateW.x, -360, 360);
 				ImGui::SliderFloat("rotate y asix", &c.rotateW.y, -360, 360);
 				ImGui::SliderFloat("rotate z asix", &c.rotateW.z, -360, 360);
@@ -503,9 +504,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 				ImGui::Begin("decide camera local transfom:");
 				ImGui::SliderFloat("scale", &c.scalex, 0, 2);
-				ImGui::SliderFloat("translate x asix", &c.trans.x, -1000, 1500);
-				ImGui::SliderFloat("translate y asix", &c.trans.y, -1000, 1000);
-				ImGui::SliderFloat("translate z asix", &c.trans.z, -1000, 1000);
+				ImGui::SliderFloat("translate x asix", &c.trans.x, -10, 15);
+				ImGui::SliderFloat("translate y asix", &c.trans.y, -10, 10);
+				ImGui::SliderFloat("translate z asix", &c.trans.z, -10, 10);
 				ImGui::SliderFloat("rotate x asix", &c.rotate.x, -360, 360);
 				ImGui::SliderFloat("rotate y asix", &c.rotate.y, -360, 360);
 				ImGui::SliderFloat("rotate z asix", &c.rotate.z, -360, 360);

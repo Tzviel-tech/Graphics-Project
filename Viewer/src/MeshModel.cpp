@@ -16,7 +16,7 @@ void MeshModel::setLocalTranslate()
 
 void MeshModel::setlocalScale()
 {
-	localscalemat=glm::scale(glm::mat4(1), glm::vec3(scalex, scalex, scalex));
+	localscalemat=glm::scale(glm::mat4(1), glm::vec3(scalex*0.1, scalex*0.1, scalex*0.1));
 }
 void MeshModel::setLocalRotation()
 {

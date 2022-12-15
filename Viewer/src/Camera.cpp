@@ -2,7 +2,7 @@
 
 Camera::Camera()
 {
-	SetCameraLookAt(glm::vec3(300, 300,300), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	SetCameraLookAt(glm::vec3(0, 0,1), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 }
 void Camera::setLocalTranslate()
 {
@@ -66,9 +66,12 @@ void Camera:: SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const g
 }
 void Camera::SetPTransform(float left, float right, float down, float up, float near, float far)
 {
-	float aspect = 1280 / 720;
-	//projection_transformation = glm::ortho(left, right, down, up, near, far);
-	projection_transformation = glm::perspective(glm::radians(45.0f), aspect, near, far);
+	float aspect = 1280.0 / 720.0;
+
+	if(!pres)
+	projection_transformation = glm::ortho(left, right, down, up, near, far);
+	else
+	projection_transformation = glm::perspective(glm::radians(90.0f), aspect, near, far);
 }
 const glm::mat4& Camera::GetProjectionTransformation()const
 {

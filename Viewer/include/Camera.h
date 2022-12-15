@@ -34,6 +34,7 @@ public:
 	float scalexW = 1;
 	glm::vec3 transW = glm::vec3(0.0f);
 	glm::vec3 rotateW = glm::vec3(0.0f);
+	bool pres;
 
 private:
 	glm::mat4 view_transformation;
