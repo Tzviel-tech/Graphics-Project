@@ -259,78 +259,88 @@ void Renderer::Render(const Scene& scene)
 	glm::mat4 matrix = mod.getTransform();
 	centerM = mod.center();
 	std::vector<glm::vec3>normals = mod.getNormals();
+	std::vector<glm::vec4>facenormals;
 	std::vector<glm::vec3>vec = mod.GetVertecies();
 	glm::mat4 finaltran =  camera.GetProjectionTransformation() * camera.GetViewTransformation() * matrix;
+	
 
-	for (int i = 0;i < vec.size();i++)
-	{ 
-		glm::vec4 temp(vec.at(i), 1.0f);
-		temp = finaltran*temp;
-		
-			vec[i].x = temp.x/temp.w;
-			vec[i].y = temp.y/temp.w;
-			vec[i].z = temp.z/temp.w;
-		
-	
-	}
-	
 	for (int i = 0;i < mod.GetFacesCount();i++)
 	{   
 		int a = mod.GetFace(i).GetVertexIndex(0);
 		int b = mod.GetFace(i).GetVertexIndex(1);
 		int c = mod.GetFace(i).GetVertexIndex(2);
-		glm::vec3 p1 = vec.at(a - 1);
-		glm::vec3 p2 = vec.at(b - 1);
-		glm::vec3 p3 = vec.at(c - 1);
-		a = mod.GetFace(i).GetNormalIndex(0);
-		b = mod.GetFace(i).GetNormalIndex(1);
-		c = mod.GetFace(i).GetNormalIndex(2);
-		normalx = glm::vec4 (normals.at(a - 1), 1.0f);
-		normaly = glm::vec4(normals.at(b- 1), 1.0f);
-		normalz = glm::vec4(normals.at(c - 1), 1.0f);
-		facenormal = mod.getFaceNormal(i);
-		facenormal= finaltran * facenormal;
-		normalx = finaltran * normalx;
-		normaly = finaltran * normaly;
-		normalz = finaltran* normalz;
-		
-		
-	    
-		normalx.x *= half_width+half_height;
-		normaly.x *=  half_width + half_width;
-		normalz.x *=  half_width + half_width;
-		normalx.y *= half_height + half_height;
-		normaly.y *= half_height + half_height;
-		normalz.y *= half_height + half_height;
-     	
-		p1.x =p1.x*half_width+half_width;
-		p1.y =p1.y*half_height + half_height;
-		p2.x =p2.x*half_width + half_width;
-		p2.y =p2.y* half_height + half_height;
-		p3.x = p3.x * half_width + half_width;
-		p3.y = p3.y*half_height + half_height;
-		glm::vec3 centerF = p1 + p2 + p3;
+		glm::vec4 p1 = glm::vec4(vec.at(a - 1),1.f);
+		glm::vec4 p2 = glm::vec4(vec.at(b - 1), 1.f);
+		glm::vec4 p3 = glm::vec4(vec.at(c - 1), 1.f);
+		glm::vec4 centerF = p1 + p2 + p3;
 		centerF.x /= 3;
 		centerF.y /= 3;
 		centerF.z /= 3;
-		normalx = normalx + glm::vec4(p1, 1.f);
-		normaly = normaly + glm::vec4(p2, 1.f);
-		normalz = normalz + glm::vec4(p3, 1.f);
-		facenormal.x *= half_width;
-		facenormal.y *= half_height;
-		facenormal = facenormal + glm::vec4(centerF, 1.f);
+		centerF.w = 1;
+		//vertex normal
+		normalx = glm::vec4(glm::cross(vec[b - 1] - vec[a - 1], vec[c - 1] - vec[a - 1]), 1.f);
+		normaly = glm::vec4(glm::cross(vec[b - 1] - vec[a - 1], vec[c - 1] - vec[a - 1]), 1.f);
+		normalx += p1;
+		glm::normalize(normalx);
+		normalx = glm::vec4(glm::vec3(p1.x + scalenormal * (normalx.x - p1.x),
+			p1.y + scalenormal * (normalx.y - p1.y),
+			p1.z + scalenormal * (normalx.z - p1.z)),1.f);
+		normalx.w = 1;
+		normalx = finaltran * normalx;
+		//face normal
+		normaly += centerF;
+		glm::normalize(normaly);
 		
-	   
+		normaly = glm::vec4(glm::vec3(centerF.x + scalenormal * (normaly.x - centerF.x),
+			centerF.y + scalenormal * (normaly.y - centerF.y),
+			centerF.z + scalenormal * (normaly.z - centerF.z)), 1.f);
+		normaly.w = 1;
+		normaly = finaltran * normaly;
+		//center of triangle
+		centerF = finaltran * centerF;
+		centerF.x /= centerF.w;
+		centerF.y /= centerF.w;
+		centerF.z /= centerF.w;
+
+		p1 = finaltran * p1;
+		p2 = finaltran * p2;
+		p3 = finaltran * p3;
+		p1 /= p1.w;
+		p2 /= p2.w;
+		p3 /= p3.w;
+		
+		
+	    //viewport transform
+		normalx.x /= normalx.w;
+		normalx.y /= normalx.w;
+		normalx.z /= normalx.w;
+		normalx.x = (normalx.x*half_width)+half_width;
+		normalx.y = (normalx.y* half_height)+half_height;
+		normaly.x /= normaly.w;
+		normaly.y /= normaly.w;
+		normaly.z /= normaly.w;
+		normaly.x = (normaly.x * half_width) + half_width;
+		normaly.y = (normaly.y * half_height) + half_height;
+		p1.x =p1.x*half_width+half_width;
+		p1.y =p1.y*half_height +half_height;
+		p2.x =p2.x*half_width + half_width;
+		p2.y =p2.y* half_height +half_height;
+		p3.x = p3.x * half_width +half_width;
+		p3.y = p3.y*half_height +half_height;
+		centerF.x = (centerF.x*half_width)+half_width;
+		centerF.y = (centerF.y*half_height)+half_height;
+
+		
+		
+	    //draw triangle
 		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
 		//draw normals
 		if (drawnormals)
 		{
-			ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
-			ChangePoints(p2, normaly, glm::vec3(1, 1, 0));
-			ChangePoints(p3, normalz, glm::vec3(1, 1, 0));
-			ChangePoints(glm::vec4(centerF, 1.f), facenormal, glm::vec3(0, 0, 1));
+		  ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
+	      ChangePoints(centerF, normaly, glm::vec3(0, 0, 1));
 		}
 	}
 	//model asexs

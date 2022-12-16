@@ -136,7 +136,7 @@ glm::vec4 MeshModel::getFaceNormal(int index)
 
 	 glm::vec4 ret=glm::vec4(glm::cross(v2 - v1, v3 - v1), 1.f);
 	 double norm = sqrt(pow(ret[0], 2) + pow(ret[1], 2) + pow(ret[2], 2));
-
+	
 	 ret[0] /= norm;
 	 ret[1] /= norm;
 	 ret[2] /= norm;

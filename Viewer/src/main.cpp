@@ -19,6 +19,7 @@
 
 bool normals;
 bool box;
+static float nornalscale;
 static float cleft = -1;
 static float cright = 1;
 static float down = -1;
@@ -118,6 +119,7 @@ int main(int argc, char** argv)
 		DrawImguiMenus(io, scene);
 		renderer.drawnormals = normals;
 		renderer.drawboundingbox = box;
+		renderer.scalenormal = nornalscale;
 		c->SetPTransform(cleft, cright, down, up, cnear, cfar);
 		RenderFrame(window, scene, renderer, io);
 		
@@ -204,42 +206,42 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 		if (io.KeysDown['A'])
 		{
 			
-			model.trans.x -= 5;
+			model.trans.x -= 0.025;
 		}
 		if (io.KeysDown['D'])
 		{
 
-			model.trans.x += 5;
+			model.trans.x += 0.025;
 		}
 		if (io.KeysDown['W'])
 		{
 
-			model.trans.y += 5;
+			model.trans.y += 0.025;
 		}
 		if (io.KeysDown['S'])
 		{
 
-			model.trans.y -= 5;
+			model.trans.y -= 0.025;
 		}
 		if (io.KeysDown['H'])
 		{
 
-			model.transW.x -= 5;
+			model.transW.x -= 0.025;
 		}
 		if (io.KeysDown['K'])
 		{
 
-			model.transW.x += 5;
+			model.transW.x += 0.025;
 		}
 		if (io.KeysDown['U'])
 		{
 
-			model.transW.y += 5;
+			model.transW.y += 0.025;
 		}
 		if (io.KeysDown['J'])
 		{
 
-			model.transW.y -= 5;
+			model.transW.y -= 0.025;
 		}
 	}
 
@@ -400,6 +402,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::SliderFloat("rotate x asix", &model.rotate.x, -360, 360);
 	ImGui::SliderFloat("rotate y asix", &model.rotate.y, -360, 360);
 	ImGui::SliderFloat("rotate z asix", &model.rotate.z, -360, 360);
+	ImGui::SliderFloat("scale normal", &nornalscale, 1, 50);
 	ImGui::Text("Press left mouse to rotate and decide rotation:");
 	ImGui::Checkbox("Rotate x", &x);
 	ImGui::Checkbox("Rotate y", &y);
