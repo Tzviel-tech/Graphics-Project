@@ -244,6 +244,12 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 void Renderer::Render(const Scene& scene)
 {
 	// TODO: Replace this code with real scene rendering code
+	 minx = 1000000;
+	 miny = 1000000;
+	 maxx = -1000000;
+	 maxy = -1000000;
+	maxz = -1000000;
+	 minz = 1000000;
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
 	glm::vec4 viewportvec(half_width, half_height, 0, 0);
@@ -260,10 +266,10 @@ void Renderer::Render(const Scene& scene)
 	centerM = mod.center();
 	std::vector<glm::vec3>normals = mod.getNormals();
 	std::vector<glm::vec4>facenormals;
-	std::vector<glm::vec3>vec = mod.GetVertecies();
+	std::vector<glm::vec3> vec = mod.GetVertecies();
 	glm::mat4 finaltran =  camera.GetProjectionTransformation() * camera.GetViewTransformation() * matrix;
 	
-
+	
 	for (int i = 0;i < mod.GetFacesCount();i++)
 	{   
 		int a = mod.GetFace(i).GetVertexIndex(0);
@@ -282,6 +288,7 @@ void Renderer::Render(const Scene& scene)
 		normaly = glm::vec4(glm::cross(vec[b - 1] - vec[a - 1], vec[c - 1] - vec[a - 1]), 1.f);
 		normalx += p1;
 		glm::normalize(normalx);
+		//scale normal while keep his direction
 		normalx = glm::vec4(glm::vec3(p1.x + scalenormal * (normalx.x - p1.x),
 			p1.y + scalenormal * (normalx.y - p1.y),
 			p1.z + scalenormal * (normalx.z - p1.z)),1.f);
@@ -290,7 +297,7 @@ void Renderer::Render(const Scene& scene)
 		//face normal
 		normaly += centerF;
 		glm::normalize(normaly);
-		
+		//scale normal while keep his direction
 		normaly = glm::vec4(glm::vec3(centerF.x + scalenormal * (normaly.x - centerF.x),
 			centerF.y + scalenormal * (normaly.y - centerF.y),
 			centerF.z + scalenormal * (normaly.z - centerF.z)), 1.f);
@@ -305,10 +312,10 @@ void Renderer::Render(const Scene& scene)
 		p1 = finaltran * p1;
 		p2 = finaltran * p2;
 		p3 = finaltran * p3;
+		
 		p1 /= p1.w;
 		p2 /= p2.w;
 		p3 /= p3.w;
-		
 		
 	    //viewport transform
 		normalx.x /= normalx.w;
@@ -329,8 +336,9 @@ void Renderer::Render(const Scene& scene)
 		p3.y = p3.y*half_height +half_height;
 		centerF.x = (centerF.x*half_width)+half_width;
 		centerF.y = (centerF.y*half_height)+half_height;
-
-		
+		checkminmax(p1);
+		checkminmax(p2);
+		checkminmax(p3);
 		
 	    //draw triangle
 		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
@@ -342,6 +350,7 @@ void Renderer::Render(const Scene& scene)
 		  ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
 	      ChangePoints(centerF, normaly, glm::vec3(0, 0, 1));
 		}
+		
 	}
 	//model asexs
 	glm::vec4 x11(centerM.x , mod.minY, 1, 1);
@@ -350,37 +359,60 @@ void Renderer::Render(const Scene& scene)
 	glm::vec4 x44(mod.maxX, centerM.y, 1, 1);
 	x22 = camera.GetProjectionTransformation() * camera.GetViewTransformation()*mod.getWorld() * mod.getsacle() * x22;
 	x11 = camera.GetProjectionTransformation() * camera.GetViewTransformation()* mod.getWorld() * mod.getsacle() * x11;
-	x22.x += half_width;
-	x11.x += half_width;
-	x22.y += half_height;
-	x11.y += half_height;
+	x22 /= x22.w;
+	x11 /= x11.w;
+	x22.x = x22.x*half_width+ half_width;
+	x11.x = x11.x * half_width + half_width;
+	x22.y =x22.y*half_height+ half_height;
+	x11.y = x11.y * half_height + half_height;
 	x33 = camera.GetProjectionTransformation() * camera.GetViewTransformation() * mod.getWorld()*mod.getsacle() * x33;
 	x44 = camera.GetProjectionTransformation() * camera.GetViewTransformation() * mod.getWorld() * mod.getsacle() * x44;
-	x33.x += half_width;
-	x44.x += half_width;
-	x33.y += half_height;
-	x44.y += half_height;
+	x33 /= x33.w;
+	x44 /= x44.w;
+	x33.x = x33.x * half_width + half_width;
+	x44.x = x44.x * half_width + half_width;
+	x33.y = x33.y * half_height + half_height;
+	x44.y = x44.y * half_height + half_height;
 	ChangePoints(x11,x22, glm::vec3(1, 1, 1));
 	ChangePoints(x33, x44, glm::vec3(1, 1, 1));
 	//bounding box
-	if (drawboundingbox)
+	if (drawboundingboxlocal)
 	{
-		glm::vec4 top1 = matrix * glm::vec4(mod.maxX, mod.maxY, mod.minZ, 1.f);
-		glm::vec4 top2 = matrix * glm::vec4(mod.maxX, mod.maxY, mod.maxZ, 1.f);
-		glm::vec4 top3 = matrix * glm::vec4(mod.minX, mod.maxY, mod.minZ, 1.f);
-		glm::vec4 top4 = matrix * glm::vec4(mod.minX, mod.maxY, mod.maxZ, 1.f);
-		glm::vec4 bottom1 = matrix * glm::vec4(mod.minX, mod.minY, mod.maxZ, 1.f);
-		glm::vec4 bottom2 = matrix * glm::vec4(mod.maxX, mod.minY, mod.maxZ, 1.f);
-		glm::vec4 bottom3 = matrix * glm::vec4(mod.minX, mod.minY, mod.minZ, 1.f);
-		glm::vec4 bottom4 = matrix * glm::vec4(mod.maxX, mod.minY, mod.minZ, 1.f);
-		top1 += viewportvec;
-		top2 += viewportvec;
-		top3 += viewportvec;
-		top4 += viewportvec;
-		bottom1 += viewportvec;
-		bottom2 += viewportvec;
-		bottom3 += viewportvec;
-		bottom4 += viewportvec;
+		
+		glm::vec4 top1 = finaltran*glm::vec4(mod.maxX, mod.maxY, mod.minZ, 1.f);
+		glm::vec4 top2 = finaltran * glm::vec4(mod.maxX, mod.maxY, mod.maxZ, 1.f);
+		glm::vec4 top3 = finaltran * glm::vec4(mod.minX, mod.maxY, mod.minZ, 1.f);
+		glm::vec4 top4 = finaltran * glm::vec4(mod.minX, mod.maxY, mod.maxZ, 1.f);
+		glm::vec4 bottom1 = finaltran * glm::vec4(mod.minX, mod.minY, mod.maxZ, 1.f);
+		glm::vec4 bottom2 = finaltran * glm::vec4(mod.maxX, mod.minY, mod.maxZ, 1.f);
+		glm::vec4 bottom3 = finaltran * glm::vec4(mod.minX, mod.minY, mod.minZ, 1.f);
+		glm::vec4 bottom4 = finaltran * glm::vec4(mod.maxX, mod.minY, mod.minZ, 1.f);
+		top1 /= top1.w;
+		top2 /= top2.w;
+		top3 /= top3.w;
+		top4 /= top4.w;
+		top1.x= top1.x * half_width + half_width;
+		top1.y = top1.y * half_height + half_height;
+		top2.x = top2.x * half_width + half_width;
+		top2.y = top2.y * half_height + half_height;
+		top3.x = top3.x * half_width + half_width;
+		top3.y = top3.y * half_height + half_height;
+		top4.x = top4.x * half_width + half_width;
+		top4.y = top4.y * half_height + half_height;
+		bottom1 /= bottom1.w;
+		bottom2 /= bottom2.w;
+		bottom3 /= bottom3.w;
+		bottom4 /= bottom4.w;
+		bottom1.x = bottom1.x * half_width + half_width;
+		bottom1.y = bottom1.y * half_height + half_height;
+		bottom2.x = bottom2.x * half_width + half_width;
+		bottom2.y = bottom2.y * half_height + half_height;
+		bottom3.x = bottom3.x * half_width + half_width;
+		bottom3.y = bottom3.y * half_height + half_height;
+		bottom4.x = bottom4.x * half_width + half_width;
+		bottom4.y = bottom4.y * half_height + half_height;
+	    
+		
 		//draw bounding box
 		ChangePoints(top1, bottom4, glm::vec3(1, 1, 1));
 		ChangePoints(top1, top2, glm::vec3(1, 1, 1));
@@ -395,6 +427,34 @@ void Renderer::Render(const Scene& scene)
 		ChangePoints(bottom3, bottom4, glm::vec3(1, 1, 1));
 		ChangePoints(bottom2, bottom4, glm::vec3(1, 1, 1));
 	}
+	if (drawboundingboxworld)
+	{
+
+		glm::vec4 top1 =  glm::vec4(maxx, maxy, minz, 1.f);
+		glm::vec4 top2 =  glm::vec4(maxx, maxy, maxz, 1.f);
+		glm::vec4 top3 =  glm::vec4(minx, maxy, minz, 1.f);
+		glm::vec4 top4 = glm::vec4(minx, maxy, maxz, 1.f);
+		glm::vec4 bottom1 = glm::vec4(minx, miny, maxz, 1.f);
+		glm::vec4 bottom2 =  glm::vec4(maxx, miny, maxz, 1.f);
+		glm::vec4 bottom3 =  glm::vec4(minx, miny, minz, 1.f);
+		glm::vec4 bottom4 =  glm::vec4(maxx, miny, minz, 1.f);
+		
+
+		//draw bounding box
+		ChangePoints(top1, bottom4, glm::vec3(1, 1, 1));
+		ChangePoints(top1, top2, glm::vec3(1, 1, 1));
+		ChangePoints(top4, top3, glm::vec3(1, 1, 1));
+		ChangePoints(top1, top3, glm::vec3(1, 1, 1));
+		ChangePoints(top2, bottom2, glm::vec3(1, 1, 1));
+		ChangePoints(top2, top4, glm::vec3(1, 1, 1));
+		ChangePoints(top3, bottom3, glm::vec3(1, 1, 1));
+		ChangePoints(top4, bottom1, glm::vec3(1, 1, 1));
+		ChangePoints(bottom1, bottom2, glm::vec3(1, 1, 1));
+		ChangePoints(bottom1, bottom3, glm::vec3(1, 1, 1));
+		ChangePoints(bottom3, bottom4, glm::vec3(1, 1, 1));
+		ChangePoints(bottom2, bottom4, glm::vec3(1, 1, 1));
+	}
+
 	
 
 
@@ -409,3 +469,18 @@ int Renderer::GetViewportHeight() const
 	return viewport_height;
 }
 
+void Renderer::checkminmax(glm::vec4& vertices)
+{
+	if (vertices.x < minx)
+		minx = vertices.x;
+	if (vertices.x > maxx)
+		maxx = vertices.x;
+	if (vertices.y < miny)
+		miny = vertices.y;
+	if (vertices.y > maxy)
+		maxy = vertices.y;
+	if (vertices.z < minz)
+		minz = vertices.z;
+	if (vertices.z > maxz)
+		maxz = vertices.z;
+}

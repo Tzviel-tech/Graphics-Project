@@ -14,8 +14,10 @@ public:
 	int GetViewportWidth() const;
 	int GetViewportHeight() const;
 	bool drawnormals=false;
-	bool drawboundingbox = false;
+	bool drawboundingboxlocal = false;
+	bool drawboundingboxworld = false;
 	float scalenormal;
+	void checkminmax(glm::vec4& vertices);
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);
 	void DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color, int flag);
@@ -24,7 +26,12 @@ private:
 	void CreateOpenglBuffer();
 	void InitOpenglRendering();
 	
-	
+	float minx = 1000000;
+	float miny = 1000000;
+	float maxx = -1000000;
+	float maxy = -1000000;
+	float maxz = -1000000;
+	float minz = 1000000;
 	float* color_buffer;
 	int viewport_width;
 	int viewport_height;

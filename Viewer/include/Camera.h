@@ -29,6 +29,8 @@ public:
 	float scalex = 1;
 	glm::vec3 trans = glm::vec3(0.0f);
 	glm::vec3 rotate = glm::vec3(0.0f);
+	float windowsheight;
+	float windowswidth;
 
 	//world running pramaters
 	float scalexW = 1;

@@ -66,10 +66,11 @@ void Camera:: SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const g
 }
 void Camera::SetPTransform(float left, float right, float down, float up, float near, float far)
 {
-	float aspect = 1280.0 / 720.0;
-
+	float aspect = windowswidth / windowsheight;
+	float height = left;
+	float width = left * aspect;
 	if(!pres)
-	projection_transformation = glm::ortho(left, right, down, up, near, far);
+	projection_transformation = glm::ortho ( - width / 2, width / 2,- height / 2, height / 2, near, far);
 	else
 	projection_transformation = glm::perspective(glm::radians(90.0f), aspect, near, far);
 }

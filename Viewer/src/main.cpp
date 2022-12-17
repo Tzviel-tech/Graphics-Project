@@ -19,8 +19,9 @@
 
 bool normals;
 bool box;
+bool wbox;
 static float nornalscale;
-static float cleft = -1;
+static float cleft = 1;
 static float cright = 1;
 static float down = -1;
 static float up = 1;
@@ -117,8 +118,11 @@ int main(int argc, char** argv)
 		glfwPollEvents();
 		StartFrame();
 		DrawImguiMenus(io, scene);
+		c->windowsheight = windowHeight;
+		c->windowswidth = windowWidth;
 		renderer.drawnormals = normals;
-		renderer.drawboundingbox = box;
+		renderer.drawboundingboxlocal = box;
+		renderer.drawboundingboxworld = wbox;
 		renderer.scalenormal = nornalscale;
 		c->SetPTransform(cleft, cright, down, up, cnear, cfar);
 		RenderFrame(window, scene, renderer, io);
@@ -414,7 +418,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("world cameraT", &cameraworld);
 	ImGui::Checkbox("normals", &normals);
 	ImGui::Checkbox("prespective projection", &c.pres);
-	ImGui::Checkbox("bounding_box", &box);
+	ImGui::Checkbox("bounding_boxlocal", &box);
+	ImGui::Checkbox("bounding_boxworld", &wbox);
 	if (ImGui::Button("Reset all to zero"))  
 	{
 		model.rotate.x = 0;
