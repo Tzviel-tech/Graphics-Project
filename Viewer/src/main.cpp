@@ -93,7 +93,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 //}
 int main(int argc, char** argv)
 {
-	int windowWidth = 1280, windowHeight = 720;
+	int windowWidth = 1920, windowHeight = 1080;
 	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
 	if (!window)
 		return 1;
@@ -522,8 +522,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::Checkbox("Rotate x", &x);
 				ImGui::Checkbox("Rotate y", &y);
 				ImGui::Checkbox("Rotate z", &z);
-				ImGui::End();
-				if (ImGui::Button("Reset all to zero"))
+				
+				if (ImGui::Button("Reset"))
 				{
 					c.rotate.x = 0;
 					c.rotate.y = 0;
@@ -533,6 +533,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					c.trans.z = 0;
 					c.scalex = 1;
 				}
+				ImGui::End();
 			}
 	//	}
 	
