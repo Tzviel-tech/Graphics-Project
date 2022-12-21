@@ -69,6 +69,8 @@ local bounding box after transformation:
 
 
 world bounding box after transformation:
+
+
 ![viewvolume](worldboundingzrotation.png "viewvolume")
 
 
