@@ -18,7 +18,7 @@ public:
 	bool drawboundingboxworld = false;
 	bool rectangle = false;
 	float scalenormal;
-	void drawtrianglebox(std::vector<glm::vec3>triangle,float r);
+	void drawtrianglebox(std::vector<glm::vec3>triangle, glm::vec3 color);
 	void checkminmax(glm::vec4& vertices);
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);

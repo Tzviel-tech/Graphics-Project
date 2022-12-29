@@ -30,23 +30,26 @@ void Renderer::PutPixel(int i, int j, const glm::vec3& color)
 	color_buffer[INDEX(viewport_width, i, j, 1)] = color.y;
 	color_buffer[INDEX(viewport_width, i, j, 2)] = color.z;
 }
- void Renderer::drawtrianglebox(std::vector<glm::vec3>triangle,float r)
+ void Renderer::drawtrianglebox(std::vector<glm::vec3>triangle,glm::vec3 color)
 {
 	float minX = std::numeric_limits<float>::max();
 	float minY = std::numeric_limits<float>::max();
 	float maxX = std::numeric_limits<float>::min();
 	float maxY = std::numeric_limits<float>::min();
+	
+
 	for (auto& v : triangle) {
 		minX = std::min(minX, v.x);
 		minY = std::min(minY, v.y);
 		maxX = std::max(maxX, v.x);
 		maxY = std::max(maxY, v.y);
+		
 	}
 	glm::vec2 top1 = glm::vec2(maxX, maxY);
 	glm::vec2 top2 = glm::vec2(minX, maxY);
 	glm::vec2 bot1 = glm::vec2(maxX, minY);
 	glm::vec2 bot2 = glm::vec2(minX, minY);
-	glm::vec3 color(triangle[0].z / r, triangle[1].z / r, triangle[2].z / r);
+
 
 	ChangePoints(top1, top2, color);
 	ChangePoints(top1, bot1, color);
@@ -304,6 +307,11 @@ void Renderer::Render(const Scene& scene)
 		glm::vec4 p2 = glm::vec4(vec.at(b - 1), 1.f);
 		glm::vec4 p3 = glm::vec4(vec.at(c - 1), 1.f);
 		glm::vec4 centerF = p1 + p2 + p3;
+		mod.center();
+		glm::vec3 color;
+		color.x = p1.z / mod.maxZ;
+	    color.y = p2.z / mod.maxZ;
+		color.z=	p3.z / mod.maxZ;
 		centerF.x /= 3;
 		centerF.y /= 3;
 		centerF.z /= 3;
@@ -369,6 +377,7 @@ void Renderer::Render(const Scene& scene)
 		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
+	
 		//draw normals
 		if (drawnormals)
 		{
@@ -379,7 +388,8 @@ void Renderer::Render(const Scene& scene)
 		{
 			mod.center();
 			std::vector <glm::vec3>tri{ p1,p2,p3 };
-			drawtrianglebox(tri, mod.maxZ / mod.minZ);
+			
+			drawtrianglebox(tri, color);
 		}
 		
 	}
