@@ -20,6 +20,7 @@ public:
 	float scalenormal;
 	void drawtrianglebox(std::vector<glm::vec3>triangle, glm::vec3 color);
 	void checkminmax(glm::vec4& vertices);
+
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);
 	void DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color, int flag);
