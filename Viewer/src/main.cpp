@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/teapot.obj");
+	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/demo.obj");
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	shared_ptr<Camera>c(new Camera());
 	Scene scene = Scene();

@@ -299,19 +299,19 @@ void Renderer::Render(const Scene& scene)
 	
 	
 	for (int i = 0;i < mod.GetFacesCount();i++)
-	{   
+	{
 		int a = mod.GetFace(i).GetVertexIndex(0);
 		int b = mod.GetFace(i).GetVertexIndex(1);
 		int c = mod.GetFace(i).GetVertexIndex(2);
-		glm::vec4 p1 = glm::vec4(vec.at(a - 1),1.f);
+		glm::vec4 p1 = glm::vec4(vec.at(a - 1), 1.f);
 		glm::vec4 p2 = glm::vec4(vec.at(b - 1), 1.f);
 		glm::vec4 p3 = glm::vec4(vec.at(c - 1), 1.f);
 		glm::vec4 centerF = p1 + p2 + p3;
 		mod.center();
 		glm::vec3 color;
 		color.x = p1.z / mod.maxZ;
-	    color.y = p2.z / mod.maxZ;
-		color.z=	p3.z / mod.maxZ;
+		color.y = p2.z / mod.maxZ;
+		color.z = p3.z / mod.maxZ;
 		centerF.x /= 3;
 		centerF.y /= 3;
 		centerF.z /= 3;
@@ -324,7 +324,7 @@ void Renderer::Render(const Scene& scene)
 		//scale normal while keep his direction
 		normalx = glm::vec4(glm::vec3(p1.x + scalenormal * (normalx.x - p1.x),
 			p1.y + scalenormal * (normalx.y - p1.y),
-			p1.z + scalenormal * (normalx.z - p1.z)),1.f);
+			p1.z + scalenormal * (normalx.z - p1.z)), 1.f);
 		normalx.w = 1;
 		normalx = finaltran * normalx;
 		//face normal
@@ -345,39 +345,51 @@ void Renderer::Render(const Scene& scene)
 		p1 = finaltran * p1;
 		p2 = finaltran * p2;
 		p3 = finaltran * p3;
-		
+
 		p1 /= p1.w;
 		p2 /= p2.w;
 		p3 /= p3.w;
-		
-	    //viewport transform
+
+		//viewport transform
 		normalx.x /= normalx.w;
 		normalx.y /= normalx.w;
 		normalx.z /= normalx.w;
-		normalx.x = (normalx.x*half_width)+half_width;
-		normalx.y = (normalx.y* half_height)+half_height;
+		normalx.x = (normalx.x * half_width) + half_width;
+		normalx.y = (normalx.y * half_height) + half_height;
 		normaly.x /= normaly.w;
 		normaly.y /= normaly.w;
 		normaly.z /= normaly.w;
 		normaly.x = (normaly.x * half_width) + half_width;
 		normaly.y = (normaly.y * half_height) + half_height;
-		p1.x =p1.x*half_width+half_width;
-		p1.y =p1.y*half_height +half_height;
-		p2.x =p2.x*half_width + half_width;
-		p2.y =p2.y* half_height +half_height;
-		p3.x = p3.x * half_width +half_width;
-		p3.y = p3.y*half_height +half_height;
-		centerF.x = (centerF.x*half_width)+half_width;
-		centerF.y = (centerF.y*half_height)+half_height;
+		p1.x = p1.x * half_width + half_width;
+		p1.y = p1.y * half_height + half_height;
+		p2.x = p2.x * half_width + half_width;
+		p2.y = p2.y * half_height + half_height;
+		p3.x = p3.x * half_width + half_width;
+		p3.y = p3.y * half_height + half_height;
+		centerF.x = (centerF.x * half_width) + half_width;
+		centerF.y = (centerF.y * half_height) + half_height;
 		checkminmax(p1);
 		checkminmax(p2);
 		checkminmax(p3);
-		
-	    //draw triangle
+		std::vector <glm::vec3>tri{ p1,p2,p3 };
+		//draw triangle
 		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
-	
+		float minX = std::numeric_limits<float>::max();
+		float minY = std::numeric_limits<float>::max();
+		float maxX = std::numeric_limits<float>::min();
+		float maxY = std::numeric_limits<float>::min();
+
+
+		for (auto& v : tri) {
+			minX = std::min(minX, v.x);
+			minY = std::min(minY, v.y);
+			maxX = std::max(maxX, v.x);
+			maxY = std::max(maxY, v.y);
+		}
+		
 		//draw normals
 		if (drawnormals)
 		{
@@ -386,9 +398,7 @@ void Renderer::Render(const Scene& scene)
 		}
 		if (rectangle)
 		{
-			mod.center();
-			std::vector <glm::vec3>tri{ p1,p2,p3 };
-			
+		
 			drawtrianglebox(tri, color);
 		}
 		
@@ -496,6 +506,7 @@ void Renderer::Render(const Scene& scene)
 		ChangePoints(bottom2, bottom4, glm::vec3(1, 1, 1));
 	}
 
+	
 	
 
 
