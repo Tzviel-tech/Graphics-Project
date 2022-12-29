@@ -20,6 +20,7 @@
 bool normals;
 bool box;
 bool wbox;
+bool rec;
 static float nornalscale;
 static float cleft = 1;
 static float cright = 1;
@@ -93,7 +94,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 //}
 int main(int argc, char** argv)
 {
-	int windowWidth = 1920, windowHeight = 1080;
+	int windowWidth = 1280, windowHeight = 720;
 	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
 	if (!window)
 		return 1;
@@ -124,6 +125,7 @@ int main(int argc, char** argv)
 		renderer.drawboundingboxlocal = box;
 		renderer.drawboundingboxworld = wbox;
 		renderer.scalenormal = nornalscale;
+		renderer.rectangle = rec;
 		c->SetPTransform(cleft, cright, down, up, cnear, cfar);
 		RenderFrame(window, scene, renderer, io);
 		
@@ -420,6 +422,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("prespective projection", &c.pres);
 	ImGui::Checkbox("bounding_boxlocal", &box);
 	ImGui::Checkbox("bounding_boxworld", &wbox);
+	ImGui::Checkbox("rectangle", &rec);
 	if (ImGui::Button("Reset all to zero"))  
 	{
 		model.rotate.x = 0;
