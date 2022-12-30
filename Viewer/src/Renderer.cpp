@@ -269,6 +269,61 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	}
 }
 
+void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag)
+{
+	float deltax1, deltax2,startpoint,endpoint;
+	int y1, y2;
+	if (flag)
+	{
+		deltax1 = (triangle[0].x - triangle[1].x) / (triangle[0].y - triangle[1].y);
+		deltax2 = (triangle[0].x - triangle[2].x) / (triangle[0].y - triangle[2].y);
+		startpoint = endpoint = triangle[0].x;
+		y1 = triangle[0].y;
+		y2 = triangle[2].y;
+	}
+	if (!flag)
+	{
+		deltax1 = -1*(triangle[2].x - triangle[0].x) / (triangle[2].y - triangle[0].y);
+		deltax2 = -1*(triangle[2].x - triangle[1].x) / (triangle[2].y - triangle[1].y);
+		startpoint = endpoint = triangle[2].x;
+		y1 = triangle[2].y;
+		y2 = triangle[0].y;
+	}
+	while (y2 != y1)
+	{
+		ChangePoints(glm::vec2(startpoint, y1), glm::vec2(endpoint, y1), glm::vec3(1, 0, 0));
+		if (flag)
+		{
+			y1++;
+		}
+		else
+			y1--;
+		startpoint += deltax1;
+		endpoint += deltax2;
+	}
+
+	return;
+}
+void Renderer:: edgewalking(std::vector<glm::vec3>triangle)
+{
+	
+	std::sort(triangle.begin(),triangle.end(),compare());
+	if (triangle[0].y == triangle[1].y)
+		addlines(triangle, 0);
+	else if(triangle[1].y == triangle[2].y)
+		addlines(triangle, 1);
+	else
+	{
+	glm::vec3 cutpoint;
+	cutpoint.y = triangle[1].y;
+	cutpoint.x = (triangle[1].y - triangle[0].y)/(triangle[2].y - triangle[0].y) * (triangle[2].x - triangle[0].x);
+	std::vector<glm::vec3> tri1{ triangle[0],triangle[1],cutpoint };
+	std::vector<glm::vec3> tri2{ triangle[1],cutpoint,triangle[2]};
+	addlines(tri1, 1);
+	addlines(tri2, 0);
+	}
+
+}
 void Renderer::Render(const Scene& scene)
 {
 	// TODO: Replace this code with real scene rendering code
@@ -383,12 +438,7 @@ void Renderer::Render(const Scene& scene)
 		float maxY = std::numeric_limits<float>::min();
 
 
-		for (auto& v : tri) {
-			minX = std::min(minX, v.x);
-			minY = std::min(minY, v.y);
-			maxX = std::max(maxX, v.x);
-			maxY = std::max(maxY, v.y);
-		}
+		edgewalking(tri);
 		
 		//draw normals
 		if (drawnormals)

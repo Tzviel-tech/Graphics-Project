@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <algorithm>
 
 class Renderer
 {
@@ -20,8 +21,20 @@ public:
 	float scalenormal;
 	void drawtrianglebox(std::vector<glm::vec3>triangle, glm::vec3 color);
 	void checkminmax(glm::vec4& vertices);
-
+	void edgewalking(std::vector<glm::vec3>triangle);
+	
+	void addlines(std::vector<glm::vec3>triangle, int flag);
 private:
+class compare
+{
+	
+public:
+	compare() {};
+	bool operator()(const glm::vec3& p1, const glm::vec3& p2)
+	{
+		return p1.y > p2.y;
+	}
+};
 	void PutPixel(const int i, const int j, const glm::vec3& color);
 	void DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color, int flag);
 	void ChangePoints(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color);
