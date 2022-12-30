@@ -275,49 +275,56 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag)
 	int y1, y2;
 	if (flag)
 	{
-		deltax1 = (triangle[0].x - triangle[1].x) / (triangle[0].y - triangle[1].y);
-		deltax2 = (triangle[0].x - triangle[2].x) / (triangle[0].y - triangle[2].y);
+		deltax1 = -1*(triangle[1].x - triangle[0].x) / (triangle[1].y - triangle[0].y);
+		deltax2 = -1*(triangle[2].x - triangle[0].x) / (triangle[2].y - triangle[0].y);
 		startpoint = endpoint = triangle[0].x;
 		y1 = triangle[0].y;
 		y2 = triangle[2].y;
+	
 	}
 	if (!flag)
 	{
-		deltax1 = -1*(triangle[2].x - triangle[0].x) / (triangle[2].y - triangle[0].y);
-		deltax2 = -1*(triangle[2].x - triangle[1].x) / (triangle[2].y - triangle[1].y);
+		deltax1 = (triangle[2].x - triangle[0].x) / (triangle[2].y - triangle[0].y);
+		deltax2 = (triangle[2].x - triangle[1].x) / (triangle[2].y - triangle[1].y);
 		startpoint = endpoint = triangle[2].x;
 		y1 = triangle[2].y;
 		y2 = triangle[0].y;
+		
 	}
 	while (y2 != y1)
 	{
 		ChangePoints(glm::vec2(startpoint, y1), glm::vec2(endpoint, y1), glm::vec3(1, 0, 0));
 		if (flag)
 		{
-			y1++;
+			y1--;
 		}
 		else
-			y1--;
-		startpoint += deltax1;
-		endpoint += deltax2;
+			y1++;
+
+		startpoint+=deltax1;
+		endpoint+=deltax2;
+	}
+	if (flag)
+	{
+		ChangePoints(glm::vec2(startpoint, y1), glm::vec2(endpoint, y1), glm::vec3(1, 0, 0));
 	}
 
 	return;
 }
-void Renderer:: edgewalking(std::vector<glm::vec3>triangle)
+void Renderer::edgewalking(std::vector<glm::vec3>triangle)
 {
 	
 	std::sort(triangle.begin(),triangle.end(),compare());
-	if (triangle[0].y == triangle[1].y)
-		addlines(triangle, 0);
-	else if(triangle[1].y == triangle[2].y)
+	if (fabs(triangle[1].y-triangle[2].y)<DBL_EPSILON)
 		addlines(triangle, 1);
+	else if(fabs(triangle[0].y-triangle[1].y)<DBL_EPSILON)
+		addlines(triangle, 0);
 	else
 	{
 	glm::vec3 cutpoint;
 	cutpoint.y = triangle[1].y;
-	cutpoint.x = (triangle[1].y - triangle[0].y)/(triangle[2].y - triangle[0].y) * (triangle[2].x - triangle[0].x);
-	std::vector<glm::vec3> tri1{ triangle[0],triangle[1],cutpoint };
+	cutpoint.x = triangle[0].x+(((triangle[1].y - triangle[0].y) / (triangle[2].y - triangle[0].y)) * (triangle[2].x - triangle[0].x));
+	std::vector<glm::vec3> tri1{ triangle[0],triangle[1],cutpoint};
 	std::vector<glm::vec3> tri2{ triangle[1],cutpoint,triangle[2]};
 	addlines(tri1, 1);
 	addlines(tri2, 0);
@@ -429,17 +436,13 @@ void Renderer::Render(const Scene& scene)
 		checkminmax(p3);
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
 		//draw triangle
+		edgewalking(tri);
 		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
 		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
-		float minX = std::numeric_limits<float>::max();
-		float minY = std::numeric_limits<float>::max();
-		float maxX = std::numeric_limits<float>::min();
-		float maxY = std::numeric_limits<float>::min();
 
-
-		edgewalking(tri);
 		
+
 		//draw normals
 		if (drawnormals)
 		{
@@ -448,7 +451,6 @@ void Renderer::Render(const Scene& scene)
 		}
 		if (rectangle)
 		{
-		
 			drawtrianglebox(tri, color);
 		}
 		
