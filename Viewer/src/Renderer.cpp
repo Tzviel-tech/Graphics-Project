@@ -269,8 +269,10 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	}
 }
 
-void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag)
+void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color)
 {
+	
+	//glm::vec3 color(1, 0, 0);
 	float deltax1, deltax2,startpoint,endpoint;
 	int y1, y2;
 	if (flag)
@@ -293,7 +295,7 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag)
 	}
 	while (y2 != y1)
 	{
-		ChangePoints(glm::vec2(startpoint, y1), glm::vec2(endpoint, y1), glm::vec3(1, 0, 0));
+		ChangePoints(glm::vec2(startpoint, y1), glm::vec2(endpoint, y1), color);
 		if (flag)
 		{
 			y1--;
@@ -304,21 +306,19 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag)
 		startpoint+=deltax1;
 		endpoint+=deltax2;
 	}
-	if (flag)
-	{
-		ChangePoints(glm::vec2(startpoint, y1), glm::vec2(endpoint, y1), glm::vec3(1, 0, 0));
-	}
+	
 
 	return;
 }
 void Renderer::edgewalking(std::vector<glm::vec3>triangle)
 {
-	
+	//glm::vec3 color = glm::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+	glm::vec3 color(1, 0, 0);
 	std::sort(triangle.begin(),triangle.end(),compare());
 	if (fabs(triangle[1].y-triangle[2].y)<DBL_EPSILON)
-		addlines(triangle, 1);
+		addlines(triangle, 1,color);
 	else if(fabs(triangle[0].y-triangle[1].y)<DBL_EPSILON)
-		addlines(triangle, 0);
+		addlines(triangle, 0,color);
 	else
 	{
 	glm::vec3 cutpoint;
@@ -326,8 +326,9 @@ void Renderer::edgewalking(std::vector<glm::vec3>triangle)
 	cutpoint.x = triangle[0].x+(((triangle[1].y - triangle[0].y) / (triangle[2].y - triangle[0].y)) * (triangle[2].x - triangle[0].x));
 	std::vector<glm::vec3> tri1{ triangle[0],triangle[1],cutpoint};
 	std::vector<glm::vec3> tri2{ triangle[1],cutpoint,triangle[2]};
-	addlines(tri1, 1);
-	addlines(tri2, 0);
+	addlines(tri1, 1,color);
+	addlines(tri2, 0,color);
+	ChangePoints(glm::vec2(triangle[1].x, triangle[1].y), glm::vec2(cutpoint.x, triangle[1].y), color);
 	}
 
 }
@@ -362,6 +363,7 @@ void Renderer::Render(const Scene& scene)
 	
 	for (int i = 0;i < mod.GetFacesCount();i++)
 	{
+		
 		int a = mod.GetFace(i).GetVertexIndex(0);
 		int b = mod.GetFace(i).GetVertexIndex(1);
 		int c = mod.GetFace(i).GetVertexIndex(2);
@@ -435,7 +437,7 @@ void Renderer::Render(const Scene& scene)
 		checkminmax(p2);
 		checkminmax(p3);
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
-		//draw triangle
+		//draw triangle;
 		edgewalking(tri);
 		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
 		ChangePoints(p1, p3, glm::vec3(1, 0, 0));

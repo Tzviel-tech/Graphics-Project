@@ -23,7 +23,7 @@ public:
 	void checkminmax(glm::vec4& vertices);
 	void edgewalking(std::vector<glm::vec3>triangle);
 	
-	void addlines(std::vector<glm::vec3>triangle, int flag);
+	void addlines(std::vector<glm::vec3>triangle, int flag,glm::vec3 color);
 private:
 class compare
 {
