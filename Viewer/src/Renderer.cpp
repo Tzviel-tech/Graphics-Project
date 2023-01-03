@@ -21,7 +21,7 @@ Renderer::~Renderer()
 	delete[] color_buffer;
 }
 
-void Renderer::PutPixel(int i, int j, const glm::vec3& color)
+void Renderer::PutPixel(int i, int j,int z, const glm::vec3& color)
 {
 	if (i < 0) return; if (i >= viewport_width) return;
 	if (j < 0) return; if (j >= viewport_height) return;
@@ -45,10 +45,10 @@ void Renderer::PutPixel(int i, int j, const glm::vec3& color)
 		maxY = std::max(maxY, v.y);
 		
 	}
-	glm::vec2 top1 = glm::vec2(maxX, maxY);
-	glm::vec2 top2 = glm::vec2(minX, maxY);
-	glm::vec2 bot1 = glm::vec2(maxX, minY);
-	glm::vec2 bot2 = glm::vec2(minX, minY);
+	glm::vec3 top1 = glm::vec3(maxX, maxY,1);
+	glm::vec3 top2 = glm::vec3(minX, maxY,1);
+	glm::vec3 bot1 = glm::vec3(maxX, minY,1);
+	glm::vec3 bot2 = glm::vec3(minX, minY,1);
 
 
 	ChangePoints(top1, top2, color);
@@ -59,7 +59,19 @@ void Renderer::PutPixel(int i, int j, const glm::vec3& color)
 
 
 }
-void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color, int flag)
+ float Renderer:: calcZ(float a1, float a2, float a3, float z1, float z2, float z3)
+ {
+	 float all = a1 + a2 + a3;
+	 return (a1 / all) * z1 + (a2 / all) * z2 + (a3 / all) * z3;
+ }
+ float Renderer::trianglearea(float X0, float Y0, float X1, float Y1, float X2, float Y2)
+ {
+	
+	 float area = (X0 * (Y1 - Y2) + X1 * (Y2 - Y0) + X2 * (Y0 - Y1)) / 2.0;
+	 return (area > 0.0) ? area : -area;
+ }
+
+void Renderer::DrawLine(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color, int flag)
 {
 
 	int x1 = p1.x, x2 = p2.x, y1 = p1.y, y2 = p2.y;
@@ -101,16 +113,23 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 		}
 		//check that we put pixel correctly(x should be first cordinate and y second)
 		if (!flag)
-			PutPixel(start_point, point_toadd, color);
+		{
+		    
+			PutPixel(start_point, point_toadd,p1.z, color);
+
+		}
 		else
-			PutPixel(point_toadd, start_point, color);
+		{
+			PutPixel(point_toadd, start_point,p1.z, color);
+
+		}
 
 		e = e + 2 * delta_2;
 		start_point++;
 	}
 }
 
-void Renderer::ChangePoints(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color)
+void Renderer::ChangePoints(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color)
 {
 	int dx = p2.x - p1.x, dy = p2.y - p1.y;
 	if (dx < 0)
@@ -135,6 +154,116 @@ void Renderer::ChangePoints(const glm::ivec2& p1, const glm::ivec2& p2, const gl
 			DrawLine(p1, p2, color, 1);
 	}
 }
+void Renderer::PutPixelZ(int i, int j, int z, const glm::vec3& color)
+{
+	if (i < 0) return; if (i >= viewport_width) return;
+	if (j < 0) return; if (j >= viewport_height) return;
+	glm::vec3 color1 = color;
+	if (fabs(z - z_buffer[INDEX(viewport_width, i, j, 0)]) >= DBL_EPSILON)
+	{
+		z_buffer[INDEX(viewport_width, i, j, 0)] = z;
+		z_buffer[INDEX(viewport_width, i, j, 1)] = z;
+		z_buffer[INDEX(viewport_width, i, j, 2)] = z;
+	
+
+	color_buffer[INDEX(viewport_width, i, j, 0)] = color.x;
+	color_buffer[INDEX(viewport_width, i, j, 1)] = color.y;
+	color_buffer[INDEX(viewport_width, i, j, 2)] = color.z;
+   }
+	
+}
+
+void Renderer::DrawLineZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color, int flag,std::vector<glm::vec3>tri)
+{
+
+	int x1 = p1.x, x2 = p2.x, y1 = p1.y, y2 = p2.y;
+	int dx = x2 - x1;
+	int dy = y2 - y1;
+	int start_point, end_point, point_toadd, delta_1, delta_2;
+	float a1, a2, a3, d;
+	//in case we need to incerment x every iteration
+	if (!flag)
+	{
+		start_point = x1;
+		end_point = x2;
+		delta_1 = dx;
+		point_toadd = y1;
+		delta_2 = dy;
+	}
+	//in case we need to incerment y every iteration
+	else
+	{
+		start_point = y1;
+		end_point = y2;
+		delta_1 = dy;
+		point_toadd = x1;
+		delta_2 = dx;
+	}
+	int e = -delta_1;
+	int to_add = 1;
+	//check if we need to reflect
+	if (delta_2 < 0)
+	{
+		delta_2 = -delta_2;
+		to_add = -1;
+	}
+	while (start_point < end_point)
+	{
+		if (e > 0)
+		{
+			point_toadd = point_toadd + to_add;
+			e = e - 2 * delta_1;
+		}
+		//check that we put pixel correctly(x should be first cordinate and y second)
+		if (!flag)
+		{
+			a1 = trianglearea(tri[1].x, tri[1].y, tri[2].x, tri[2].y, start_point, point_toadd);
+			a2 = trianglearea(tri[0].x, tri[0].y, tri[2].x, tri[2].y, start_point, point_toadd);
+			a3 = trianglearea(tri[1].x, tri[1].y, tri[0].x, tri[0].y, start_point, point_toadd);
+			d = calcZ(a1, a2, a3, tri[0].z, tri[1].z, tri[2].z);
+
+			PutPixelZ(start_point, point_toadd, d, color);
+
+		}
+		else
+		{
+			a1 = trianglearea(tri[1].x, tri[1].y, tri[2].x, tri[2].y, point_toadd, start_point);
+			a2 = trianglearea(tri[0].x, tri[0].y, tri[2].x, tri[2].y, point_toadd, start_point);
+			a3 = trianglearea(tri[1].x, tri[1].y, tri[0].x, tri[0].y, point_toadd, start_point);
+			d = calcZ(a1, a2, a3, tri[0].z, tri[1].z, tri[2].z);
+			PutPixelZ(point_toadd, start_point, d, color);
+		}
+
+		e = e + 2 * delta_2;
+		start_point++;
+	}
+}
+
+void Renderer::ChangePointsZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color,std::vector<glm::vec3>tri)
+{
+	int dx = p2.x - p1.x, dy = p2.y - p1.y;
+	if (dx < 0)
+		dx = -dx;
+	if (dy < 0)
+		dy = -dy;
+	//in this case A is from 0 to 1 or 0 to -1
+	if (dy < dx)
+	{
+		//check if we need to draw from left to right or rigt to left
+		if (p2.x < p1.x)
+			DrawLineZ(p2, p1, color, 0,tri);
+		else
+			DrawLineZ(p1, p2, color, 0, tri);
+	}
+	//same as last one but for A bigger than 1 or lesser than -1
+	else
+	{
+		if (p2.y < p1.y)
+			DrawLineZ(p2, p1, color, 1, tri);
+		else
+			DrawLineZ(p1, p2, color, 1, tri);
+	}
+}
 
 
 
@@ -142,6 +271,11 @@ void Renderer::CreateBuffers(int w, int h)
 {
 	CreateOpenglBuffer(); //Do not remove this line.
 	color_buffer = new float[3 * w * h];
+	z_buffer = new float[3 * w * h];
+	for (int i = 0;i < 3 * w * h;i++)
+	{
+		z_buffer[i]= std::numeric_limits<float>::min();
+	}
 	ClearColorBuffer(glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
@@ -264,8 +398,12 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	{
 		for (int j = 0; j < viewport_height; j++)
 		{
-			PutPixel(i, j, color);
+			PutPixel(i, j,1, color);
 		}
+	}
+	for (int i = 0;i < 3 * viewport_height * viewport_width;i++)
+	{
+		z_buffer[i] = std::numeric_limits<float>::min();
 	}
 }
 
@@ -273,7 +411,7 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 {
 	
 	//glm::vec3 color(1, 0, 0);
-	float deltax1, deltax2,startpoint,endpoint;
+	float deltax1, deltax2,startpoint,endpoint,d1=1,d2=1;
 	int y1, y2;
 	if (flag)
 	{
@@ -293,9 +431,10 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 		y2 = triangle[0].y;
 		
 	}
+	
 	while (y2 != y1)
 	{
-		ChangePoints(glm::vec2(startpoint, y1), glm::vec2(endpoint, y1), color);
+		ChangePointsZ(glm::vec3(startpoint, y1,1), glm::vec3(endpoint, y1,1), color, triangle);
 		if (flag)
 		{
 			y1--;
@@ -312,8 +451,7 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 }
 void Renderer::edgewalking(std::vector<glm::vec3>triangle)
 {
-	//glm::vec3 color = glm::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
-	glm::vec3 color(1, 0, 0);
+	glm::vec3 color = glm::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
 	std::sort(triangle.begin(),triangle.end(),compare());
 	if (fabs(triangle[1].y-triangle[2].y)<DBL_EPSILON)
 		addlines(triangle, 1,color);
@@ -324,25 +462,35 @@ void Renderer::edgewalking(std::vector<glm::vec3>triangle)
 	glm::vec3 cutpoint;
 	cutpoint.y = triangle[1].y;
 	cutpoint.x = triangle[0].x+(((triangle[1].y - triangle[0].y) / (triangle[2].y - triangle[0].y)) * (triangle[2].x - triangle[0].x));
+	float a1, a2, a3, d;
+	a1 = trianglearea(triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y, cutpoint.x, cutpoint.y);
+	a2 = trianglearea(triangle[0].x, triangle[0].y, triangle[2].x, triangle[2].y, cutpoint.x, cutpoint.y);
+	a3 = trianglearea(triangle[1].x, triangle[1].y, triangle[0].x, triangle[0].y, cutpoint.x, cutpoint.y);
+	d = calcZ(a1, a2, a3, triangle[0].z, triangle[1].z, triangle[2].z);
+	cutpoint.z = d;
 	std::vector<glm::vec3> tri1{ triangle[0],triangle[1],cutpoint};
 	std::vector<glm::vec3> tri2{ triangle[1],cutpoint,triangle[2]};
 	addlines(tri1, 1,color);
 	addlines(tri2, 0,color);
-	ChangePoints(glm::vec2(triangle[1].x, triangle[1].y), glm::vec2(cutpoint.x, triangle[1].y), color);
+	ChangePointsZ(triangle[1], cutpoint, color,triangle);
 	}
+	ChangePointsZ(triangle[0], triangle[1], glm::vec3(1, 0, 1), triangle);
+	ChangePointsZ(triangle[0], triangle[2], glm::vec3(1, 0, 1), triangle);
+	ChangePointsZ(triangle[2], triangle[1], glm::vec3(1, 0, 1), triangle);
 
 }
 void Renderer::Render(const Scene& scene)
 {
-	// TODO: Replace this code with real scene rendering code
+	
 	 minx = 1000000;
 	 miny = 1000000;
 	 maxx = -1000000;
 	 maxy = -1000000;
-	maxz = -1000000;
+	 maxz = -1000000;
 	 minz = 1000000;
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
+	
 	glm::vec4 viewportvec(half_width, half_height, 0, 0);
 	glm::vec4 normalx, normaly, normalz,facenormal;
 	glm::vec3 y1(half_width, viewport_height, 0), y2(half_width, 0, 0), x1(0, half_height, 0), x2(viewport_width, half_height, 0);
@@ -431,6 +579,7 @@ void Renderer::Render(const Scene& scene)
 		p2.y = p2.y * half_height + half_height;
 		p3.x = p3.x * half_width + half_width;
 		p3.y = p3.y * half_height + half_height;
+		
 		centerF.x = (centerF.x * half_width) + half_width;
 		centerF.y = (centerF.y * half_height) + half_height;
 		checkminmax(p1);
@@ -438,10 +587,8 @@ void Renderer::Render(const Scene& scene)
 		checkminmax(p3);
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
 		//draw triangle;
-		edgewalking(tri);
-		ChangePoints(p1, p2, glm::vec3(1, 0, 0));
-		ChangePoints(p1, p3, glm::vec3(1, 0, 0));
-		ChangePoints(p3, p2, glm::vec3(1, 0, 0));
+     	edgewalking(tri);
+		
 
 		
 

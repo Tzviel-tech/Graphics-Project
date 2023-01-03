@@ -35,13 +35,17 @@ public:
 		return p1.y > p2.y;
 	}
 };
-	void PutPixel(const int i, const int j, const glm::vec3& color);
-	void DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color, int flag);
-	void ChangePoints(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color);
+	void PutPixel(const int i, const int j,const int z, const glm::vec3& color);
+	void DrawLine(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color, int flag);
+	void ChangePoints(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color);
+	void DrawLineZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color, int flag, std::vector<glm::vec3>tri);
+	void PutPixelZ(int i, int j, int z, const glm::vec3& color);
+	void ChangePointsZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color,std::vector<glm::vec3>tri);
 	void CreateBuffers(int w, int h);
 	void CreateOpenglBuffer();
 	void InitOpenglRendering();
-	
+	float trianglearea(float X0, float Y0, float X1, float Y1, float X2, float Y2);
+	float calcZ(float a1, float a2, float a3, float z1, float z2, float z3);
 	float minx = 1000000;
 	float miny = 1000000;
 	float maxx = -1000000;
@@ -49,6 +53,7 @@ public:
 	float maxz = -1000000;
 	float minz = 1000000;
 	float* color_buffer;
+	float* z_buffer;
 	int viewport_width;
 	int viewport_height;
 	GLuint gl_screen_tex;
