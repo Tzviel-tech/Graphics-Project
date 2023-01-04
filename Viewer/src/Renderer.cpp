@@ -19,6 +19,7 @@ Renderer::Renderer(int viewport_width, int viewport_height) :
 Renderer::~Renderer()
 {
 	delete[] color_buffer;
+	delete[] z_buffer;
 }
 
 void Renderer::PutPixel(int i, int j,int z, const glm::vec3& color)
@@ -158,18 +159,17 @@ void Renderer::PutPixelZ(int i, int j, int z, const glm::vec3& color)
 {
 	if (i < 0) return; if (i >= viewport_width) return;
 	if (j < 0) return; if (j >= viewport_height) return;
-	glm::vec3 color1 = color;
-	if (fabs(z - z_buffer[INDEX(viewport_width, i, j, 0)]) >= DBL_EPSILON)
-	{
-		z_buffer[INDEX(viewport_width, i, j, 0)] = z;
-		z_buffer[INDEX(viewport_width, i, j, 1)] = z;
-		z_buffer[INDEX(viewport_width, i, j, 2)] = z;
 	
 
-	color_buffer[INDEX(viewport_width, i, j, 0)] = color.x;
-	color_buffer[INDEX(viewport_width, i, j, 1)] = color.y;
-	color_buffer[INDEX(viewport_width, i, j, 2)] = color.z;
-   }
+	if (z>z_buffer[Z_INDEX(viewport_width, i, j)])
+	{
+		z_buffer[Z_INDEX(viewport_width, i, j)] = z;
+		if(z<0)
+		PutPixel(i, j,1, glm::vec3(-z/100.f, -z/100.f, -z/100.f));
+		else
+		PutPixel(i, j, 1, glm::vec3(z / 100.f, z / 100.f, z / 100.f));
+
+    }
 	
 }
 
@@ -221,7 +221,6 @@ void Renderer::DrawLineZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::
 			a2 = trianglearea(tri[0].x, tri[0].y, tri[2].x, tri[2].y, start_point, point_toadd);
 			a3 = trianglearea(tri[1].x, tri[1].y, tri[0].x, tri[0].y, start_point, point_toadd);
 			d = calcZ(a1, a2, a3, tri[0].z, tri[1].z, tri[2].z);
-
 			PutPixelZ(start_point, point_toadd, d, color);
 
 		}
@@ -274,7 +273,7 @@ void Renderer::CreateBuffers(int w, int h)
 	z_buffer = new float[3 * w * h];
 	for (int i = 0;i < 3 * w * h;i++)
 	{
-		z_buffer[i]= std::numeric_limits<float>::min();
+		z_buffer[i]= -1000000.00f;
 	}
 	ClearColorBuffer(glm::vec3(0.0f, 0.0f, 0.0f));
 }
@@ -403,7 +402,7 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	}
 	for (int i = 0;i < 3 * viewport_height * viewport_width;i++)
 	{
-		z_buffer[i] = std::numeric_limits<float>::min();
+		z_buffer[i] = -1000000.00f;
 	}
 }
 
@@ -603,7 +602,16 @@ void Renderer::Render(const Scene& scene)
 			drawtrianglebox(tri, color);
 		}
 		
+		
 	}
+	float m=z_buffer[0];
+	for (int i = 0;i < 3 * viewport_height * viewport_width;i++)
+	{
+		if (m < z_buffer[i])
+			m = z_buffer[i];
+	}
+
+
 	//model asexs
 	glm::vec4 x11(centerM.x , mod.minY, 1, 1);
 	glm::vec4 x22(centerM.x, mod.maxY , 1, 1);
