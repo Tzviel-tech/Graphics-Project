@@ -72,7 +72,7 @@ void Camera::SetPTransform(float left, float right, float down, float up, float 
 	if(!pres)
 	projection_transformation = glm::ortho ( - width / 2, width / 2,- height / 2, height / 2, near, far);
 	else
-	projection_transformation = glm::perspective(glm::radians(90.0f), aspect, 2.f, 1000.f);
+	projection_transformation = glm::perspective(glm::radians(90.0f), aspect, 1.5f, 1000.f);
 }
 const glm::mat4& Camera::GetProjectionTransformation()const
 {

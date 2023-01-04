@@ -27,13 +27,15 @@ static float cright = 1;
 static float down = -1;
 static float up = 1;
 static float cnear = 1;
-static float cfar = 1;
+static float cfar = -1;
+static float grey = 1;
 bool x = false, y = false, z = false,xW=false,yW=false,zW=false;
 bool WORLD_TRANSFOM;
 bool orthogonalP;
 bool movecamera;
 bool cameraworld;
 bool cameralocal;
+bool Z_buff;
 /**
  * Fields
  */
@@ -126,6 +128,7 @@ int main(int argc, char** argv)
 		renderer.drawboundingboxworld = wbox;
 		renderer.scalenormal = nornalscale;
 		renderer.rectangle = rec;
+		renderer.show_Z = Z_buff;
 		c->SetPTransform(cleft, cright, down, up, cnear, cfar);
 		RenderFrame(window, scene, renderer, io);
 		
@@ -409,6 +412,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::SliderFloat("rotate y asix", &model.rotate.y, -360, 360);
 	ImGui::SliderFloat("rotate z asix", &model.rotate.z, -360, 360);
 	ImGui::SliderFloat("scale normal", &nornalscale, 1, 50);
+	
 	ImGui::Text("Press left mouse to rotate and decide rotation:");
 	ImGui::Checkbox("Rotate x", &x);
 	ImGui::Checkbox("Rotate y", &y);
@@ -423,6 +427,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("bounding_boxlocal", &box);
 	ImGui::Checkbox("bounding_boxworld", &wbox);
 	ImGui::Checkbox("rectangle", &rec);
+	ImGui::Checkbox("Show grey Z:", &Z_buff);
 	if (ImGui::Button("Reset all to zero"))  
 	{
 		model.rotate.x = 0;

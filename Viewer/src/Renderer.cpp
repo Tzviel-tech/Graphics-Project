@@ -155,21 +155,20 @@ void Renderer::ChangePoints(const glm::ivec3& p1, const glm::ivec3& p2, const gl
 			DrawLine(p1, p2, color, 1);
 	}
 }
-void Renderer::PutPixelZ(int i, int j, int z, const glm::vec3& color)
+void Renderer::PutPixelZ(int i, int j, float z, const glm::vec3& color)
 {
 	if (i < 0) return; if (i >= viewport_width) return;
 	if (j < 0) return; if (j >= viewport_height) return;
 	
 
-	if (z>z_buffer[Z_INDEX(viewport_width, i, j)])
+	if (z>=z_buffer[INDEX(viewport_width, i, j, 0)])
 	{
-		z_buffer[Z_INDEX(viewport_width, i, j)] = z;
-		if(z<0)
-		PutPixel(i, j,1, glm::vec3(-z/100.f, -z/100.f, -z/100.f));
-		else
-		PutPixel(i, j, 1, glm::vec3(z / 100.f, z / 100.f, z / 100.f));
-
+		z_buffer[INDEX(viewport_width, i, j, 0)] = z;
+		z_buffer[INDEX(viewport_width, i, j, 1)] = z;
+		z_buffer[INDEX(viewport_width, i, j, 2)] = z;
+		PutPixel(i, j, z, color);
     }
+	
 	
 }
 
@@ -473,9 +472,9 @@ void Renderer::edgewalking(std::vector<glm::vec3>triangle)
 	addlines(tri2, 0,color);
 	ChangePointsZ(triangle[1], cutpoint, color,triangle);
 	}
-	ChangePointsZ(triangle[0], triangle[1], glm::vec3(1, 0, 1), triangle);
-	ChangePointsZ(triangle[0], triangle[2], glm::vec3(1, 0, 1), triangle);
-	ChangePointsZ(triangle[2], triangle[1], glm::vec3(1, 0, 1), triangle);
+	ChangePointsZ(triangle[0], triangle[1], color, triangle);
+	ChangePointsZ(triangle[0], triangle[2],color, triangle);
+	ChangePointsZ(triangle[2], triangle[1],color, triangle);
 
 }
 void Renderer::Render(const Scene& scene)
@@ -601,19 +600,36 @@ void Renderer::Render(const Scene& scene)
 		{
 			drawtrianglebox(tri, color);
 		}
-		
+	
 		
 	}
-	float m=z_buffer[0];
-	for (int i = 0;i < 3 * viewport_height * viewport_width;i++)
+	if (show_Z)
 	{
-		if (m < z_buffer[i])
-			m = z_buffer[i];
+		float min = 10000000;
+		float max = -1000000;
+		for (int i = 0;i < 3 * viewport_height * viewport_width;i++)
+		{
+			if (min > z_buffer[i] && z_buffer[i] > -100000.f)
+				min = z_buffer[i];
+			if (max < z_buffer[i] && z_buffer[i] > -100000.f)
+				max = z_buffer[i];
+		}
+
+		for (int i = 0;i < 3 * viewport_height * viewport_width;i++)
+		{
+			if (z_buffer[i] > -100000.f)
+			{
+				if (max > 0)
+					color_buffer[i] = (z_buffer[i] - min) / (max);
+				else
+					color_buffer[i] = (z_buffer[i] - min) / (-1.f * max);
+			}
+		}
 	}
 
 
 	//model asexs
-	glm::vec4 x11(centerM.x , mod.minY, 1, 1);
+	/*glm::vec4 x11(centerM.x , mod.minY, 1, 1);
 	glm::vec4 x22(centerM.x, mod.maxY , 1, 1);
 	glm::vec4 x33(mod.minX, centerM.y, 1, 1);
 	glm::vec4 x44(mod.maxX, centerM.y, 1, 1);
@@ -634,7 +650,7 @@ void Renderer::Render(const Scene& scene)
 	x33.y = x33.y * half_height + half_height;
 	x44.y = x44.y * half_height + half_height;
 	ChangePoints(x11,x22, glm::vec3(1, 1, 1));
-	ChangePoints(x33, x44, glm::vec3(1, 1, 1));
+	ChangePoints(x33, x44, glm::vec3(1, 1, 1));*/
 	//bounding box
 	if (drawboundingboxlocal)
 	{

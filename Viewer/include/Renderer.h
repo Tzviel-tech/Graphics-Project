@@ -18,11 +18,12 @@ public:
 	bool drawboundingboxlocal = false;
 	bool drawboundingboxworld = false;
 	bool rectangle = false;
+	bool show_Z = false;
 	float scalenormal;
 	void drawtrianglebox(std::vector<glm::vec3>triangle, glm::vec3 color);
 	void checkminmax(glm::vec4& vertices);
 	void edgewalking(std::vector<glm::vec3>triangle);
-	
+	float grey = 1;
 	void addlines(std::vector<glm::vec3>triangle, int flag,glm::vec3 color);
 private:
 class compare
@@ -39,7 +40,7 @@ public:
 	void DrawLine(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color, int flag);
 	void ChangePoints(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color);
 	void DrawLineZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color, int flag, std::vector<glm::vec3>tri);
-	void PutPixelZ(int i, int j, int z, const glm::vec3& color);
+	void PutPixelZ(int i, int j, float z, const glm::vec3& color);
 	void ChangePointsZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color,std::vector<glm::vec3>tri);
 	void CreateBuffers(int w, int h);
 	void CreateOpenglBuffer();
@@ -52,6 +53,7 @@ public:
 	float maxy = -1000000;
 	float maxz = -1000000;
 	float minz = 1000000;
+	
 	float* color_buffer;
 	float* z_buffer;
 	int viewport_width;
