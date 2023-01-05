@@ -105,7 +105,7 @@ void Renderer::DrawLine(const glm::ivec3& p1, const glm::ivec3& p2, const glm::v
 		delta_2 = -delta_2;
 		to_add = -1;
 	}
-	while (start_point < end_point)
+	while (start_point <= end_point)
 	{
 		if (e > 0)
 		{
@@ -166,7 +166,7 @@ void Renderer::PutPixelZ(int i, int j, float z, const glm::vec3& color)
 		z_buffer[INDEX(viewport_width, i, j, 0)] = z;
 		z_buffer[INDEX(viewport_width, i, j, 1)] = z;
 		z_buffer[INDEX(viewport_width, i, j, 2)] = z;
-		PutPixel(i, j, z, color);
+		PutPixel(i, j, z,color);
     }
 	
 	
@@ -206,7 +206,7 @@ void Renderer::DrawLineZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::
 		delta_2 = -delta_2;
 		to_add = -1;
 	}
-	while (start_point < end_point)
+	while (start_point <= end_point)
 	{
 		if (e > 0)
 		{
@@ -435,7 +435,7 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 		ChangePointsZ(glm::vec3(startpoint, y1,1), glm::vec3(endpoint, y1,1), color, triangle);
 		if (flag)
 		{
-			y1--;
+			y1=y1-1.f;
 		}
 		else
 			y1++;
@@ -444,12 +444,13 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 		endpoint+=deltax2;
 	}
 	
+	
 
 	return;
 }
 void Renderer::edgewalking(std::vector<glm::vec3>triangle)
 {
-	glm::vec3 color = glm::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+    glm::vec3 color = glm::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
 	std::sort(triangle.begin(),triangle.end(),compare());
 	if (fabs(triangle[1].y-triangle[2].y)<DBL_EPSILON)
 		addlines(triangle, 1,color);
