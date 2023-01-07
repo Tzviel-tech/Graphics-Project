@@ -169,7 +169,7 @@ void Renderer::PutPixelZ(int i, int j, float z, const glm::vec3& color)
 		PutPixel(i, j, z, color);
 		
     }
-
+	
 	
 }
 

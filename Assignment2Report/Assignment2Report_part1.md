@@ -41,14 +41,14 @@ here is photo of the result:
 
 ![bet](rabitt.png "bet")
 
-![bet](bet.png "bet")
+![bet](bett.png "bet")
 
 
 <p style="font-family: times, serif; font-size:11pt; font-style:italic">
   Some results with grey color:
 </p>
 
-![bet](Zgray.png "bet")
+![bet](ZGRAY.png "bet")
 
 ![bet](GRAYBUFFER.png "bet")
 
