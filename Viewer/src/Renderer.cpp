@@ -166,9 +166,10 @@ void Renderer::PutPixelZ(int i, int j, float z, const glm::vec3& color)
 		z_buffer[INDEX(viewport_width, i, j, 0)] = z;
 		z_buffer[INDEX(viewport_width, i, j, 1)] = z;
 		z_buffer[INDEX(viewport_width, i, j, 2)] = z;
-		PutPixel(i, j, z,color);
+		PutPixel(i, j, z, color);
+		
     }
-	
+
 	
 }
 
@@ -450,7 +451,7 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 }
 void Renderer::edgewalking(std::vector<glm::vec3>triangle)
 {
-    glm::vec3 color = glm::vec3((float)rand() / RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX);
+    glm::vec3 color = glm::vec3((float)std::rand()/RAND_MAX, (float)std::rand() / RAND_MAX, (float)std::rand() / RAND_MAX);
 	std::sort(triangle.begin(),triangle.end(),compare());
 	if (fabs(triangle[1].y-triangle[2].y)<DBL_EPSILON)
 		addlines(triangle, 1,color);
@@ -506,7 +507,7 @@ void Renderer::Render(const Scene& scene)
 	std::vector<glm::vec4>facenormals;
 	std::vector<glm::vec3> vec = mod.GetVertecies();
 	glm::mat4 finaltran =  camera.GetProjectionTransformation() * camera.GetViewTransformation() * matrix;
-	
+	std::vector<vector<glm::vec3>>alltri;
 	
 	for (int i = 0;i < mod.GetFacesCount();i++)
 	{
@@ -519,10 +520,7 @@ void Renderer::Render(const Scene& scene)
 		glm::vec4 p3 = glm::vec4(vec.at(c - 1), 1.f);
 		glm::vec4 centerF = p1 + p2 + p3;
 		mod.center();
-		glm::vec3 color;
-		color.x = p1.z / mod.maxZ;
-		color.y = p2.z / mod.maxZ;
-		color.z = p3.z / mod.maxZ;
+
 		centerF.x /= 3;
 		centerF.y /= 3;
 		centerF.z /= 3;
@@ -585,6 +583,7 @@ void Renderer::Render(const Scene& scene)
 		checkminmax(p2);
 		checkminmax(p3);
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
+		alltri.push_back(tri);
 		//draw triangle;
      	edgewalking(tri);
 		
@@ -597,10 +596,7 @@ void Renderer::Render(const Scene& scene)
 		  ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
 	      ChangePoints(centerF, normaly, glm::vec3(0, 0, 1));
 		}
-		if (rectangle)
-		{
-			drawtrianglebox(tri, color);
-		}
+	
 	
 		
 	}
@@ -627,7 +623,16 @@ void Renderer::Render(const Scene& scene)
 			}
 		}
 	}
-
+	if (rectangle)
+	{
+		for (auto& vec : alltri)
+		{
+			float avrage = (vec[0].z + vec[1].z + vec[2].z) / 3.f;
+			glm::vec3 color  (avrage / (maxz+minz), avrage / (maxz + minz), avrage / (maxz + minz));
+			drawtrianglebox(vec, color);
+		}
+		
+	}
 
 	//model asexs
 	/*glm::vec4 x11(centerM.x , mod.minY, 1, 1);
