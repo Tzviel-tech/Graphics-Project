@@ -34,9 +34,9 @@ here is photo of the result:
 
 
 <p style="font-family: times, serif; font-size:11pt; font-style:italic">
- Here i have implemented the Z buffer algorithem here are some results compering of color buffer without z buffer,
- colored with Z buffer and gray scale.
- For each example Left with z_buffer Right without so we can clearly see that no more overlap problem:
+ Here i have implemented the Z buffer algorithem.you can see some results compering colored model 
+ with and without z_buffer algorithim.
+ For each example Left with z_buffer and Right before i implemented it so we can clearly see that no more overlap problem:
 </p>
 
 ![bet](rabitt.png "bet")
@@ -45,7 +45,7 @@ here is photo of the result:
 
 
 <p style="font-family: times, serif; font-size:11pt; font-style:italic">
-  Some results with grey color and colored:
+  Some results with grey color and colored after implementing z buffer:
 </p>
 
 ![bet](cowg.png "bet")
