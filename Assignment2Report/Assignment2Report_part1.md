@@ -36,7 +36,7 @@ here is photo of the result:
 <p style="font-family: times, serif; font-size:11pt; font-style:italic">
  Here i have implemented the Z buffer algorithem here are some results compering of color buffer without z buffer,
  colored with Z buffer and gray scale.
- For each example Left with z_buffer Right without:
+ For each example Left with z_buffer Right without so we can clearly see that no more overlap problem:
 </p>
 
 ![bet](rabitt.png "bet")
@@ -45,10 +45,10 @@ here is photo of the result:
 
 
 <p style="font-family: times, serif; font-size:11pt; font-style:italic">
-  Some results with grey color:
+  Some results with grey color and colored:
 </p>
 
-![bet](ZGRAY.png "bet")
+![bet](cowg.png "bet")
 
-![bet](GRAYBUFFER.png "bet")
+![bet](rg1.png "bet")
 
