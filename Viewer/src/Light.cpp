@@ -16,15 +16,15 @@ glm::vec3 Light::GetSpecular() const
 
 void Light::SetAmbient(glm::vec3 ambient)
 {
-	this->ambient= ambient;
+	this->ambient = ambient;
 }
 
 void Light::SetDiffuse(glm::vec3 diffuse)
 {
-	this->diffuse= diffuse;
+	this->diffuse = diffuse;
 }
 
 void Light::SetSpecular(glm::vec3 specular)
 {
-	this->specular= specular;
+	this->specular = specular;
 }
