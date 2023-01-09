@@ -452,7 +452,7 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 void Renderer::edgewalking(std::vector<glm::vec3>triangle,Light l,MeshModel::material m)
 {
 	
-   // glm::vec3 color=glm::normalize(l.ge)
+    glm::vec3 color = glm::vec3((float)std::rand()/RAND_MAX, (float)std::rand() / RAND_MAX, (float)std::rand() / RAND_MAX);
 	std::sort(triangle.begin(),triangle.end(),compare());
 	if (fabs(triangle[1].y-triangle[2].y)<DBL_EPSILON)
 		addlines(triangle, 1,color);
@@ -588,7 +588,7 @@ void Renderer::Render(const Scene& scene)
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
 		alltri.push_back(tri);
 		//draw triangle;
-     	edgewalking(tri);
+     	edgewalking(tri,l,matiral);
 		
 
 		
