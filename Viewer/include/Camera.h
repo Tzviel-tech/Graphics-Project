@@ -31,7 +31,10 @@ public:
 	glm::vec3 rotate = glm::vec3(0.0f);
 	float windowsheight;
 	float windowswidth;
-
+	glm::vec3 GetCameraEye()
+	{
+		return glm::vec3(a, b, c);
+	}
 	//world running pramaters
 	float scalexW = 1;
 	glm::vec3 transW = glm::vec3(0.0f);

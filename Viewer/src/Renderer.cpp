@@ -449,10 +449,33 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 
 	return;
 }
-void Renderer::edgewalking(std::vector<glm::vec3>triangle,Light l,MeshModel::material m)
+void Renderer::edgewalking(std::vector<glm::vec3>triangle,glm::vec3 facenormal,Scene s)
 {
+	facenormal = glm::normalize(facenormal);
+	MeshModel::material m = s.GetActiveModel().m;
+	Light l = s.GetLight(0);
+	MeshModel model = s.GetActiveModel();
+
+	// Ambient:
+	glm::vec3 color1 = glm::vec3(1.f, 0.25f, 0.33f);
+	glm::vec3 ambient = m.ambient_*l.GetAmbient()*color1;
+
+	//Diffuse:
+	glm::vec3 diffuseStrength = m.diffuse_;
+	glm::vec3 lightDir = glm::normalize(s.GetLight(0).position - triangle[0]);
 	
-    glm::vec3 color = glm::vec3((float)std::rand()/RAND_MAX, (float)std::rand() / RAND_MAX, (float)std::rand() / RAND_MAX);
+	float diff = fmax(glm::dot(facenormal, lightDir), 0.0);
+
+	glm::vec3 diffuse = diffuseStrength * diff * color1;
+	//Specular:
+	glm::vec3 specularStrength = m.specular_;
+	glm::vec3 viewDir = glm::normalize(s.GetActiveCamera().GetCameraEye() - triangle[0]);
+	glm::vec3 reflectDir = glm::reflect(-lightDir, facenormal);
+	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 64);
+	glm::vec3 specular = specularStrength * spec * color1;
+	glm::vec3 color =ambient+diffuse+specular;
+	
+    
 	std::sort(triangle.begin(),triangle.end(),compare());
 	if (fabs(triangle[1].y-triangle[2].y)<DBL_EPSILON)
 		addlines(triangle, 1,color);
@@ -491,7 +514,15 @@ void Renderer::Render(const Scene& scene)
 	 minz = 1000000;
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
-	
+	float r = 60.f;
+	float a = 50.f;
+	for (int i = 0;i <1000;i++)
+	{
+		ChangePoints(scene.GetLight(0).position, glm::vec3(scene.GetLight(0).position.x + r * sin((360 * i) / a), 
+			scene.GetLight(0).position.y + r * cos((360 * i) / a),1.f), glm::ivec3(1, 1,1));
+
+
+	}
 	glm::vec4 viewportvec(half_width, half_height, 0, 0);
 	glm::vec4 normalx, normaly, normalz,facenormal;
 	glm::vec3 y1(half_width, viewport_height, 0), y2(half_width, 0, 0), x1(0, half_height, 0), x2(viewport_width, half_height, 0);
@@ -588,7 +619,7 @@ void Renderer::Render(const Scene& scene)
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
 		alltri.push_back(tri);
 		//draw triangle;
-     	edgewalking(tri,l,matiral);
+     	edgewalking(tri,normalx,scene);
 		
 
 		

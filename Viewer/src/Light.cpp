@@ -9,6 +9,7 @@ glm::vec3 Light::GetDiffuse() const
 	return diffuse;
 }
 
+
 glm::vec3 Light::GetSpecular() const
 {
 	return specular;

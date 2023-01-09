@@ -17,11 +17,14 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-
+float lightx;
+float lightz;
+float lighty;
 bool normals;
 bool box;
 bool wbox;
 bool rec;
+bool addlight = false;
 static float nornalscale;
 static float cleft = 1;
 static float cright = 1;
@@ -109,6 +112,7 @@ int main(int argc, char** argv)
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	shared_ptr<Camera>c(new Camera());
 	shared_ptr<Light>l(new Light());
+	Light n;
 	Scene scene = Scene();
 	scene.AddModel(model);
 	scene.AddCamera(c);
@@ -126,6 +130,7 @@ int main(int argc, char** argv)
 		DrawImguiMenus(io, scene);
 		c->windowsheight = windowHeight;
 		c->windowswidth = windowWidth;
+		scene.GetLight(0).position = glm::vec3(lightx, lighty, lightz);
 		renderer.drawnormals = normals;
 		renderer.drawboundingboxlocal = box;
 		renderer.drawboundingboxworld = wbox;
@@ -431,6 +436,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("bounding_boxworld", &wbox);
 	ImGui::Checkbox("rectangle", &rec);
 	ImGui::Checkbox("Show grey Z:", &Z_buff);
+	ImGui::Checkbox("change light pos:", &addlight);
 	if (ImGui::Button("Reset all to zero"))  
 	{
 		model.rotate.x = 0;
@@ -547,8 +553,20 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::End();
 			}
 	//	}
-	
-	
+			if (addlight)
+			{
+
+				ImGui::Begin("add light source");
+				
+				ImGui::SliderFloat("translate x asix", &lightx, 0, 1000);
+				ImGui::SliderFloat("translate y asix", &lighty, 0, 1000);
+				ImGui::SliderFloat("translate z asix", &lightz, 0, 1000);
+			
+
+				ImGui::End();
+			}
+			
+
 	
 	ImGui::End();
 }
