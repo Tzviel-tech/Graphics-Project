@@ -561,7 +561,23 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::SliderFloat("translate x asix", &lightx, 0, 1000);
 				ImGui::SliderFloat("translate y asix", &lighty, 0, 1000);
 				ImGui::SliderFloat("translate z asix", &lightz, 0, 1000);
-			
+				Light& l = scene.GetLight(0);
+				ImGui::Text("Ambient RBG:");
+				ImGui::SliderFloat("R A", &l.GetAmbient().x, 0, 1);
+				ImGui::SliderFloat("B A", &l.GetAmbient().y, 0, 1);
+				ImGui::SliderFloat("G A", &l.GetAmbient().z, 0, 1);
+				ImGui::Text("Diffuse RBG:");
+				ImGui::SliderFloat("R D", &l.GetDiffuse().x, 0, 1);
+				ImGui::SliderFloat("B D", &l.GetDiffuse().y, 0, 1);
+				ImGui::SliderFloat("G D", &l.GetDiffuse().z, 0, 1);
+				ImGui::Text("Specular RBG:");
+				ImGui::SliderFloat("R S", &l.GetSpecular().x, 0, 1);
+				ImGui::SliderFloat("B S", &l.GetSpecular().y, 0, 1);
+				ImGui::SliderFloat("G S", &l.GetSpecular().z, 0, 1);
+				ImGui::SliderFloat("Scale ambient", &l.Ascale, 0, 1);
+				ImGui::SliderFloat("Scale diffuse", &l.Dscale, 0, 1);
+				ImGui::SliderFloat("Scale specular", &l.Sscale, 0, 1);
+				
 
 				ImGui::End();
 			}

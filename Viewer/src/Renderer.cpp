@@ -451,6 +451,8 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 }
 void Renderer::edgewalking(std::vector<glm::vec3>triangle,glm::vec3 facenormal,Scene s)
 {
+	glm::vec3 c= triangle[0] + triangle[1] + triangle[2];
+	c /= 3.f;
 	facenormal = glm::normalize(facenormal);
 	MeshModel::material m = s.GetActiveModel().m;
 	Light l = s.GetLight(0);
@@ -462,18 +464,18 @@ void Renderer::edgewalking(std::vector<glm::vec3>triangle,glm::vec3 facenormal,S
 
 	//Diffuse:
 	glm::vec3 diffuseStrength = m.diffuse_;
-	glm::vec3 lightDir = glm::normalize(s.GetLight(0).position - triangle[0]);
+	glm::vec3 lightDir = glm::normalize(s.GetLight(0).position - c);
 	
 	float diff = fmax(glm::dot(facenormal, lightDir), 0.0);
 
 	glm::vec3 diffuse = diffuseStrength * diff * color1;
 	//Specular:
 	glm::vec3 specularStrength = m.specular_;
-	glm::vec3 viewDir = glm::normalize(s.GetActiveCamera().GetCameraEye() - triangle[0]);
+	glm::vec3 viewDir = glm::normalize(s.GetActiveCamera().GetCameraEye() - triangle[1]);
 	glm::vec3 reflectDir = glm::reflect(-lightDir, facenormal);
 	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 64);
 	glm::vec3 specular = specularStrength * spec * color1;
-	glm::vec3 color =ambient+diffuse+specular;
+	glm::vec3 color =l.Ascale*ambient+ l.Dscale *diffuse+ l.Sscale*specular;
 	
     
 	std::sort(triangle.begin(),triangle.end(),compare());

@@ -1,16 +1,16 @@
 #include "Light.h"
-glm::vec3 Light::GetAmbient() const
+glm::vec3& Light::GetAmbient() 
 {
 	return ambient;
 }
 
-glm::vec3 Light::GetDiffuse() const
+glm::vec3 &Light::GetDiffuse() 
 {
 	return diffuse;
 }
 
 
-glm::vec3 Light::GetSpecular() const
+glm::vec3 &Light::GetSpecular() 
 {
 	return specular;
 }
