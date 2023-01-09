@@ -17,6 +17,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+
 bool normals;
 bool box;
 bool wbox;

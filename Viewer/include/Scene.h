@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <memory>
-
+#include "Light.h"
 #include "Camera.h"
 #include "MeshModel.h"
 
