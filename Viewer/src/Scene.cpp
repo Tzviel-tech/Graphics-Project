@@ -8,7 +8,14 @@ Scene::Scene() :
 {
 
 }
-
+void Scene::AddLight(const std::shared_ptr<Light>& l)
+{
+	lights.push_back(l);
+}
+Light& Scene::GetLight(int index) const
+{
+	return *lights[index];
+}
 void Scene::AddModel(const std::shared_ptr<MeshModel>& mesh_model)
 {
 	mesh_models.push_back(mesh_model);

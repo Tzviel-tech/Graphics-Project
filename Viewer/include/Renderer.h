@@ -22,7 +22,7 @@ public:
 	float scalenormal;
 	void drawtrianglebox(std::vector<glm::vec3>triangle, glm::vec3 color);
 	void checkminmax(glm::vec4& vertices);
-	void edgewalking(std::vector<glm::vec3>triangle);
+	void edgewalking(std::vector<glm::vec3>triangle,Light l,MeshModel::material m);
 	float grey = 1;
 	void addlines(std::vector<glm::vec3>triangle, int flag,glm::vec3 color);
 private:

@@ -449,9 +449,10 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 
 	return;
 }
-void Renderer::edgewalking(std::vector<glm::vec3>triangle)
+void Renderer::edgewalking(std::vector<glm::vec3>triangle,Light l,MeshModel::material m)
 {
-    glm::vec3 color = glm::vec3((float)std::rand()/RAND_MAX, (float)std::rand() / RAND_MAX, (float)std::rand() / RAND_MAX);
+	
+   // glm::vec3 color=glm::normalize(l.ge)
 	std::sort(triangle.begin(),triangle.end(),compare());
 	if (fabs(triangle[1].y-triangle[2].y)<DBL_EPSILON)
 		addlines(triangle, 1,color);
@@ -501,6 +502,8 @@ void Renderer::Render(const Scene& scene)
 	camera.SetCameraLookAt(glm::vec3(camera.a, camera.b, camera.c), glm::vec3(0, 0,0), glm::vec3(0, 1, 0));
 	
 	MeshModel mod = scene.GetModel(0);
+	MeshModel::material matiral = mod.m;
+	Light l = scene.GetLight(0);
 	glm::mat4 matrix = mod.getTransform();
 	centerM = mod.center();
 	std::vector<glm::vec3>normals = mod.getNormals();

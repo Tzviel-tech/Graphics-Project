@@ -108,10 +108,12 @@ int main(int argc, char** argv)
 	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/bunny.obj");
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	shared_ptr<Camera>c(new Camera());
+	shared_ptr<Light>l(new Light());
 	Scene scene = Scene();
 	scene.AddModel(model);
 	scene.AddCamera(c);
 	scene.SetActiveCameraIndex(0);
+	scene.AddLight(l);
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
 	//std::cout << *model;

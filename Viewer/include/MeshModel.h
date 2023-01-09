@@ -67,6 +67,15 @@ public:
 	float maxY;
 	float maxZ;
 	float minZ;
+	
+	//matirial
+	struct material
+	{
+		glm::vec3 ambient_ = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 diffuse_ = glm::vec3(140.0f / 200.0f, 60.0f / 200.0f, 60.0f / 200.0f);
+		glm::vec3 specular_ = glm::vec3(1.0f, 1.0f, 1.0f);
+	};
+	material m;
 private:
 	glm::mat4 local=glm::mat4(1);
 	glm::mat4 world = glm::mat4(1);
