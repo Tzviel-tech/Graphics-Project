@@ -449,29 +449,30 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 
 	return;
 }
-void Renderer::edgewalking(std::vector<glm::vec3>triangle,glm::vec3 facenormal,Scene s)
+void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>noproj,std::vector<glm::vec3>triangle,glm::vec3 facenormal,Scene s)
 {
-	glm::vec3 c= triangle[0] + triangle[1] + triangle[2];
+	glm::vec3 c= noproj[0] + noproj[1] + noproj[2];
 	c /= 3.f;
-	facenormal = glm::normalize(facenormal);
+	facenormal = glm::normalize(nprojnor);
 	MeshModel::material m = s.GetActiveModel().m;
 	Light l = s.GetLight(0);
 	MeshModel model = s.GetActiveModel();
 
 	// Ambient:
-	glm::vec3 color1 = glm::vec3(1.f, 0.25f, 0.33f);
+	glm::vec3 color1 = glm::vec3(1.f, 1.0f, 1.0);
 	glm::vec3 ambient = m.ambient_*l.GetAmbient()*color1;
 
 	//Diffuse:
 	glm::vec3 diffuseStrength = m.diffuse_;
 	glm::vec3 lightDir = glm::normalize(s.GetLight(0).position - c);
+
 	
 	float diff = fmax(glm::dot(facenormal, lightDir), 0.0);
 
 	glm::vec3 diffuse = diffuseStrength * diff * color1;
 	//Specular:
 	glm::vec3 specularStrength = m.specular_;
-	glm::vec3 viewDir = glm::normalize(s.GetActiveCamera().GetCameraEye() - triangle[1]);
+	glm::vec3 viewDir = glm::normalize(glm::vec3(0,0,1.f) - c);
 	glm::vec3 reflectDir = glm::reflect(-lightDir, facenormal);
 	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 64);
 	glm::vec3 specular = specularStrength * spec * color1;
@@ -556,6 +557,11 @@ void Renderer::Render(const Scene& scene)
 		glm::vec4 p3 = glm::vec4(vec.at(c - 1), 1.f);
 		glm::vec4 centerF = p1 + p2 + p3;
 		mod.center();
+		glm::vec4 p1noproject = matrix * p1;
+		glm::vec4 p2noproject = matrix * p2;
+		glm::vec4 p3noproject = matrix * p3;
+		std::vector<glm::vec3>noproject{p1noproject,p2noproject,p3noproject};
+		
 
 		centerF.x /= 3;
 		centerF.y /= 3;
@@ -571,6 +577,7 @@ void Renderer::Render(const Scene& scene)
 			p1.y + scalenormal * (normalx.y - p1.y),
 			p1.z + scalenormal * (normalx.z - p1.z)), 1.f);
 		normalx.w = 1;
+		glm::vec3 nornoproj = matrix * normalx;
 		normalx = finaltran * normalx;
 		//face normal
 		normaly += centerF;
@@ -621,7 +628,7 @@ void Renderer::Render(const Scene& scene)
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
 		alltri.push_back(tri);
 		//draw triangle;
-     	edgewalking(tri,normalx,scene);
+     	edgewalking(nornoproj,noproject,tri,normalx,scene);
 		
 
 		
