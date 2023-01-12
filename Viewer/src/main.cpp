@@ -21,6 +21,7 @@ float lightx;
 float lightz;
 float lighty;
 bool normals;
+bool drawlight = false;
 bool box;
 bool wbox;
 bool rec;
@@ -137,6 +138,7 @@ int main(int argc, char** argv)
 		renderer.scalenormal = nornalscale;
 		renderer.rectangle = rec;
 		renderer.show_Z = Z_buff;
+		renderer.drawlightray = drawlight;
 		c->SetPTransform(cleft, cright, down, up, cnear, cfar);
 		RenderFrame(window, scene, renderer, io);
 		
@@ -437,6 +439,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("rectangle", &rec);
 	ImGui::Checkbox("Show grey Z:", &Z_buff);
 	ImGui::Checkbox("change light pos:", &addlight);
+	ImGui::Checkbox("drawlight rays", &drawlight);
 	if (ImGui::Button("Reset all to zero"))  
 	{
 		model.rotate.x = 0;

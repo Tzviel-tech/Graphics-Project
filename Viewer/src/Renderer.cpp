@@ -449,7 +449,7 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 
 	return;
 }
-void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>noproj,std::vector<glm::vec3>triangle,glm::vec3 facenormal,Scene s)
+void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>noproj,std::vector<glm::vec3>&triangle,glm::vec3 facenormal,Scene s,float& dif)
 {
 	glm::vec3 c= noproj[0] + noproj[1] + noproj[2];
 	c /= 3.f;
@@ -465,15 +465,17 @@ void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>noproj,std::
 	//Diffuse:
 	glm::vec3 diffuseStrength = m.diffuse_;
 	glm::vec3 lightDir = glm::normalize(s.GetLight(0).position - c);
-
+	triangle.push_back(lightDir);
 	
 	float diff = fmax(glm::dot(facenormal, lightDir), 0.0);
-
+	dif = diff;
 	glm::vec3 diffuse = diffuseStrength * diff * color1;
 	//Specular:
 	glm::vec3 specularStrength = m.specular_;
 	glm::vec3 viewDir = glm::normalize(glm::vec3(0,0,1.f) - c);
 	glm::vec3 reflectDir = glm::reflect(-lightDir, facenormal);
+	triangle.push_back(reflectDir);
+
 	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 64);
 	glm::vec3 specular = specularStrength * spec * color1;
 	glm::vec3 color =l.Ascale*ambient+ l.Dscale *diffuse+ l.Sscale*specular;
@@ -572,6 +574,7 @@ void Renderer::Render(const Scene& scene)
 		normaly = glm::vec4(glm::cross(vec[b - 1] - vec[a - 1], vec[c - 1] - vec[a - 1]), 1.f);
 		normalx += p1;
 		glm::normalize(normalx);
+		glm::vec4 centerf = centerF;
 		//scale normal while keep his direction
 		normalx = glm::vec4(glm::vec3(p1.x + scalenormal * (normalx.x - p1.x),
 			p1.y + scalenormal * (normalx.y - p1.y),
@@ -625,19 +628,44 @@ void Renderer::Render(const Scene& scene)
 		checkminmax(p1);
 		checkminmax(p2);
 		checkminmax(p3);
+		float dif;
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
 		alltri.push_back(tri);
 		//draw triangle;
-     	edgewalking(nornoproj,noproject,tri,normalx,scene);
-		
+     	edgewalking(nornoproj,noproject,tri,normalx,scene,dif);
 
+		glm::vec4 lightdir = glm::vec4(tri[3], 1.f);
+		glm::vec4 reflectlight = glm::vec4(tri[4], 1.f);
+		lightdir += centerf;
+		reflectlight += centerf;
 		
+		lightdir= glm::vec4(glm::vec3(centerf.x + scalenormal * (lightdir.x - centerf.x),
+			centerf.y + scalenormal * (lightdir.y - centerf.y),
+			centerf.z + scalenormal * (lightdir.z - centerf.z)), 1.f);
+
+		reflectlight = glm::vec4(glm::vec3(centerf.x + scalenormal * (reflectlight.x - centerf.x),
+			centerf.y + scalenormal * (reflectlight.y - centerf.y),
+			centerf.z + scalenormal * (reflectlight.z - centerf.z)), 1.f);
+		reflectlight = finaltran * reflectlight;
+		lightdir = finaltran * lightdir;
+		lightdir /= lightdir.w;
+		reflectlight /= reflectlight.w;
+		reflectlight.x = (reflectlight.x * half_width) + half_width;
+		reflectlight.y = (reflectlight.y * half_height) + half_height;
+		lightdir.x = (lightdir.x * half_width) + half_width;
+		lightdir.y = (lightdir.y * half_height) + half_height;
+
 
 		//draw normals
 		if (drawnormals)
 		{
 		  ChangePoints(p1, normalx, glm::vec3(1, 1, 0));
 	      ChangePoints(centerF, normaly, glm::vec3(0, 0, 1));
+		}
+		if (drawlightray&&dif!=0.0)
+		{
+			ChangePoints(centerF, lightdir, glm::vec3(1, 1, 0));
+			ChangePoints(centerF, reflectlight, glm::vec3(0, 0, 1));
 		}
 	
 	

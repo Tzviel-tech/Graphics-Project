@@ -20,9 +20,10 @@ public:
 	bool rectangle = false;
 	bool show_Z = false;
 	float scalenormal;
+	bool drawlightray;
 	void drawtrianglebox(std::vector<glm::vec3>triangle, glm::vec3 color);
 	void checkminmax(glm::vec4& vertices);
-	void edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>noproj,std::vector<glm::vec3>triangle,glm::vec3 facenormal,Scene  scene);
+	void edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>noproj,std::vector<glm::vec3>&triangle,glm::vec3 facenormal,Scene  scene,float& dif);
 	float grey = 1;
 	void addlines(std::vector<glm::vec3>triangle, int flag,glm::vec3 color);
 private:
