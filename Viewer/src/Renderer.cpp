@@ -538,6 +538,10 @@ void Renderer::Shadetriangle(std::vector<glm::vec3>& tri, Scene& scene, glm::vec
 	glm::vec3 v1 = tri[0];
 	glm::vec3 v2 = tri[1];
 	glm::vec3 v3 = tri[2];
+	int maxX = fmax(v1.x, fmax(v2.x, v3.x));
+	int minX = fmin(v1.x, fmin(v2.x, v3.x));
+	int maxY = fmax(v1.y, fmax(v2.y, v3.y));
+	int minY = fmin(v1.y, fmin(v2.y, v3.y));
 	float deltax = v2.x - v1.x;
 	float deltay = v2.y - v1.y;
 	float deltaz = v2.z - v1.z;
@@ -549,21 +553,18 @@ void Renderer::Shadetriangle(std::vector<glm::vec3>& tri, Scene& scene, glm::vec
 	float c = deltax * deltay2 - deltay * deltax1;
 	float d = (-a * v1.x - b * v1.y - c * v1.z);
 	float z;
-	int maxX = fmax(v1.x, fmax(v2.x, v3.x));
-	int minX = fmin(v1.x, fmin(v2.x, v3.x));
-	int maxY = fmax(v1.y, fmax(v2.y, v3.y));
-	int minY = fmin(v1.y, fmin(v2.y, v3.y));
-	glm::vec2 vs1 = glm::vec2(v2.x - v1.x, v2.y - v1.y);
-	glm::vec2 vs2 = glm::vec2(v3.x - v1.x, v3.y - v1.y);
+	
+	glm::vec2 vv1 = glm::vec2(v2.x - v1.x, v2.y - v1.y);
+	glm::vec2 vv2 = glm::vec2(v3.x - v1.x, v3.y - v1.y);
 	for (int x = minX; x <= maxX; x++)
 	{
 		for (int y = minY; y <= maxY; y++)
 		{
-			//check point inside triangle
+			//check point inside triangle used (det(v,v1)-det(v0,v1))/det(v1,v2) when det==ux*vy-uy*vx
 			glm::vec2 q = glm::vec2(x - v1.x, y - v1.y);
-			float s = (q.x * vs2.y - q.y * vs2.x) / (vs1.x * vs2.y - vs1.y * vs2.x);
-			float t = (vs1.x * q.y - vs1.y * q.x) / (vs1.x * vs2.y - vs1.y * vs2.x);
-			if ((s >= 0) && (t >= 0) && (s + t <= 1))
+			float aa = (q.x * vv2.y - q.y * vv2.x) / (vv1.x * vv2.y - vv1.y * vv2.x);
+			float bb = (vv1.x * q.y - vv1.y * q.x) / (vv1.x * vv2.y - vv1.y * vv2.x);
+			if ((aa >= 0) && (bb >= 0) && (aa + bb <= 1))
 			{
 				//find z by interpolation 
 				float a1 = trianglearea(tri[1].x, tri[1].y, tri[2].x, tri[2].y, x, y);
