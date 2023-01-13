@@ -24,6 +24,7 @@ public:
 	void drawtrianglebox(std::vector<glm::vec3>triangle, glm::vec3 color);
 	void checkminmax(glm::vec4& vertices);
 	void edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std::vector<glm::vec3>&triangle,glm::vec3 facenormal,Scene  scene,float& dif);
+	void Shadetriangle(std::vector<glm::vec3>& vertexPositions, Scene& scene, glm::vec3 lightPoint, std::vector <glm::vec3> Normals);
 	float grey = 1;
 	void addlines(std::vector<glm::vec3>triangle, int flag,glm::vec3 color);
 private:
@@ -66,5 +67,6 @@ glm::vec3 Color(glm::vec3 nprojnor,glm::vec3 point, std::vector<glm::vec3>& tria
 	int viewport_width;
 	int viewport_height;
 	GLuint gl_screen_tex;
+	glm::vec3 weight;
 	GLuint gl_screen_vtc;
 };

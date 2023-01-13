@@ -71,6 +71,7 @@ void Renderer::PutPixel(int i, int j,int z, const glm::vec3& color)
 	 float area = (X0 * (Y1 - Y2) + X1 * (Y2 - Y0) + X2 * (Y0 - Y1)) / 2.0;
 	 return (area > 0.0) ? area : -area;
  }
+ 
 
 void Renderer::DrawLine(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color, int flag)
 {
@@ -460,14 +461,15 @@ glm::vec3 Renderer:: normalInter(std::vector<glm::vec3>& Normals, std::vector<gl
 	float A1 = trianglearea(Pos.at(1).x, Pos.at(1).y, Pos.at(2).x, Pos.at(2).y, px, py);
 
 	float A = A1 + A2 + A3;
-		glm::vec3 Normal = (A1 / A * Normals.at(0) + A2 / A * Normals.at(1) + A3 / A * Normals.at(2));
+	weight = glm::vec3(A1 / A, A2 / A, A3 / A);
+		glm::vec3 Normal = (A1 / A)* Normals.at(0) + (A2 / A) * Normals.at(1) +(A3 /A) * Normals.at(2);
 	return Normal;
 }
 glm::vec3 Renderer::Color(glm::vec3 nprojnor, glm::vec3 point, std::vector<glm::vec3>& triangle, glm::vec3 facenormal, Scene s)
 
 {
 	glm::vec3 c = point;
-	
+	glm::normalize(point);
 	facenormal = glm::normalize(nprojnor);
 	MeshModel::material &m = s.GetActiveModel().m;
 	Light &l = s.GetLight(0);
@@ -479,19 +481,19 @@ glm::vec3 Renderer::Color(glm::vec3 nprojnor, glm::vec3 point, std::vector<glm::
 
 	//Diffuse:
 	glm::vec3 diffuseStrength = m.diffuse_;
-	glm::vec3 lightDir = glm::normalize(l.position- c);
+	glm::vec3 lightDir = glm::normalize(l.position-c);
 	
 
 	float diff = fmax(glm::dot(facenormal, lightDir), 0.0);
 	
 	glm::vec3 diffuse = diffuseStrength * diff * color1;
-	Specular:
-glm::vec3 specularStrength = m.specular_;
+	//Specular:
+    glm::vec3 specularStrength = m.specular_;
 	glm::vec3 viewDir = glm::normalize(glm::vec3(0,0,1) - c);
-	glm::vec3 reflectDir = glm::reflect(-lightDir, facenormal);
+	glm::vec3 reflectDir = glm::normalize(glm::reflect(-lightDir, facenormal));
 
 
-	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 32);
+	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 2);
 	glm::vec3 specular = specularStrength * spec * color1;
 	glm::vec3 color = l.Ascale * ambient + l.Dscale * diffuse + l.Sscale * specular;
 
@@ -531,6 +533,62 @@ void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std:
 	ChangePointsZ(triangle[2], triangle[1],color, triangle);
 
 }
+void Renderer::Shadetriangle(std::vector<glm::vec3>& tri, Scene& scene, glm::vec3 lightPoint, std::vector <glm::vec3> Normals)
+{
+	glm::vec3 v1 = tri[0];
+	glm::vec3 v2 = tri[1];
+	glm::vec3 v3 = tri[2];
+	float deltax = v2.x - v1.x;
+	float deltay = v2.y - v1.y;
+	float deltaz = v2.z - v1.z;
+	float deltax1 = v3.x - v1.x;
+	float deltay2 = v3.y - v1.y;
+	float deltaz2 = v3.z - v1.z;
+	float a = deltay * deltaz2 - deltay2 * deltaz;
+	float b = deltax1 * deltaz - deltax * deltaz2;
+	float c = deltax * deltay2 - deltay * deltax1;
+	float d = (-a * v1.x - b * v1.y - c * v1.z);
+	float z;
+	int maxX = fmax(v1.x, fmax(v2.x, v3.x));
+	int minX = fmin(v1.x, fmin(v2.x, v3.x));
+	int maxY = fmax(v1.y, fmax(v2.y, v3.y));
+	int minY = fmin(v1.y, fmin(v2.y, v3.y));
+	glm::vec2 vs1 = glm::vec2(v2.x - v1.x, v2.y - v1.y);
+	glm::vec2 vs2 = glm::vec2(v3.x - v1.x, v3.y - v1.y);
+	for (int x = minX; x <= maxX; x++)
+	{
+		for (int y = minY; y <= maxY; y++)
+		{
+			//check point inside triangle
+			glm::vec2 q = glm::vec2(x - v1.x, y - v1.y);
+			float s = (q.x * vs2.y - q.y * vs2.x) / (vs1.x * vs2.y - vs1.y * vs2.x);
+			float t = (vs1.x * q.y - vs1.y * q.x) / (vs1.x * vs2.y - vs1.y * vs2.x);
+			if ((s >= 0) && (t >= 0) && (s + t <= 1))
+			{
+				//find z by interpolation 
+				float a1 = trianglearea(tri[1].x, tri[1].y, tri[2].x, tri[2].y, x, y);
+				float a2 = trianglearea(tri[0].x, tri[0].y, tri[2].x, tri[2].y, x, y);
+				float a3 = trianglearea(tri[1].x, tri[1].y, tri[0].x, tri[0].y, x, y);
+				if (x > 0 && y > 0 && y < viewport_height && x < viewport_width)
+				{
+					z= calcZ(a1, a2, a3, tri[0].z, tri[1].z, tri[2].z);
+					if (z >= z_buffer[INDEX(viewport_width, x, y, 0)])
+					{
+						z_buffer[INDEX(viewport_width, x, y, 0)] = z;
+						z_buffer[INDEX(viewport_width, x, y, 1)] = z;
+						z_buffer[INDEX(viewport_width, x, y, 2)] = z;
+						glm::vec3 Normal = glm::normalize(normalInter(Normals, tri, x, y));
+						glm::vec3 color = Color(Normal, glm::vec3(x, y, z),tri,Normal,curs);
+						PutPixel(x, y,1.f, color);
+
+					}
+
+
+				}
+			}
+		}
+	}
+}
 void Renderer::Render( Scene& scene)
 {
 	
@@ -552,7 +610,7 @@ void Renderer::Render( Scene& scene)
 	Camera camera = s.GetCamera(0);
 	camera.SetCameraLookAt(glm::vec3(camera.a, camera.b, camera.c), glm::vec3(0, 0,0), glm::vec3(0, 1, 0));
 	
-	MeshModel mod = scene.GetModel(0);
+	MeshModel &mod = scene.GetModel(0);
 	MeshModel::material matiral = mod.m;
 	Light &l = scene.GetLight(0);
 	glm::mat4 matrix = mod.getTransform();
@@ -572,25 +630,24 @@ void Renderer::Render( Scene& scene)
 		glm::vec4 p1 = glm::vec4(vec.at(a - 1), 1.f);
 		glm::vec4 p2 = glm::vec4(vec.at(b - 1), 1.f);
 		glm::vec4 p3 = glm::vec4(vec.at(c - 1), 1.f);
-		int a1 = mod.GetFace(i).GetNormalIndex(0);
+		int a11 = mod.GetFace(i).GetNormalIndex(0);
 		int b1 = mod.GetFace(i).GetNormalIndex(1);
 		int c1 = mod.GetFace(i).GetNormalIndex(2);
-		glm::vec4 p1n = glm::vec4(normals.at(a1-1),1.f);
+		glm::vec4 p1n = glm::vec4(normals.at(a11-1),1.f);
 		glm::vec4 p2n = glm::vec4(normals.at(b1 - 1), 1.f);
 		glm::vec4 p3n = glm::vec4(normals.at(c1 - 1), 1.f);
-		p1n = p1n * finaltran;
-		p2n = p2n * finaltran;
-		p3n = p3n * finaltran;
+		glm::mat4 k = glm::transpose(glm::inverse(matrix));
+		p1n = k *p1n;
+		p2n = k*p2n;
+		p3n = k*p3n ;
 		p1n /= p1n.w;
 		p2n /= p2n.w;
 		p2n /= p2n.w;
-		p1n.x = (p1n.x * half_width) + half_width;
-		p1n.y = (p1n.y * half_height) + half_height;
-		p2n.x = (p2n.x * half_width) + half_width;
-		p2n.y = (p2n.y * half_height) + half_height;
-		p3n.x = (p3n.x * half_width) + half_width;
-		p3n.y = (p3n.y * half_height) + half_height;
-		norn = { p1n,p2n,p3n };
+		
+		glm::normalize(p1n);
+		glm::normalize(p2n);
+		glm::normalize(p3n);
+		
 		curs = scene;
 
 
@@ -629,9 +686,9 @@ void Renderer::Render( Scene& scene)
 		glm::normalize(normalx);
 		glm::vec4 centerf = centerF;
 		//scale normal while keep his direction
-		normalx = glm::vec4(glm::vec3(p1.x + scalenormal * (normalx.x - p1.x),
+	/*	normalx = glm::vec4(glm::vec3(p1.x + scalenormal * (normalx.x - p1.x),
 			p1.y + scalenormal * (normalx.y - p1.y),
-			p1.z + scalenormal * (normalx.z - p1.z)), 1.f);
+			p1.z + scalenormal * (normalx.z - p1.z)), 1.f);*/
 		normalx.w = 1;
 		glm::vec3 nornoproj = matrix * normalx;
 		normalx = finaltran * normalx;
@@ -675,7 +732,7 @@ void Renderer::Render( Scene& scene)
 		p2.y = p2.y * half_height + half_height;
 		p3.x = p3.x * half_width + half_width;
 		p3.y = p3.y * half_height + half_height;
-		
+		norn = { p1n,p2n,p3n };
 		centerF.x = (centerF.x * half_width) + half_width;
 		centerF.y = (centerF.y * half_height) + half_height;
 		checkminmax(p1);
@@ -685,7 +742,8 @@ void Renderer::Render( Scene& scene)
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
 		alltri.push_back(tri);
 		//draw triangle;
-     	edgewalking(normalx,tri,tri,normalx,scene,dif);
+     //	edgewalking(normalx,tri,tri,normalx,scene,dif);
+		Shadetriangle(tri, curs, l.position, norn);
 		l.position = save;
 		/*glm::vec4 lightdir = glm::vec4(tri[3], 1.f);
 		glm::vec4 reflectlight = glm::vec4(tri[4], 1.f);
