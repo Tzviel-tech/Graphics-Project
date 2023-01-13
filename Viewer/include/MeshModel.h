@@ -74,7 +74,7 @@ public:
 		
 		glm::vec3 ambient_ = glm::vec3(0.35f,0.35f,0.35f);
 		glm::vec3 diffuse_ = glm::vec3(0.5f,0.4f,0.4f);
-		glm::vec3 specular_ = glm::vec3(0.5f,0.4f,0.4f);
+		glm::vec3 specular_ = glm::vec3(1.f,0.5f,0.5f);
 	};
 	material m;
 private:

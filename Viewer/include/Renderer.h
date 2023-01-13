@@ -9,7 +9,7 @@ class Renderer
 public:
 	Renderer(int viewportWidth, int viewportHeight);
 	virtual ~Renderer();
-	void Render(const Scene&scene);
+	void Render( Scene&scene);
 	void SwapBuffers();
 	void ClearColorBuffer(const glm::vec3& color);
 	int GetViewportWidth() const;
@@ -37,7 +37,8 @@ public:
 		return p1.y > p2.y;
 	}
 };
-glm::vec3 Color(glm::vec3 nprojnor, std::vector<glm::vec3>&noproj, std::vector<glm::vec3>& triangle, glm::vec3 facenormal, Scene s);
+glm::vec3 normalInter(std::vector<glm::vec3>& Normals, std::vector<glm::vec3>& Pos, float px, float py);
+glm::vec3 Color(glm::vec3 nprojnor,glm::vec3 point, std::vector<glm::vec3>& triangle, glm::vec3 facenormal, Scene s);
 	void PutPixel(const int i, const int j,const int z, const glm::vec3& color);
 	void DrawLine(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color, int flag);
 	void ChangePoints(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color);
@@ -55,7 +56,11 @@ glm::vec3 Color(glm::vec3 nprojnor, std::vector<glm::vec3>&noproj, std::vector<g
 	float maxy = -1000000;
 	float maxz = -1000000;
 	float minz = 1000000;
-	
+	std::vector<glm::vec3>vernp;
+	std::vector<glm::vec3>norn;
+	std::vector<glm::vec3>temp;
+	glm::vec3 globalcutpoint;
+	Scene curs;
 	float* color_buffer;
 	float* z_buffer;
 	int viewport_width;

@@ -561,9 +561,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 				ImGui::Begin("add light source");
 				
-				ImGui::SliderFloat("translate x asix", &lightx, 0, 1000);
-				ImGui::SliderFloat("translate y asix", &lighty, 0, 1000);
-				ImGui::SliderFloat("translate z asix", &lightz, -1000, 1000);
+				ImGui::SliderFloat("translate x asix", &lightx, -1, 1);
+				ImGui::SliderFloat("translate y asix", &lighty, -1, 1);
+				ImGui::SliderFloat("translate z asix", &lightz, -1, 1);
 				Light& l = scene.GetLight(0);
 				ImGui::Text("Ambient RBG:");
 				ImGui::SliderFloat("R A", &l.GetAmbient().x, 0, 1);

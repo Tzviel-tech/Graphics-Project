@@ -221,8 +221,9 @@ void Renderer::DrawLineZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::
 			a2 = trianglearea(tri[0].x, tri[0].y, tri[2].x, tri[2].y, start_point, point_toadd);
 			a3 = trianglearea(tri[1].x, tri[1].y, tri[0].x, tri[0].y, start_point, point_toadd);
 			d = calcZ(a1, a2, a3, tri[0].z, tri[1].z, tri[2].z);
-			PutPixelZ(start_point, point_toadd, d, color);
-
+			glm::vec3 normal = normalInter(norn, tri, start_point, point_toadd);
+			PutPixelZ(start_point, point_toadd, d, Color(normal,glm::vec3(start_point,point_toadd,d), tri, normal, curs));
+			//PutPixelZ(start_point, point_toadd, d, color);
 		}
 		else
 		{
@@ -230,7 +231,10 @@ void Renderer::DrawLineZ(const glm::ivec3& p1, const glm::ivec3& p2, const glm::
 			a2 = trianglearea(tri[0].x, tri[0].y, tri[2].x, tri[2].y, point_toadd, start_point);
 			a3 = trianglearea(tri[1].x, tri[1].y, tri[0].x, tri[0].y, point_toadd, start_point);
 			d = calcZ(a1, a2, a3, tri[0].z, tri[1].z, tri[2].z);
-			PutPixelZ(point_toadd, start_point, d, color);
+			glm::vec3 normal = normalInter(norn, tri, point_toadd, start_point);
+			PutPixelZ(point_toadd, start_point, d, Color(normal,glm::vec3(point_toadd,start_point,d), tri, normal, curs));
+			//(point_toadd, start_point,d, color);
+		
 		}
 
 		e = e + 2 * delta_2;
@@ -449,15 +453,25 @@ void Renderer:: addlines(std::vector<glm::vec3>triangle,int flag,glm::vec3 color
 
 	return;
 }
-glm::vec3 Renderer::Color(glm::vec3 nprojnor, std::vector<glm::vec3>&noproj, std::vector<glm::vec3>& triangle, glm::vec3 facenormal, Scene s)
+glm::vec3 Renderer:: normalInter(std::vector<glm::vec3>& Normals, std::vector<glm::vec3>& Pos, float px, float py)
+{
+	float A3 = trianglearea(Pos.at(0).x, Pos.at(0).y, Pos.at(1).x, Pos.at(1).y, px, py);
+	float A2 = trianglearea(Pos.at(0).x, Pos.at(0).y, Pos.at(2).x, Pos.at(2).y, px, py);
+	float A1 = trianglearea(Pos.at(1).x, Pos.at(1).y, Pos.at(2).x, Pos.at(2).y, px, py);
+
+	float A = A1 + A2 + A3;
+		glm::vec3 Normal = (A1 / A * Normals.at(0) + A2 / A * Normals.at(1) + A3 / A * Normals.at(2));
+	return Normal;
+}
+glm::vec3 Renderer::Color(glm::vec3 nprojnor, glm::vec3 point, std::vector<glm::vec3>& triangle, glm::vec3 facenormal, Scene s)
 
 {
-	glm::vec3 c = noproj[0] + noproj[1] + noproj[2];
-	c /= 3.f;
+	glm::vec3 c = point;
+	
 	facenormal = glm::normalize(nprojnor);
-	MeshModel::material m = s.GetActiveModel().m;
-	Light l = s.GetLight(0);
-	MeshModel model = s.GetActiveModel();
+	MeshModel::material &m = s.GetActiveModel().m;
+	Light &l = s.GetLight(0);
+	MeshModel& model = s.GetActiveModel();
 
 	// Ambient:
 	glm::vec3 color1 = glm::vec3(1.f, 1.0f, 1.0);
@@ -465,19 +479,19 @@ glm::vec3 Renderer::Color(glm::vec3 nprojnor, std::vector<glm::vec3>&noproj, std
 
 	//Diffuse:
 	glm::vec3 diffuseStrength = m.diffuse_;
-	glm::vec3 lightDir = glm::normalize(s.GetLight(0).position - c);
-	triangle.push_back(lightDir);
+	glm::vec3 lightDir = glm::normalize(l.position- c);
+	
 
 	float diff = fmax(glm::dot(facenormal, lightDir), 0.0);
 	
 	glm::vec3 diffuse = diffuseStrength * diff * color1;
-	//Specular:
-	glm::vec3 specularStrength = m.specular_;
-	glm::vec3 viewDir = glm::normalize(glm::vec3(0, 0, 1.f) - c);
+	Specular:
+glm::vec3 specularStrength = m.specular_;
+	glm::vec3 viewDir = glm::normalize(glm::vec3(0,0,1) - c);
 	glm::vec3 reflectDir = glm::reflect(-lightDir, facenormal);
-	triangle.push_back(reflectDir);
 
-	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 64);
+
+	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 32);
 	glm::vec3 specular = specularStrength * spec * color1;
 	glm::vec3 color = l.Ascale * ambient + l.Dscale * diffuse + l.Sscale * specular;
 
@@ -487,7 +501,7 @@ glm::vec3 Renderer::Color(glm::vec3 nprojnor, std::vector<glm::vec3>&noproj, std
 }
 void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std::vector<glm::vec3>&triangle,glm::vec3 facenormal,Scene s,float& dif)
 {
-	glm::vec3 color = Color(nprojnor, noproj, triangle, facenormal, s);
+	glm::vec3 color = Color(nprojnor,triangle[0], triangle, facenormal, s);
 	std::sort(triangle.begin(),triangle.end(),compare());
 	if (fabs(triangle[1].y-triangle[2].y)<DBL_EPSILON)
 		addlines(triangle, 1,color);
@@ -496,6 +510,7 @@ void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std:
 	else
 	{
 	glm::vec3 cutpoint;
+	
 	cutpoint.y = triangle[1].y;
 	cutpoint.x = triangle[0].x+(((triangle[1].y - triangle[0].y) / (triangle[2].y - triangle[0].y)) * (triangle[2].x - triangle[0].x));
 	float a1, a2, a3, d;
@@ -507,6 +522,7 @@ void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std:
 	std::vector<glm::vec3> tri1{ triangle[0],triangle[1],cutpoint};
 	std::vector<glm::vec3> tri2{ triangle[1],cutpoint,triangle[2]};
 	addlines(tri1, 1,color);
+
 	addlines(tri2, 0,color);
 	ChangePointsZ(triangle[1], cutpoint, color,triangle);
 	}
@@ -515,7 +531,7 @@ void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std:
 	ChangePointsZ(triangle[2], triangle[1],color, triangle);
 
 }
-void Renderer::Render(const Scene& scene)
+void Renderer::Render( Scene& scene)
 {
 	
 	 minx = 1000000;
@@ -526,27 +542,19 @@ void Renderer::Render(const Scene& scene)
 	 minz = 1000000;
 	int half_width = viewport_width / 2;
 	int half_height = viewport_height / 2;
-	float r = 60.f;
-	float a = 50.f;
-	for (int i = 0;i <1000;i++)
-	{
-		ChangePoints(scene.GetLight(0).position, glm::vec3(scene.GetLight(0).position.x + r * sin((360 * i) / a), 
-			scene.GetLight(0).position.y + r * cos((360 * i) / a),1.f), glm::ivec3(1, 1,1));
-
-
-	}
+	
 	glm::vec4 viewportvec(half_width, half_height, 0, 0);
 	glm::vec4 normalx, normaly, normalz,facenormal;
 	glm::vec3 y1(half_width, viewport_height, 0), y2(half_width, 0, 0), x1(0, half_height, 0), x2(viewport_width, half_height, 0);
 	ChangePoints(y1, y2, glm::vec3(0, 0, 0)), ChangePoints(x1, x2, glm::vec3(0, 0, 0));
 	glm::vec4 centerM;
-	Scene s = scene;
+	Scene &s = scene;
 	Camera camera = s.GetCamera(0);
 	camera.SetCameraLookAt(glm::vec3(camera.a, camera.b, camera.c), glm::vec3(0, 0,0), glm::vec3(0, 1, 0));
 	
 	MeshModel mod = scene.GetModel(0);
 	MeshModel::material matiral = mod.m;
-	Light l = scene.GetLight(0);
+	Light &l = scene.GetLight(0);
 	glm::mat4 matrix = mod.getTransform();
 	centerM = mod.center();
 	std::vector<glm::vec3>normals = mod.getNormals();
@@ -564,22 +572,60 @@ void Renderer::Render(const Scene& scene)
 		glm::vec4 p1 = glm::vec4(vec.at(a - 1), 1.f);
 		glm::vec4 p2 = glm::vec4(vec.at(b - 1), 1.f);
 		glm::vec4 p3 = glm::vec4(vec.at(c - 1), 1.f);
+		int a1 = mod.GetFace(i).GetNormalIndex(0);
+		int b1 = mod.GetFace(i).GetNormalIndex(1);
+		int c1 = mod.GetFace(i).GetNormalIndex(2);
+		glm::vec4 p1n = glm::vec4(normals.at(a1-1),1.f);
+		glm::vec4 p2n = glm::vec4(normals.at(b1 - 1), 1.f);
+		glm::vec4 p3n = glm::vec4(normals.at(c1 - 1), 1.f);
+		p1n = p1n * finaltran;
+		p2n = p2n * finaltran;
+		p3n = p3n * finaltran;
+		p1n /= p1n.w;
+		p2n /= p2n.w;
+		p2n /= p2n.w;
+		p1n.x = (p1n.x * half_width) + half_width;
+		p1n.y = (p1n.y * half_height) + half_height;
+		p2n.x = (p2n.x * half_width) + half_width;
+		p2n.y = (p2n.y * half_height) + half_height;
+		p3n.x = (p3n.x * half_width) + half_width;
+		p3n.y = (p3n.y * half_height) + half_height;
+		norn = { p1n,p2n,p3n };
+		curs = scene;
+
+
 		glm::vec4 centerF = p1 + p2 + p3;
 		mod.center();
 		glm::vec4 p1noproject = matrix * p1;
 		glm::vec4 p2noproject = matrix * p2;
 		glm::vec4 p3noproject = matrix * p3;
+
 		std::vector<glm::vec3>noproject{p1noproject,p2noproject,p3noproject};
 		
-
+		glm::vec4 templ = glm::vec4(l.position, 1.f);
+		glm::vec3 save = l.position;
+		templ = camera.GetProjectionTransformation() * camera.GetViewTransformation() * templ;
+		templ /= templ.w;
+		templ.x = (templ.x * half_width) + half_width;
+		templ.y = (templ.y * half_height) + half_height;
+		l.position = templ;
 		centerF.x /= 3;
 		centerF.y /= 3;
 		centerF.z /= 3;
 		centerF.w = 1;
 		//vertex normal
+		float r = 22.f;
+		float a22 = 50.f;
+		for (int i = 0;i < 1000;i++)
+		{
+			ChangePoints(templ, glm::vec3(templ.x + r * sin((360 * i) / a22),
+				templ.y + r * cos((360 * i) / a22), 1.f), glm::ivec3(1, 1, 1));
+
+
+		}
 		normalx = glm::vec4(glm::cross(vec[b - 1] - vec[a - 1], vec[c - 1] - vec[a - 1]), 1.f);
 		normaly = glm::vec4(glm::cross(vec[b - 1] - vec[a - 1], vec[c - 1] - vec[a - 1]), 1.f);
-		normalx += p1;
+		
 		glm::normalize(normalx);
 		glm::vec4 centerf = centerF;
 		//scale normal while keep his direction
@@ -607,7 +653,7 @@ void Renderer::Render(const Scene& scene)
 		p1 = finaltran * p1;
 		p2 = finaltran * p2;
 		p3 = finaltran * p3;
-
+		
 		p1 /= p1.w;
 		p2 /= p2.w;
 		p3 /= p3.w;
@@ -639,8 +685,8 @@ void Renderer::Render(const Scene& scene)
 		std::vector <glm::vec3>tri{ p1,p2,p3 };
 		alltri.push_back(tri);
 		//draw triangle;
-     	edgewalking(nornoproj,noproject,tri,normalx,scene,dif);
-
+     	edgewalking(normalx,tri,tri,normalx,scene,dif);
+		l.position = save;
 		/*glm::vec4 lightdir = glm::vec4(tri[3], 1.f);
 		glm::vec4 reflectlight = glm::vec4(tri[4], 1.f);
 		lightdir += centerf;

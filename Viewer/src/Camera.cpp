@@ -61,7 +61,7 @@ Camera::~Camera()
 void Camera:: SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up)
 {
 
-	view_transformation= getTransform()*glm::lookAt(eye, at, up);
+	view_transformation= glm::lookAt(eye, at, up);
 
 }
 void Camera::SetPTransform(float left, float right, float down, float up, float near, float far)
