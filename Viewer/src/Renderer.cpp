@@ -501,6 +501,32 @@ glm::vec3 Renderer::Color(glm::vec3 nprojnor, glm::vec3 point, std::vector<glm::
 
 	return color;
 }
+bool Renderer:: insidetri(std::vector<glm::vec3>& tri,int x,int y)
+{
+	glm::vec3 v1 = tri[0];
+	glm::vec3 v2 = tri[1];
+	glm::vec3 v3 = tri[2];
+	float deltax = v2.x - v1.x;
+	float deltay = v2.y - v1.y;
+	float deltaz = v2.z - v1.z;
+	float deltax1 = v3.x - v1.x;
+	float deltay2 = v3.y - v1.y;
+	float deltaz2 = v3.z - v1.z;
+	float a = deltay * deltaz2 - deltay2 * deltaz;
+	float b = deltax1 * deltaz - deltax * deltaz2;
+	float c = deltax * deltay2 - deltay * deltax1;
+	float d = (-a * v1.x - b * v1.y - c * v1.z);
+	
+
+	glm::vec2 vv1 = glm::vec2(v2.x - v1.x, v2.y - v1.y);
+	glm::vec2 vv2 = glm::vec2(v3.x - v1.x, v3.y - v1.y);
+	glm::vec2 m = glm::vec2(x - v1.x, y - v1.y);
+	float aa = (m.x * vv2.y - m.y * vv2.x) / (vv1.x * vv2.y - vv1.y * vv2.x);
+	float bb = (vv1.x * m.y - vv1.y * m.x) / (vv1.x * vv2.y - vv1.y * vv2.x);
+	if ((aa >= 0) && (bb >= 0) && (aa + bb <= 1))
+		return true;
+	return false;
+}
 void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std::vector<glm::vec3>&triangle,glm::vec3 facenormal,Scene s,float& dif)
 {
 	glm::vec3 color = Color(nprojnor,triangle[0], triangle, facenormal, s);
@@ -523,11 +549,18 @@ void Renderer::edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std:
 	cutpoint.z = d;
 	std::vector<glm::vec3> tri1{ triangle[0],triangle[1],cutpoint};
 	std::vector<glm::vec3> tri2{ triangle[1],cutpoint,triangle[2]};
+	glm::vec3 temp = norn[2];
+	std::vector<glm::vec3>copy = norn;
+	glm::vec3 newnormal = glm::normalize(normalInter(norn, triangle, cutpoint.x, cutpoint.y));
+	norn[2] = newnormal;
 	addlines(tri1, 1,color);
-
+	norn = { norn[1],newnormal,temp};
 	addlines(tri2, 0,color);
+	norn = copy;
 	ChangePointsZ(triangle[1], cutpoint, color,triangle);
+	norn = copy;
 	}
+	
 	ChangePointsZ(triangle[0], triangle[1], color, triangle);
 	ChangePointsZ(triangle[0], triangle[2],color, triangle);
 	ChangePointsZ(triangle[2], triangle[1],color, triangle);
@@ -542,29 +575,13 @@ void Renderer::Shadetriangle(std::vector<glm::vec3>& tri, Scene& scene, glm::vec
 	int minX = fmin(v1.x, fmin(v2.x, v3.x));
 	int maxY = fmax(v1.y, fmax(v2.y, v3.y));
 	int minY = fmin(v1.y, fmin(v2.y, v3.y));
-	float deltax = v2.x - v1.x;
-	float deltay = v2.y - v1.y;
-	float deltaz = v2.z - v1.z;
-	float deltax1 = v3.x - v1.x;
-	float deltay2 = v3.y - v1.y;
-	float deltaz2 = v3.z - v1.z;
-	float a = deltay * deltaz2 - deltay2 * deltaz;
-	float b = deltax1 * deltaz - deltax * deltaz2;
-	float c = deltax * deltay2 - deltay * deltax1;
-	float d = (-a * v1.x - b * v1.y - c * v1.z);
 	float z;
-	
-	glm::vec2 vv1 = glm::vec2(v2.x - v1.x, v2.y - v1.y);
-	glm::vec2 vv2 = glm::vec2(v3.x - v1.x, v3.y - v1.y);
 	for (int x = minX; x <= maxX; x++)
 	{
 		for (int y = minY; y <= maxY; y++)
 		{
 			//check point inside triangle used (det(v,v1)-det(v0,v1))/det(v1,v2) when det==ux*vy-uy*vx
-			glm::vec2 q = glm::vec2(x - v1.x, y - v1.y);
-			float aa = (q.x * vv2.y - q.y * vv2.x) / (vv1.x * vv2.y - vv1.y * vv2.x);
-			float bb = (vv1.x * q.y - vv1.y * q.x) / (vv1.x * vv2.y - vv1.y * vv2.x);
-			if ((aa >= 0) && (bb >= 0) && (aa + bb <= 1))
+			if (insidetri(tri, x, y))
 			{
 				//find z by interpolation 
 				float a1 = trianglearea(tri[1].x, tri[1].y, tri[2].x, tri[2].y, x, y);

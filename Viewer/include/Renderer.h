@@ -25,6 +25,7 @@ public:
 	void checkminmax(glm::vec4& vertices);
 	void edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std::vector<glm::vec3>&triangle,glm::vec3 facenormal,Scene  scene,float& dif);
 	void Shadetriangle(std::vector<glm::vec3>& vertexPositions, Scene& scene, glm::vec3 lightPoint, std::vector <glm::vec3> Normals);
+	bool insidetri(std::vector<glm::vec3>& tri, int x, int y);
 	float grey = 1;
 	void addlines(std::vector<glm::vec3>triangle, int flag,glm::vec3 color);
 private:
