@@ -493,7 +493,7 @@ glm::vec3 Renderer::Color(glm::vec3 nprojnor, glm::vec3 point, std::vector<glm::
 	glm::vec3 reflectDir = glm::normalize(glm::reflect(-lightDir, facenormal));
 
 
-	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 2);
+	float spec = pow(fmax(glm::dot(viewDir, reflectDir), 0.0), 32);
 	glm::vec3 specular = specularStrength * spec * color1;
 	glm::vec3 color = l.Ascale * ambient + l.Dscale * diffuse + l.Sscale * specular;
 

@@ -21,6 +21,7 @@ float lightx;
 float lightz;
 float lighty;
 bool normals;
+bool material = false;
 bool drawlight = false;
 bool box;
 bool wbox;
@@ -437,6 +438,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::Checkbox("bounding_boxlocal", &box);
 	ImGui::Checkbox("bounding_boxworld", &wbox);
 	ImGui::Checkbox("rectangle", &rec);
+	ImGui::Checkbox("change material", &material);
 	ImGui::Checkbox("Show grey Z:", &Z_buff);
 	ImGui::Checkbox("change light pos:", &addlight);
 	ImGui::Checkbox("drawlight rays", &drawlight);
@@ -475,6 +477,25 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			model.transW.z = 0;
 			model.scalexW = 1;
 		}
+		ImGui::End();
+	}
+	if (material)
+	{
+		ImGui::Begin("decide world transfom:");
+		ImGui::Text("Ambient RBG Material:");
+		ImGui::SliderFloat("R A", &model.m.ambient_.x, 0, 1);
+		ImGui::SliderFloat("B A", &model.m.ambient_.y, 0, 1);
+		ImGui::SliderFloat("G A", &model.m.ambient_.z, 0, 1);
+		ImGui::Text("Diffuse RBG Material:");
+		ImGui::SliderFloat("R D M", &model.m.diffuse_.x, 0, 1);
+		ImGui::SliderFloat("B D M", &model.m.diffuse_.y, 0, 1);
+		ImGui::SliderFloat("G D M", &model.m.diffuse_.z, 0, 1);
+		ImGui::Text("Specular RBG Material:");
+		ImGui::SliderFloat("R S M", &model.m.specular_.x, 0, 1);
+		ImGui::SliderFloat("B S M", &model.m.specular_.y, 0, 1);
+		ImGui::SliderFloat("G S M", &model.m.specular_.z, 0, 1);
+		
+
 		ImGui::End();
 	}
 	if (orthogonalP)
