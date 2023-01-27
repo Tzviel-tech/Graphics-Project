@@ -482,7 +482,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	}
 	if (material)
 	{
-		ImGui::Begin("decide world transfom:");
+		ImGui::Begin("decide matireal:");
 		ImGui::Text("Ambient RBG Material:");
 		ImGui::SliderFloat("R A", &model.m.ambient_.x, 0, 1);
 		ImGui::SliderFloat("B A", &model.m.ambient_.y, 0, 1);

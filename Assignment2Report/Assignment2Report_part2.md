@@ -6,7 +6,7 @@ matirial. now each model holds struct calls "material" witch holds
 3 glm::vec3 representing amabient specular and diffuse of the matiral.
 here picture of how the user can change them:
 
-![bounding](matir.png "bounding")
+![bounding](m.png "bounding")
 
 after this i changed the model's color to be white and add some red ambient light, i used the white color so the model we will be able to clearly see the red color on the model here is the result:
 
