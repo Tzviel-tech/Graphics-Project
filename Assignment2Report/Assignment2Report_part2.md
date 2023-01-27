@@ -35,6 +35,9 @@ here i have implemented the specular light we can see the rays direction here:
 
 
 -------------------------------------part5+6-------------------------------------------------
+
+
+
 Im working alone so i have implemented only phong shading so here are some models and results:
 
 
