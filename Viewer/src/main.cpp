@@ -26,6 +26,7 @@ bool drawlight = false;
 bool box;
 bool wbox;
 bool rec;
+bool newlight=false;
 bool addlight = false;
 static float nornalscale;
 static float cleft = 1;
@@ -415,7 +416,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	
 	ImGui::Begin("decide local or world transfom:");
 	ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'W' to move up\n press 'S' to move down\n press 'D' to move left\n press 'A' to move right");
-	ImGui::SliderFloat("scale", &model.scalex, 1, 10);
+	ImGui::SliderFloat("scale", &model.scalex, 1, 50);
 	ImGui::SliderFloat("translate x asix", &model.trans.x, -10, 15);
 	ImGui::SliderFloat("translate y asix", &model.trans.y, -10, 10);
 	ImGui::SliderFloat("translate z asix", &model.trans.z, -10, 10);
@@ -581,11 +582,28 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			{
 
 				ImGui::Begin("add light source");
+				newlight = false;
+				ImGui::Checkbox("add new light", &newlight);
 				
+				if (newlight)
+				{
+					shared_ptr<Light>m(new Light());
+					scene.AddLight(m);
+
+				}
+				int index = 0;
 				ImGui::SliderFloat("translate x asix", &lightx, -1, 1);
 				ImGui::SliderFloat("translate y asix", &lighty, -1, 1);
 				ImGui::SliderFloat("translate z asix", &lightz, -1, 1);
+				ImGui::Text("Choose active light:");
+				bool b = false;
+				ImGui::Checkbox("add another L", &b);
+				if(b)
+					if(index<scene.LightSize()-1)
+					index++;
+				scene.active_light_index = index;
 				Light& l = scene.GetLight(0);
+
 				ImGui::Text("Ambient RBG:");
 				ImGui::SliderFloat("R A", &l.GetAmbient().x, 0, 1);
 				ImGui::SliderFloat("B A", &l.GetAmbient().y, 0, 1);

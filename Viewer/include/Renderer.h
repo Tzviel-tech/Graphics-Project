@@ -24,7 +24,7 @@ public:
 	void drawtrianglebox(std::vector<glm::vec3>triangle, glm::vec3 color);
 	void checkminmax(glm::vec4& vertices);
 	void edgewalking(glm::vec3 nprojnor,std::vector<glm::vec3>&noproj,std::vector<glm::vec3>&triangle,glm::vec3 facenormal,Scene  scene,float& dif);
-	void Shadetriangle(std::vector<glm::vec3>& vertexPositions, Scene& scene, glm::vec3 lightPoint, std::vector <glm::vec3> Normals);
+	void Shadetriangle(std::vector<glm::vec3>& vertexPositions, Scene& scene,std::vector<Light>lv, std::vector <glm::vec3> Normals);
 	bool insidetri(std::vector<glm::vec3>& tri, int x, int y);
 	float grey = 1;
 	void addlines(std::vector<glm::vec3>triangle, int flag,glm::vec3 color);
@@ -40,7 +40,7 @@ public:
 	}
 };
 glm::vec3 normalInter(std::vector<glm::vec3>& Normals, std::vector<glm::vec3>& Pos, float px, float py);
-glm::vec3 Color(glm::vec3 nprojnor,glm::vec3 point, std::vector<glm::vec3>& triangle, glm::vec3 facenormal, Scene s);
+glm::vec3 Color(glm::vec3 nprojnor,glm::vec3 point, std::vector<glm::vec3>& triangle, glm::vec3 facenormal,std::vector<Light>lv, Scene s);
 	void PutPixel(const int i, const int j,const int z, const glm::vec3& color);
 	void DrawLine(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color, int flag);
 	void ChangePoints(const glm::ivec3& p1, const glm::ivec3& p2, const glm::vec3& color);

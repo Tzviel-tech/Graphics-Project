@@ -29,11 +29,18 @@ public:
 	void SetActiveModelIndex(int index);
 	int GetActiveModelIndex() const;
 	void AddLight(const std::shared_ptr<Light>& l);
+	int active_light_index = 0;
+	int LightSize()
+	{
+		return lights.size();
+	}
+	vector<shared_ptr<Light>> lights;
 private:
 	vector<shared_ptr<MeshModel>> mesh_models;
 	vector<shared_ptr<Camera>> cameras;
-	vector<shared_ptr<Light>> lights;
+	
 
+	
 	int active_camera_index;
 	int active_model_index;
 };

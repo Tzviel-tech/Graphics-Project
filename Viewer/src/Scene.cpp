@@ -14,7 +14,7 @@ void Scene::AddLight(const std::shared_ptr<Light>& l)
 }
 Light& Scene::GetLight(int index) const
 {
-	return *lights[index];
+	return *lights[active_light_index];
 }
 void Scene::AddModel(const std::shared_ptr<MeshModel>& mesh_model)
 {

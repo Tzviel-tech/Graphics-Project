@@ -72,9 +72,9 @@ public:
 	struct material
 	{
 		
-		glm::vec3 ambient_ = glm::vec3(0.24725f	,0.1995f,	0.0745f);
-		glm::vec3 diffuse_ = glm::vec3(0.24725f,	0.1995f,	0.0745f);
-		glm::vec3 specular_ = glm::vec3(0.628281f,	0.555802f,	0.366065f);
+		glm::vec3 ambient_ = glm::vec3(0.2125f,	0.1275f,	0.054f);
+		glm::vec3 diffuse_ = glm::vec3(0.714f,	0.4284f,	0.18144f);
+		glm::vec3 specular_ = glm::vec3(0.393548f,0.271906f,0.166721f);
 	};
 	material m;
 private:
