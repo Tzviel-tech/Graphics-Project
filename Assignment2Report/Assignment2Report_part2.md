@@ -38,10 +38,15 @@ here i have implemented the specular light we can see the rays direction here:
 
 
 
-Im working alone so i have implemented only phong shading so here are some models and results:
+Im working alone so i have implemented only phong and flat shading so here are some models and results:
+
+*flat shading:*
+
+![bounding](flat.png "bounding")
 
 
 
+*phong shading:*
 
 
 ![bounding](phong2light.png "bounding")
