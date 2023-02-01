@@ -11,7 +11,7 @@ private:
 	glm::mat4x4 viewTransformation;
 	glm::mat4x4 projectionTransformation;
 
-	glm::vec3 eye;
+	
 	glm::vec3 up;
 	glm::vec3 at;
 
@@ -31,7 +31,7 @@ private:
 public:
 	Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up, const float aspectRatio);
 	~Camera();
-
+	glm::vec3 eye;
 	void SetOrthographicProjection(
 		const float height,
 		const float aspectRatio,

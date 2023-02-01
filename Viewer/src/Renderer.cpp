@@ -35,6 +35,7 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 			colorShader.setUniform("model", currentModel->GetWorldTransformation() * currentModel->GetModelTransformation());
 			colorShader.setUniform("view", camera.GetViewTransformation());
 			colorShader.setUniform("projection", camera.GetProjectionTransformation());
+			colorShader.setUniform("camerapos", camera.eye);
 			colorShader.setUniform("material.textureMap", 0);
 			colorShader.setUniform("lightposition",scene->GetLight(0)->GetPosition( ));
 
