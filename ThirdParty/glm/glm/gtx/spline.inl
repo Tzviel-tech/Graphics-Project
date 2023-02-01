@@ -1,4 +1,5 @@
 /// @ref gtx_spline
+/// @file glm/gtx/spline.inl
 
 namespace glm
 {

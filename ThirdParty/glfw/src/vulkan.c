@@ -1,8 +1,8 @@
 //========================================================================
-// GLFW 3.4 - www.glfw.org
+// GLFW 3.3 - www.glfw.org
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
-// Copyright (c) 2006-2018 Camilla Löwy <elmindreda@glfw.org>
+// Copyright (c) 2006-2016 Camilla Löwy <elmindreda@glfw.org>
 //
 // This software is provided 'as-is', without any express or implied
 // warranty. In no event will the authors be held liable for any damages
@@ -23,8 +23,6 @@
 // 3. This notice may not be removed or altered from any source
 //    distribution.
 //
-//========================================================================
-// Please use C89 style variable declarations in this file because VS 2010
 //========================================================================
 
 #include "internal.h"
@@ -138,6 +136,9 @@ GLFWbool _glfwInitVulkan(int mode)
 #elif defined(_GLFW_WAYLAND)
         else if (strcmp(ep[i].extensionName, "VK_KHR_wayland_surface") == 0)
             _glfw.vk.KHR_wayland_surface = GLFW_TRUE;
+#elif defined(_GLFW_MIR)
+        else if (strcmp(ep[i].extensionName, "VK_KHR_mir_surface") == 0)
+            _glfw.vk.KHR_mir_surface = GLFW_TRUE;
 #endif
     }
 

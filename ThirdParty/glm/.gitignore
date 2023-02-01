@@ -53,6 +53,5 @@ Makefile
 build*
 
 /.vs
-/.vscode
 /CMakeSettings.json
 .DS_Store

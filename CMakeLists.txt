@@ -22,6 +22,7 @@ set(glfw_INCLUDE_DIRS "ThirdParty/glfw/include")
 set(glm_INCLUDE_DIRS "ThirdParty/glm")
 set(imgui_INCLUDE_DIRS "ThirdParty/imgui")
 set(nfd_INCLUDE_DIRS "ThirdParty/nativefiledialog/nativefiledialog/src/include")
+set(ImGuizmo_INCLUDE_DIRS "ThirdParty/ImGuizmo/ImGuizmo")
 
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 # set(CMAKE_COLOR_MAKEFILE   ON)
@@ -32,6 +33,9 @@ add_subdirectory(ThirdParty/glad)  # glad is a static library (depends on nothin
 add_subdirectory(ThirdParty/glfw)  # glfw is a static library (depends on nothing)
 add_subdirectory(ThirdParty/imgui) # imgui is a static library (depends on nothing)
 add_subdirectory(ThirdParty/nativefiledialog) # nativefiledialog is a static library (depends on nothing)
+add_subdirectory(ThirdParty/ImGuizmo)	# ImGuizmo is a static library (depends on nothing)
+# We need to supply ImGuizmo with the include dirs of imgui.
+target_include_directories(ImGuizmo PUBLIC ${imgui_INCLUDE_DIRS}/imgui)
 
 # openmp support
 if(MSVC)
@@ -57,6 +61,8 @@ file (GLOB SOURCE_FILES
       "Viewer/src/*.cpp")
 file (GLOB SHADER_FILES
       "Viewer/shaders/*.glsl")
+file (GLOB DATA_FILES
+      "Data/*.*")      
 # Create named folders for the sources within the .vcproj
 # Empty name lists them directly under the .vcproj
 # source_group("" FILES ${SOURCE_FILES})
@@ -71,6 +77,7 @@ include_directories ("Viewer/include"
 					 ${glm_INCLUDE_DIRS}
 					 ${imgui_INCLUDE_DIRS}
 					 ${nfd_INCLUDE_DIRS}
+					 ${ImGuizmo_INCLUDE_DIRS}
 					 )
 # Set Properties->General->Configuration Type to Application(.exe)
 # Creates app.exe with the listed sources (main.cpp)
@@ -81,7 +88,7 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} ${SHADER_FILES})
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER ${PROJECT_NAME})
 
 # link subprojects	 
-target_link_libraries(${PROJECT_NAME} glad glfw imgui nativefiledialog ${OPENGL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} glad glfw imgui nativefiledialog ImGuizmo ${OPENGL_LIBRARIES})
 # Turn on the ability to create folders to organize projects (.vcproj)
 # It creates "CMakePredefinedTargets" folder by default and adds CMake
 # defined projects like INSTALL.vcproj and ZERO_CHECK.vcproj
@@ -117,6 +124,16 @@ add_custom_command(
 		# DEPENDS ${SHADER_FILES}
 		COMMENT "Copying Shaders"
 		VERBATIM
+)
+
+add_custom_command(
+        TARGET  ${PROJECT_NAME}   POST_BUILD
+        COMMAND ${CMAKE_COMMAND}  -E copy
+                ${DATA_FILES}
+                ${CMAKE_CURRENT_BINARY_DIR}/bin/$<CONFIG>
+    # DEPENDS ${DATA_FILES}
+    COMMENT "Copying Data"
+    VERBATIM
 )
 
 # If we use visual studio, makes MeshViewer the startup project.

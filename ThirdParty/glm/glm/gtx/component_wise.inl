@@ -1,4 +1,5 @@
 /// @ref gtx_component_wise
+/// @file glm/gtx/component_wise.inl
 
 #include <limits>
 

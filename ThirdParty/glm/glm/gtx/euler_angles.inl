@@ -1,4 +1,5 @@
 /// @ref gtx_euler_angles
+/// @file glm/gtx/euler_angles.inl
 
 #include "compatibility.hpp" // glm::atan2
 

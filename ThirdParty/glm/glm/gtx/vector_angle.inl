@@ -1,4 +1,5 @@
 /// @ref gtx_vector_angle
+/// @file glm/gtx/vector_angle.inl
 
 namespace glm
 {

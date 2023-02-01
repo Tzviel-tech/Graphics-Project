@@ -1,15 +1,6 @@
 #include <glm/integer.hpp>
 #include <glm/vector_relational.hpp>
-#include <glm/ext/vector_int1.hpp>
-#include <glm/ext/vector_int2.hpp>
-#include <glm/ext/vector_int3.hpp>
-#include <glm/ext/vector_int4.hpp>
-#include <glm/ext/vector_uint1.hpp>
-#include <glm/ext/vector_uint2.hpp>
-#include <glm/ext/vector_uint3.hpp>
-#include <glm/ext/vector_uint4.hpp>
-#include <glm/ext/scalar_int_sized.hpp>
-#include <glm/ext/scalar_uint_sized.hpp>
+#include <glm/gtc/vec1.hpp>
 #include <vector>
 #include <ctime>
 #include <cstdio>
@@ -41,9 +32,9 @@ namespace bitfieldInsert
 		{0x00000000, 0xffffffff,  0, 32, 0xffffffff},
 		{0x00000000, 0xffffffff,  0, 31, 0x7fffffff},
 		{0x00000000, 0xffffffff,  0,  0, 0x00000000},
-		{0xff000000, 0x000000ff,  8,  8, 0xff00ff00},
-		{0xffff0000, 0xffff0000, 16, 16, 0x00000000},
-		{0x0000ffff, 0x0000ffff, 16, 16, 0xffffffff}
+		{0xff000000, 0x0000ff00,  8,  8, 0xff00ff00},
+		{0xffff0000, 0x0000ffff, 16, 16, 0x00000000},
+		{0x0000ffff, 0xffff0000, 16, 16, 0xffffffff}
 	};
 
 	static int test()
@@ -182,7 +173,7 @@ namespace bitfieldReverse
 		return bitfieldReverseLoop(glm::vec<1, T>(v)).x;
 	}
 
-	GLM_FUNC_QUALIFIER glm::uint32 bitfieldReverseUint32(glm::uint32 x)
+	GLM_FUNC_QUALIFIER glm::uint32_t bitfieldReverseUint32(glm::uint32_t x)
 	{
 		x = (x & 0x55555555) <<  1 | (x & 0xAAAAAAAA) >>  1;
 		x = (x & 0x33333333) <<  2 | (x & 0xCCCCCCCC) >>  2;
@@ -192,7 +183,7 @@ namespace bitfieldReverse
 		return x;
 	}
 
-	GLM_FUNC_QUALIFIER glm::uint64 bitfieldReverseUint64(glm::uint64 x)
+	GLM_FUNC_QUALIFIER glm::uint64_t bitfieldReverseUint64(glm::uint64_t x)
 	{
 		x = (x & 0x5555555555555555) <<  1 | (x & 0xAAAAAAAAAAAAAAAA) >>  1;
 		x = (x & 0x3333333333333333) <<  2 | (x & 0xCCCCCCCCCCCCCCCC) >>  2;

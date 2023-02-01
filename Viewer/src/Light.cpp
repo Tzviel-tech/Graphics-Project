@@ -1,31 +1,27 @@
 #include "Light.h"
-glm::vec3& Light::GetAmbient() 
+
+Light::Light() :
+	color(glm::vec3(1.0, 1.0, 1.0))
 {
-	return ambient;
 }
 
-glm::vec3 &Light::GetDiffuse() 
+Light::Light(const glm::vec3& color) :
+	color(color)
 {
-	return diffuse;
+
 }
 
 
-glm::vec3 &Light::GetSpecular() 
+Light::~Light()
 {
-	return specular;
 }
 
-void Light::SetAmbient(glm::vec3 ambient)
+const glm::vec3& Light::GetColor() const
 {
-	this->ambient = ambient;
+	return color;
 }
 
-void Light::SetDiffuse(glm::vec3 diffuse)
+void Light::SetColor(const glm::vec3& color)
 {
-	this->diffuse = diffuse;
-}
-
-void Light::SetSpecular(glm::vec3 specular)
-{
-	this->specular = specular;
+	this->color = color;
 }

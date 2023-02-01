@@ -1,94 +1,73 @@
 #pragma once
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <string>
-#include "Face.h"
 #include <memory>
-#include "glm/gtx/string_cast.hpp"
-#include <iostream>
+#include "MeshModel.h"
+#include "Face.h"
+
+struct Vertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 textureCoords;
+};
+
 class MeshModel
 {
-public:
-	MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name);
-	virtual ~MeshModel();
-	const Face& GetFace(int index) const;
-	int GetFacesCount() const;
-	std::vector<glm::vec3>& GetVertecies();
-	const std::string& GetModelName() const;
-	void setLocalTranslate();
-	void setlocalScale();
-	void setLocalRotation();
-	void setWorld();
-	void setWorldTranslate();
-	void setWorldScale();
-	void setWorldRotation();
-	void setLocal();
-	//glm::vec4 getFaceCenter(int index);
-	glm::vec4 getFaceNormal(int index);
-	std::vector<glm::vec3>&getNormals()
-	{
-		return normals;
-	}
-	glm::mat4 & getsacle()
-	{
-		return localscalemat;
-	}
-	glm::mat4& getLocal() { setLocal();return local; };
-	glm::mat4& getWorld() { setWorld();return world; }; 
-	glm::mat4 getTransform() { return getWorld() * getLocal(); };
-	glm::vec4 center();
-	friend std::ostream& operator<<(std::ostream& out, MeshModel &thi)
-	{
-		out << "Model is: " << thi.GetModelName() << "\n";
-		std::vector<glm::vec3>vec = thi.GetVertecies();
-		for (auto a : vec)
-			out << glm::to_string(a) << "\n";
-		for (int i = 0;i < thi.GetFacesCount();i++)
-		{
-			out << "face" << i+1 << " : ";
-			for (int j = 0;j < 3;j++)
-				out << thi.GetFace(i).GetVertexIndex(j) << " ";
-			out << "\n";
-		}
-		
-		return out;
-	}
-	//local running prameters
-	float scalex=1;
-	glm::vec3 trans = glm::vec3(0.0f);
-	glm::vec3 rotate = glm::vec3(0.0f);
-	
-	//world running pramaters
-	float scalexW = 1;
-	glm::vec3 transW=glm::vec3(0.0f);
-	glm::vec3 rotateW = glm::vec3(0.0f);
-	float maxX;
-	float minX;
-	float minY;
-	float maxY;
-	float maxZ;
-	float minZ;
-	
-	//matirial
-	struct material
-	{
-		
-		glm::vec3 ambient_ = glm::vec3(0.2125f,	0.1275f,	0.054f);
-		glm::vec3 diffuse_ = glm::vec3(0.714f,	0.4284f,	0.18144f);
-		glm::vec3 specular_ = glm::vec3(0.393548f,0.271906f,0.166721f);
-	};
-	material m;
-private:
-	glm::mat4 local=glm::mat4(1);
-	glm::mat4 world = glm::mat4(1);
-	glm::mat4 localscalemat = glm::mat4(1);
-	glm::mat4 localtransmat = glm::mat4(1);
-	glm::mat4 localrotation = glm::mat4(1);
-	glm::mat4 Wscalemat = glm::mat4(1);
-	glm::mat4 Wtransmat = glm::mat4(1);
-	glm::mat4 Wrotation = glm::mat4(1);
+protected:
 	std::vector<Face> faces;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
-	std::string model_name;
-	
+	std::vector<glm::vec3> textureCoords;
+
+	std::vector<Vertex> modelVertices;
+
+	glm::mat4x4 modelTransform;
+	glm::mat4x4 worldTransform;
+
+	std::string modelName;
+
+	glm::vec3 color;
+
+	GLuint vbo;
+	GLuint vao;
+
+public:
+	MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> textureCoords, const std::string& modelName = "");
+	virtual ~MeshModel();
+
+	const glm::mat4x4& GetWorldTransformation() const;
+	const glm::mat4x4& GetModelTransformation() const;
+
+	void SetWorldTransformation(const glm::mat4x4& worldTransform);
+	void SetModelTransformation(const glm::mat4x4& modelTransform);
+
+	const glm::vec3& GetColor() const;
+	void SetColor(const glm::vec3& color);
+
+	const std::string& GetModelName();
+
+	const std::vector<Vertex>& GetModelVertices();
+
+	void TranslateModel(const glm::vec3& translationVector);
+	void TranslateWorld(const glm::vec3& translationVector);
+
+	void RotateXModel(double angle);
+	void RotateYModel(double angle);
+	void RotateZModel(double angle);
+	void ScaleXModel(double factor);
+	void ScaleYModel(double factor);
+	void ScaleZModel(double factor);
+	void ScaleModel(double factor);
+
+	void RotateXWorld(double angle);
+	void RotateYWorld(double angle);
+	void RotateZWorld(double angle);
+	void ScaleXWorld(double factor);
+	void ScaleYWorld(double factor);
+	void ScaleZWorld(double factor);
+	void ScaleWorld(double factor);
+
+	GLuint GetVAO() const;
 };

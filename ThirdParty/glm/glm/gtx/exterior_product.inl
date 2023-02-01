@@ -1,4 +1,5 @@
-/// @ref gtx_exterior_product
+/// @ref core
+/// @file glm/detail/func_geometric.inl
 
 #include <limits>
 

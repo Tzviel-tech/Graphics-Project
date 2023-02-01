@@ -1,322 +1,270 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <imgui/imgui.h>
-#include <stdio.h>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include <imgui/imgui.h>
+
 #include <nfd.h>
+
+#include <stdio.h>
 #include <iostream>
+#include <memory>
+#include <random>
+#include <string>
+#include <sstream>
+#include <stdlib.h>
+
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include <fstream>
+
 #include "Renderer.h"
 #include "Scene.h"
+#include "Camera.h"
+#include "ImguiMenus.h"
+#include "AmbientLight.h"
+#include "PointLight.h"
 #include "Utils.h"
-#include <sstream>
-#include "glm/gtx/string_cast.hpp"
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
-float lightx;
-float lightz;
-float lighty;
-bool normals;
-bool material = false;
-bool drawlight = false;
-bool box;
-bool wbox;
-bool rec;
-bool newlight=false;
-bool addlight = false;
-static float nornalscale;
-static float cleft = 1;
-static float cright = 1;
-static float down = -1;
-static float up = 1;
-static float cnear = 1;
-static float cfar = -1;
-static float grey = 1;
-bool x = false, y = false, z = false,xW=false,yW=false,zW=false;
-bool WORLD_TRANSFOM;
-bool orthogonalP;
-bool movecamera;
-bool cameraworld;
-bool cameralocal;
-bool Z_buff;
-/**
- * Fields
- */
-bool show_demo_window = false;
-bool show_another_window = false;
-glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+double zoomFactor = 1;
+int windowWidth = 1280;
+int windowHeight = 720;
+char* windowTitle = "OpenGL Demo";
+glm::vec4 clearColor = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+bool zoomChanged = false;
+std::shared_ptr<Scene> scene;
 
-/**
- * Function declarations
- */
-static void GlfwErrorCallback(int error, const char* description);
+ImGuiIO* imgui;
+GLFWwindow* window;
+
 GLFWwindow* SetupGlfwWindow(int w, int h, const char* window_name);
-ImGuiIO& SetupDearImgui(GLFWwindow* window);
-void StartFrame();
-void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io);
-void Cleanup(GLFWwindow* window);
-void DrawImguiMenus(ImGuiIO& io, Scene& scene);
+ImGuiIO& SetupImgui(GLFWwindow* window);
+bool Setup(int windowWidth, int windowHeight, const char* windowName);
+void Cleanup();
 
-/**
- * Function implementation
- */
-void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+static void GlfwErrorCallback(int error, const char* description);
+void RenderFrame(GLFWwindow* window, std::shared_ptr<Scene> scene, Renderer& renderer, ImGuiIO& io);
+
+void glfw_OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
+void glfw_OnFramebufferSize(GLFWwindow* window, int width, int height);
+
+float GetAspectRatio();
+void DrawImguiMenus();
+void HandleImguiInput();
+
+int main(int argc, char **argv)
 {
-	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
-	// TODO: Handle mouse scroll here
-}
-//MeshModel& load(const char* filename)
-//{
-//	    std::vector<glm::vec3> vertices;
-//		std::vector<Face> faces;
-//		std::string line;
-//		std::vector<std::string> lines;
-//		std::ifstream in(filename);
-//		if (!in.is_open()) {
-//			printf("Cannot load model %s\n", filename);
-//			exit;
-//		}
-//		while (!in.eof()) {
-//			std::getline(in, line);
-//			lines.push_back(line);
-//		}
-//		in.close();
-//		float a, b, c;
-//		for (std::string& line : lines) 
-//		{
-//			if (line[0] == 'v') {
-//				sscanf(line.c_str(), "v %f %f %f", &a, &b, &c);
-//				vertices.push_back(glm::vec3( a, b, c));
-//			}
-//			else if (line[0] == 'f') {
-//			
-//				faces.push_back(Face(std::istringstream(line)));
-//			}
-//		}
-//		string name=lines.at(0);
-//		MeshModel * model = new MeshModel(faces, vertices,vertices,name);
-//		return *model;
-//}
-int main(int argc, char** argv)
-{
-	int windowWidth = 1280, windowHeight = 720;
-	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
-	if (!window)
-		return 1;
-	Utils u;
-	int frameBufferWidth, frameBufferHeight;
-	glfwMakeContextCurrent(window);
-	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/cubereal.obj");
-	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
-	shared_ptr<Camera>c(new Camera());
-	shared_ptr<Light>l(new Light());
-	Light n;
-	Scene scene = Scene();
-	scene.AddModel(model);
-	scene.AddCamera(c);
-	scene.SetActiveCameraIndex(0);
-	scene.AddLight(l);
-	ImGuiIO& io = SetupDearImgui(window);
-	glfwSetScrollCallback(window, ScrollCallback);
-	//std::cout << *model;
-	//std::cout << *model;
+
+	if (!Setup(windowWidth, windowHeight, windowTitle))
+	{
+		std::cerr << "Setup failed" << std::endl;
+		return -1;
+	}
+
+	scene = std::make_shared<Scene>();
+	glm::vec3 eye = glm::vec3(0, 0, 10);
+	glm::vec3 at = glm::vec3(0, 0, 0);
+	glm::vec3 up = glm::vec3(0, 1, 0);
+	Camera camera = Camera(eye, at, up, GetAspectRatio());
+	scene->AddCamera(camera);
+
+	scene->AddLight(std::make_shared<PointLight>(glm::vec3( 0, 0, 15), glm::vec3(1, 1, 1)));
+	scene->AddLight(std::make_shared<PointLight>(glm::vec3( 0, 5, 5),  glm::vec3(0, 0, 0)));
+	scene->AddLight(std::make_shared<PointLight>(glm::vec3(-5, 0, 0),  glm::vec3(0, 0, 0)));
+
+	Renderer renderer;
+	renderer.LoadShaders();
+	renderer.LoadTextures();
+
 	while (!glfwWindowShouldClose(window))
 	{
-		
+		// Poll and process events
 		glfwPollEvents();
-		StartFrame();
-		DrawImguiMenus(io, scene);
-		c->windowsheight = windowHeight;
-		c->windowswidth = windowWidth;
-		scene.GetLight(0).position = glm::vec3(lightx, lighty, lightz);
-		renderer.drawnormals = normals;
-		renderer.drawboundingboxlocal = box;
-		renderer.drawboundingboxworld = wbox;
-		renderer.scalenormal = nornalscale;
-		renderer.rectangle = rec;
-		renderer.show_Z = Z_buff;
-		renderer.drawlightray = drawlight;
-		c->SetPTransform(cleft, cright, down, up, cnear, cfar);
-		RenderFrame(window, scene, renderer, io);
-		
 
+		// Imgui stuff
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		DrawImguiMenus();
+		ImGui::Render();
+		HandleImguiInput();
+
+		// Clear the screen and depth buffer
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Render scene
+		renderer.Render(scene);
+
+		// Imgui stuff
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		// Swap front and back buffers
+		glfwSwapBuffers(window);
 	}
-	
-	
-	Cleanup(window);
-	
-	return 0;
+
+	glfwTerminate();
+    return 0;
 }
-
-
-
-
-
-
-
 
 static void GlfwErrorCallback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-GLFWwindow* SetupGlfwWindow(int w, int h, const char* window_name)
+bool Setup(int windowWidth, int windowHeight, const char* windowName)
 {
-	glfwSetErrorCallback(GlfwErrorCallback);
+	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, windowName);
+	if (!window)
+	{
+		std::cerr << "Window setup failed" << std::endl;
+		return false;
+	}
+
+	imgui = &SetupImgui(window);
+
+	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+	glEnable(GL_DEPTH_TEST);
+
+	return true;
+}
+
+GLFWwindow* SetupGlfwWindow(int windowWidth, int windowHeight, const char* windowName)
+{
+	// Intialize GLFW
 	if (!glfwInit())
-		return NULL;
+	{
+		// An error occured
+		std::cerr << "GLFW initialization failed" << std::endl;
+		return false;
+	}
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#if __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+	// forward compatible with newer versions of OpenGL as they become available but not backward compatible (it will not run on devices that do not support OpenGL 3.3
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);	
 
-	GLFWwindow* window = glfwCreateWindow(w, h, window_name, NULL, NULL);
+	// Create an OpenGL 3.3 core, forward compatible context window
+	window = glfwCreateWindow(windowWidth, windowHeight, windowName, NULL, NULL);
+	if (window == NULL)
+	{
+		std::cerr << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return false;
+	}
+
+	// Make the window's context the current one
 	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1); // Enable vsync
-						 // very importent!! initialization of glad
-						 // https://stackoverflow.com/questions/48582444/imgui-with-the-glad-opengl-loader-throws-segmentation-fault-core-dumped
 
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	// Setup window events callbacks
+	glfwSetFramebufferSizeCallback(window, glfw_OnFramebufferSize);
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		// An error occured
+		std::cerr << "GLAD initialization failed" << std::endl;
+		return false;
+	}
+
 	return window;
 }
 
-ImGuiIO& SetupDearImgui(GLFWwindow* window)
+ImGuiIO& SetupImgui(GLFWwindow* window)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
+
+	// Setup style
 	ImGui::StyleColorsDark();
+
+	glfwSetScrollCallback(window, glfw_OnMouseScroll);
+
 	return io;
 }
 
-void StartFrame()
+void HandleImguiInput()
 {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
+	if (!imgui->WantCaptureKeyboard)
+	{
+		if (imgui->KeysDown[49]) // 1
+		{
+			scene->GetActiveModel()->RotateXModel(M_PI / 200);
+		}
+
+		if (imgui->KeysDown[50]) // 2
+		{
+			scene->GetActiveModel()->RotateXModel(-M_PI / 200);
+		}
+
+		if (imgui->KeysDown[51]) // 3
+		{
+			scene->GetActiveModel()->RotateYModel(M_PI / 200);
+		}
+
+		if (imgui->KeysDown[52]) // 4
+		{
+			scene->GetActiveModel()->RotateYModel(-M_PI / 200);
+		}
+
+		if (imgui->KeysDown[53]) // 5
+		{
+			scene->GetActiveModel()->RotateZModel(M_PI / 200);
+		}
+
+		if (imgui->KeysDown[54]) // 6
+		{
+			scene->GetActiveModel()->RotateZModel(-M_PI / 200);
+		}
+
+		if (imgui->KeysDown[45]) // -
+		{
+			scene->GetActiveModel()->ScaleModel(1 / 1.01);
+		}
+
+		if (imgui->KeysDown[61]) // +
+		{
+			scene->GetActiveModel()->ScaleModel(1.01);
+		}
+
+		if (imgui->KeysDown[65]) // a
+		{
+			scene->GetActiveModel()->TranslateModel(glm::vec3(-0.02, 0, 0));
+		}
+
+		if (imgui->KeysDown[68]) // d
+		{
+			scene->GetActiveModel()->TranslateModel(glm::vec3(0.02, 0, 0));
+		}
+
+		if (imgui->KeysDown[83]) // s
+		{
+			scene->GetActiveModel()->TranslateModel(glm::vec3(0, 0, 0.02));
+		}
+
+		if (imgui->KeysDown[87]) // w
+		{
+			scene->GetActiveModel()->TranslateModel(glm::vec3(0, 0, -0.02));
+		}
+	}
+
+	if (!imgui->WantCaptureMouse)
+	{
+		if (zoomChanged)
+		{
+			scene->GetActiveCamera().Zoom(zoomFactor);
+			zoomChanged = false;
+		}
+	}
 }
 
-void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io)
-{
-	
-
-	MeshModel& model = scene.GetModel(0);
-	ImGui::Render();
-	int frameBufferWidth, frameBufferHeight;
-	glfwMakeContextCurrent(window);
-	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	
-	if (frameBufferWidth != renderer.GetViewportWidth() || frameBufferHeight != renderer.GetViewportHeight())
-	{
-		// TODO: Set new aspect ratio
-	}
-
-	if (!io.WantCaptureKeyboard)
-	{
-		// Controll translation
-		if (io.KeysDown['A'])
-		{
-			
-			model.trans.x -= 0.025;
-		}
-		if (io.KeysDown['D'])
-		{
-
-			model.trans.x += 0.025;
-		}
-		if (io.KeysDown['W'])
-		{
-
-			model.trans.y += 0.025;
-		}
-		if (io.KeysDown['S'])
-		{
-
-			model.trans.y -= 0.025;
-		}
-		if (io.KeysDown['H'])
-		{
-
-			model.transW.x -= 0.025;
-		}
-		if (io.KeysDown['K'])
-		{
-
-			model.transW.x += 0.025;
-		}
-		if (io.KeysDown['U'])
-		{
-
-			model.transW.y += 0.025;
-		}
-		if (io.KeysDown['J'])
-		{
-
-			model.transW.y -= 0.025;
-		}
-	}
-
-	if (!io.WantCaptureMouse)
-	{
-		// TODO: Handle mouse events here
-		if (io.MouseDown[0] && x)
-		{
-
-			model.rotate.x++;
-
-		}
-		if (io.MouseDown[0] && y)
-		{
-
-			model.rotate.y++;
-
-		}
-		if (io.MouseDown[0] && z)
-		{
-
-			model.rotate.z++;
-
-		}
-		if (io.MouseDown[0] && xW)
-		{
-
-			model.rotateW.x++;
-
-		}
-		if (io.MouseDown[0] && yW)
-		{
-
-			model.rotateW.y++;
-
-		}
-		if (io.MouseDown[0] && zW)
-		{
-
-			model.rotateW.z++;
-
-		}
-	}
-
-	renderer.ClearColorBuffer(clear_color);
-	renderer.Render(scene);
-	renderer.SwapBuffers();
-
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	glfwMakeContextCurrent(window);
-	glfwSwapBuffers(window);
-}
-
-void Cleanup(GLFWwindow* window)
+void Cleanup()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
@@ -326,305 +274,208 @@ void Cleanup(GLFWwindow* window)
 	glfwTerminate();
 }
 
-void DrawImguiMenus(ImGuiIO& io, Scene& scene)
+//-----------------------------------------------------------------------------
+// Is called when the window is resized
+//-----------------------------------------------------------------------------
+void glfw_OnFramebufferSize(GLFWwindow* window, int width, int height)
 {
-	
-	/**
-	 * MeshViewer menu
-	 */
-	ImGui::Begin("MeshViewer Menu");
+	windowWidth = width;
+	windowHeight = height;
+	glViewport(0, 0, windowWidth, windowHeight);
+	scene->GetActiveCamera().SetAspectRatio(GetAspectRatio());
+}
 
-	// Menu Bar
-	if (ImGui::BeginMainMenuBar())
+void glfw_OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+	zoomFactor = glm::pow(1.1, -yoffset);
+	zoomChanged = true;
+}
+
+float GetAspectRatio()
+{
+	return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+}
+
+void DrawImguiMenus()
+{
+	ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_Once);
 	{
-		if (ImGui::BeginMenu("File"))
+		ImGui::Begin("Scene Menu");
+		if (ImGui::ColorEdit3("Clear Color", (float*)&clearColor))
 		{
-			if (ImGui::MenuItem("Open", "CTRL+O"))
-			{
-				nfdchar_t* outPath = NULL;
-				nfdresult_t result = NFD_OpenDialog("obj;", NULL, &outPath);
-				if (result == NFD_OKAY)
-				{
-					scene.AddModelAtindex0(Utils::LoadMeshModel(outPath));
-					free(outPath);
-				}
-				else if (result == NFD_CANCEL)
-				{
-				}
-				else
-				{
-				}
-
-			}
-			ImGui::EndMenu();
+			glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		}
 
-		// TODO: Add more menubar items (if you want to)
-		ImGui::EndMainMenuBar();
-	}
-	Camera& c = scene.GetActiveCamera();
-	MeshModel& model = scene.GetModel(0);
-	// Controls
-	ImGui::ColorEdit3("Clear Color", (float*)&clear_color);
-	// TODO: Add more controls as needed
+		if (ImGui::CollapsingHeader("Cameras"))
+		{
+			if (ImGui::Button("Add Camera"))
+			{
 
-	ImGui::End();
+				std::random_device rd;
+				std::mt19937 mt(rd());
+				std::uniform_real_distribution<double> dist(0, 2 * M_PI);
+				std::uniform_real_distribution<double> dist2(2, 10);
+				double angle = dist(mt);
+				double radius = dist2(mt);
 
-	/**
-	 * Imgui demo - you can remove it once you are familiar with imgui
-	 */
+				glm::vec4 eye = glm::vec4(radius * glm::cos(angle), 0, radius * glm::sin(angle), 1);
+				glm::vec4 at = glm::vec4(0, 0, 0, 1);
+				glm::vec4 up = glm::vec4(0, 1, 0, 1);
+				scene->AddCamera(Camera(-scene->GetActiveCamera().GetEye(), at, up, GetAspectRatio()));
+			}
 
-	 // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
+			const char** items;
+			std::vector<std::string> cameraStrings;
+			items = new const char*[scene->GetCameraCount()];
+			for (int i = 0; i < scene->GetCameraCount(); i++)
+			{
+				std::ostringstream s;
+				s << "Camera " << i;
+				std::string mystring = s.str();
+				cameraStrings.push_back(mystring);
+			}
 
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	{
-		static float f = 0.0f;
-		static int counter = 0;
+			for (int i = 0; i < scene->GetCameraCount(); i++)
+			{
+				items[i] = cameraStrings[i].c_str();
+			}
 
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+			int currentCamera = scene->GetActiveCameraIndex();
+			ImGui::Combo("Active Camera", &currentCamera, items, scene->GetCameraCount());
 
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
+			if (currentCamera != scene->GetActiveCameraIndex())
+			{
+				scene->SetActiveCameraIndex(currentCamera);
+				scene->GetActiveCamera().SetAspectRatio(GetAspectRatio());
+			}
 
-		//ImGui::SliderFloat("float", &f, 0.0f, 5.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+			delete items;
 
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
+			int newProjectionType = scene->GetActiveCamera().IsPrespective() ? 0 : 1;
+			ImGui::RadioButton("Prespective", &newProjectionType, 0);
+			ImGui::RadioButton("Orthographic", &newProjectionType, 1);
+
+			if (newProjectionType == 0)
+			{
+				float fovy;
+				float zNear;
+				float zFar;
+
+				scene->GetActiveCamera().SwitchToPrespective();
+
+				if (ImGui::SliderFloat("Fovy", &fovy, 0.0f, M_PI))
+				{
+					scene->GetActiveCamera().SetFovy(fovy);
+				}
+
+				if (ImGui::SliderFloat("Near", &zNear, 1.0f, 10.0f))
+				{
+					scene->GetActiveCamera().SetNear(zNear);
+				}
+
+				if (ImGui::SliderFloat("Far", &zFar, 1.0f, 10.0f))
+				{
+					scene->GetActiveCamera().SetFar(zFar);
+				}
+			}
+			else if (newProjectionType == 1)
+			{
+				float height;
+				float zNear;
+				float zFar;
+
+				scene->GetActiveCamera().SwitchToOrthographic();
+
+				if (ImGui::SliderFloat("Height", &height, 0.0f, M_PI))
+				{
+					scene->GetActiveCamera().SetHeight(height);
+				}
+
+				if (ImGui::SliderFloat("Near", &zNear, 1.0f, 10.0f))
+				{
+					scene->GetActiveCamera().SetNear(zNear);
+				}
+
+				if (ImGui::SliderFloat("Far", &zFar, 1.0f, 10.0f))
+				{
+					scene->GetActiveCamera().SetFar(zFar);
+				}
+			}
+		}
+
+		if (ImGui::CollapsingHeader("Models"))
+		{
+			const char** items;
+			std::vector<std::string> modelStrings;
+			items = new const char*[scene->GetModelCount()];
+			for (int i = 0; i < scene->GetModelCount(); i++)
+			{
+				std::ostringstream s;
+				s << scene->GetModel(i)->GetModelName();
+				std::string mystring = s.str();
+				modelStrings.push_back(mystring);
+			}
+
+			for (int i = 0; i < scene->GetModelCount(); i++)
+			{
+				items[i] = modelStrings[i].c_str();
+			}
+
+			int currentModelIndex = scene->GetActiveModelIndex();
+			ImGui::Combo("Active Model", &currentModelIndex, items, scene->GetModelCount());
+
+			if (currentModelIndex != scene->GetActiveModelIndex())
+			{
+				scene->SetActiveModelIndex(currentModelIndex);
+			}
+
+			delete items;
+
+			glm::vec3 modelColor = scene->GetActiveModel()->GetColor();
+			if (ImGui::ColorEdit3("Model Color", (float*)&modelColor))
+			{
+				scene->GetActiveModel()->SetColor(modelColor);
+			}
+
+			std::shared_ptr<MeshModel> meshModel = std::dynamic_pointer_cast<MeshModel>(scene->GetActiveModel());
+			if (meshModel)
+			{
+				//glm::vec4 normalColor = meshModel->GetNormalModel().GetColor();
+				//if (ImGui::ColorEdit3("Normal Color", (float*)&normalColor))
+				//{
+				//	meshModel->GetNormalModel().SetColor(normalColor);
+				//}
+			}
+		}
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
 
-	// 3. Show another simple window.
-	if (show_another_window)
 	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
-			show_another_window = false;
-		ImGui::End();
-	}
-	
-	
-
-	
-	ImGui::Begin("decide local or world transfom:");
-	ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'W' to move up\n press 'S' to move down\n press 'D' to move left\n press 'A' to move right");
-	ImGui::SliderFloat("scale", &model.scalex, 1, 50);
-	ImGui::SliderFloat("translate x asix", &model.trans.x, -10, 15);
-	ImGui::SliderFloat("translate y asix", &model.trans.y, -10, 10);
-	ImGui::SliderFloat("translate z asix", &model.trans.z, -10, 10);
-	ImGui::SliderFloat("rotate x asix", &model.rotate.x, -360, 360);
-	ImGui::SliderFloat("rotate y asix", &model.rotate.y, -360, 360);
-	ImGui::SliderFloat("rotate z asix", &model.rotate.z, -360, 360);
-	ImGui::SliderFloat("scale normal", &nornalscale, 1, 50);
-	
-	ImGui::Text("Press left mouse to rotate and decide rotation:");
-	ImGui::Checkbox("Rotate x", &x);
-	ImGui::Checkbox("Rotate y", &y);
-	ImGui::Checkbox("Rotate z", &z);
-	ImGui::Checkbox("World transfom", &WORLD_TRANSFOM);
-	ImGui::Checkbox("view volume", &orthogonalP);
-	ImGui::Checkbox("move camera", &movecamera);
-	ImGui::Checkbox("local cameraT", &cameralocal);
-	ImGui::Checkbox("world cameraT", &cameraworld);
-	ImGui::Checkbox("normals", &normals);
-	ImGui::Checkbox("prespective projection", &c.pres);
-	ImGui::Checkbox("bounding_boxlocal", &box);
-	ImGui::Checkbox("bounding_boxworld", &wbox);
-	ImGui::Checkbox("rectangle", &rec);
-	ImGui::Checkbox("change material", &material);
-	ImGui::Checkbox("Show grey Z:", &Z_buff);
-	ImGui::Checkbox("change light pos:", &addlight);
-	ImGui::Checkbox("drawlight rays", &drawlight);
-	if (ImGui::Button("Reset all to zero"))  
-	{
-		model.rotate.x = 0;
-		model.rotate.y = 0;
-	    model.rotate.z = 0;
-		model.trans.x = 0;
-		model.trans.y = 0;
-		model.trans.z = 0;
-		model.scalex = 1;
-	}
-	if(WORLD_TRANSFOM)
-	{
-		ImGui::Begin("decide world transfom:");
-		ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'U' to move up\n press 'J' to move down\n press 'H' to move left\n press 'K' to move right");
-		ImGui::SliderFloat("scale", &model.scalexW, 0, 2);
-		ImGui::SliderFloat("translate x asix", &model.transW.x, -10, 15);
-		ImGui::SliderFloat("translate y asix", &model.transW.y, -10, 10);
-		ImGui::SliderFloat("translate z asix", &model.transW.z, -10, 10);
-		ImGui::SliderFloat("rotate x asix", &model.rotateW.x, -360, 360);
-		ImGui::SliderFloat("rotate y asix", &model.rotateW.y, -360, 360);
-		ImGui::SliderFloat("rotate z asix", &model.rotateW.z, -360, 360);
-		ImGui::Text("Press left mouse to rotate and decide rotation:");
-		ImGui::Checkbox("Rotate x", &xW);
-		ImGui::Checkbox("Rotate y", &yW);
-		ImGui::Checkbox("Rotate z", &zW);
-		if (ImGui::Button("Reset all to zero"))
+		ImGuiWindowFlags flags = ImGuiWindowFlags_NoFocusOnAppearing;
+		if (ImGui::BeginMainMenuBar())
 		{
-			model.rotateW.x = 0;
-			model.rotateW.y = 0;
-			model.rotateW.z = 0;
-			model.transW.x = 0;
-			model.transW.y = 0;
-			model.transW.z = 0;
-			model.scalexW = 1;
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Open", "CTRL+O"))
+				{
+					nfdchar_t *outPath = NULL;
+					nfdresult_t result = NFD_OpenDialog("obj;png,jpg", NULL, &outPath);
+					if (result == NFD_OKAY) {
+						scene->AddModel(Utils::LoadMeshModel(outPath));
+						free(outPath);
+					}
+					else if (result == NFD_CANCEL) {
+					}
+					else {
+					}
+
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
 		}
-		ImGui::End();
 	}
-	if (material)
-	{
-		ImGui::Begin("decide matireal:");
-		ImGui::Text("Ambient RBG Material:");
-		ImGui::SliderFloat("R A", &model.m.ambient_.x, 0, 1);
-		ImGui::SliderFloat("B A", &model.m.ambient_.y, 0, 1);
-		ImGui::SliderFloat("G A", &model.m.ambient_.z, 0, 1);
-		ImGui::Text("Diffuse RBG Material:");
-		ImGui::SliderFloat("R D M", &model.m.diffuse_.x, 0, 1);
-		ImGui::SliderFloat("B D M", &model.m.diffuse_.y, 0, 1);
-		ImGui::SliderFloat("G D M", &model.m.diffuse_.z, 0, 1);
-		ImGui::Text("Specular RBG Material:");
-		ImGui::SliderFloat("R S M", &model.m.specular_.x, 0, 1);
-		ImGui::SliderFloat("B S M", &model.m.specular_.y, 0, 1);
-		ImGui::SliderFloat("G S M", &model.m.specular_.z, 0, 1);
-		
-
-		ImGui::End();
-	}
-	if (orthogonalP)
-{
-	ImGui::Begin("decide view volume");
-	ImGui::SliderFloat("left", &cleft, -10, 10);
-	ImGui::SliderFloat("right", &cright, -10, 10);
-	ImGui::SliderFloat("down", &down, -10, 10);
-	ImGui::SliderFloat("up", &up, -10,10);
-	ImGui::SliderFloat("near", &cnear, -360, 360);
-	ImGui::SliderFloat("far", &cfar, -360, 360);
-	ImGui::End();
-}
-	if (movecamera)
-	{
-		ImGui::Begin("move camera");
-		ImGui::SliderFloat("a", &c.a, -10, 10);
-		ImGui::SliderFloat("b", &c.b, -10, 10);
-		ImGui::SliderFloat("c", &c.c, -10, 10);
-		ImGui::End();
-	}
-	
-		//if (ImGui::BeginMenu("camera"))
-		//{
-			if (cameraworld)
-			{
-
-				ImGui::Begin("decide camera world transfom:");
-				ImGui::SliderFloat("scale", &c.scalexW, 0, 2);
-				ImGui::SliderFloat("translate x asix", &c.transW.x, -10, 15);
-				ImGui::SliderFloat("translate y asix", &c.transW.y, -10, 10);
-				ImGui::SliderFloat("translate z asix", &c.transW.z, -10, 10);
-				ImGui::SliderFloat("rotate x asix", &c.rotateW.x, -360, 360);
-				ImGui::SliderFloat("rotate y asix", &c.rotateW.y, -360, 360);
-				ImGui::SliderFloat("rotate z asix", &c.rotateW.z, -360, 360);
-				ImGui::Text("Press left mouse to rotate and decide rotation:");
-				ImGui::Checkbox("Rotate x", &xW);
-				ImGui::Checkbox("Rotate y", &yW);
-				ImGui::Checkbox("Rotate z", &zW);
-				if (ImGui::Button("Reset all to zero"))
-				{
-					c.rotateW.x = 0;
-					c.rotateW.y = 0;
-					c.rotateW.z = 0;
-					c.transW.x = 0;
-					c.transW.y = 0;
-					c.transW.z = 0;
-					c.scalexW = 1;
-				}
-				ImGui::End();
-
-			}
-			if (cameralocal)
-			{
-
-				ImGui::Begin("decide camera local transfom:");
-				ImGui::SliderFloat("scale", &c.scalex, 0, 2);
-				ImGui::SliderFloat("translate x asix", &c.trans.x, -10, 15);
-				ImGui::SliderFloat("translate y asix", &c.trans.y, -10, 10);
-				ImGui::SliderFloat("translate z asix", &c.trans.z, -10, 10);
-				ImGui::SliderFloat("rotate x asix", &c.rotate.x, -360, 360);
-				ImGui::SliderFloat("rotate y asix", &c.rotate.y, -360, 360);
-				ImGui::SliderFloat("rotate z asix", &c.rotate.z, -360, 360);
-				ImGui::Text("Press left mouse to rotate and decide rotation:");
-				ImGui::Checkbox("Rotate x", &x);
-				ImGui::Checkbox("Rotate y", &y);
-				ImGui::Checkbox("Rotate z", &z);
-				
-				if (ImGui::Button("Reset"))
-				{
-					c.rotate.x = 0;
-					c.rotate.y = 0;
-					c.rotate.z = 0;
-					c.trans.x = 0;
-					c.trans.y = 0;
-					c.trans.z = 0;
-					c.scalex = 1;
-				}
-				ImGui::End();
-			}
-	//	}
-			if (addlight)
-			{
-
-				ImGui::Begin("add light source");
-				newlight = false;
-				ImGui::Checkbox("add new light", &newlight);
-				
-				if (newlight)
-				{
-					shared_ptr<Light>m(new Light());
-					scene.AddLight(m);
-
-				}
-				int index = 0;
-				ImGui::SliderFloat("translate x asix", &lightx, -1, 1);
-				ImGui::SliderFloat("translate y asix", &lighty, -1, 1);
-				ImGui::SliderFloat("translate z asix", &lightz, -1, 1);
-				ImGui::Text("Choose active light:");
-				bool b = false;
-				ImGui::Checkbox("add another L", &b);
-				if(b)
-					if(index<scene.LightSize()-1)
-					index++;
-				scene.active_light_index = index;
-				Light& l = scene.GetLight(0);
-
-				ImGui::Text("Ambient RBG:");
-				ImGui::SliderFloat("R A", &l.GetAmbient().x, 0, 1);
-				ImGui::SliderFloat("B A", &l.GetAmbient().y, 0, 1);
-				ImGui::SliderFloat("G A", &l.GetAmbient().z, 0, 1);
-				ImGui::Text("Diffuse RBG:");
-				ImGui::SliderFloat("R D", &l.GetDiffuse().x, 0, 1);
-				ImGui::SliderFloat("B D", &l.GetDiffuse().y, 0, 1);
-				ImGui::SliderFloat("G D", &l.GetDiffuse().z, 0, 1);
-				ImGui::Text("Specular RBG:");
-				ImGui::SliderFloat("R S", &l.GetSpecular().x, 0, 1);
-				ImGui::SliderFloat("B S", &l.GetSpecular().y, 0, 1);
-				ImGui::SliderFloat("G S", &l.GetSpecular().z, 0, 1);
-				ImGui::SliderFloat("Scale ambient", &l.Ascale, 0, 1);
-				ImGui::SliderFloat("Scale diffuse", &l.Dscale, 0, 1);
-				ImGui::SliderFloat("Scale specular", &l.Sscale, 0, 1);
-				
-
-				ImGui::End();
-			}
-			
-
-	
-	ImGui::End();
 }

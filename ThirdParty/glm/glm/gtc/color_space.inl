@@ -1,4 +1,5 @@
 /// @ref gtc_color_space
+/// @file glm/gtc/color_space.inl
 
 namespace glm{
 namespace detail

@@ -1,3 +1,6 @@
+/// @ref core
+/// @file glm/detail/type_half.inl
+
 namespace glm{
 namespace detail
 {
@@ -20,12 +23,12 @@ namespace detail
 			f(f_)
 		{}
 
-		GLM_FUNC_QUALIFIER uif32(unsigned int i_) :
+		GLM_FUNC_QUALIFIER uif32(uint32 i_) :
 			i(i_)
 		{}
 
 		float f;
-		unsigned int i;
+		uint32 i;
 	};
 
 	GLM_FUNC_QUALIFIER float toFloat32(hdata value)
@@ -112,7 +115,7 @@ namespace detail
 		// Our floating point number, f, is represented by the bit
 		// pattern in integer i.  Disassemble that bit pattern into
 		// the sign, s, the exponent, e, and the significand, m.
-		// Shift s into the position where it will go in the
+		// Shift s into the position where it will go in in the
 		// resulting half number.
 		// Adjust e, accounting for the different exponent bias
 		// of float and half (127 versus 15).

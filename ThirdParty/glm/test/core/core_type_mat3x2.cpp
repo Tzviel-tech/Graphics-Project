@@ -1,7 +1,4 @@
-#include <glm/gtc/constants.hpp>
-#include <glm/ext/scalar_relational.hpp>
-#include <glm/ext/vector_relational.hpp>
-#include <glm/ext/matrix_relational.hpp>
+#include <glm/vector_relational.hpp>
 #include <glm/mat2x2.hpp>
 #include <glm/mat2x3.hpp>
 #include <glm/mat2x4.hpp>
@@ -26,8 +23,8 @@ static bool test_operators()
 	glm::mat3x2 o = m / x;
 	glm::mat3x2 p = x * m;
 	glm::mat3x2 q = m * x;
-	bool R = glm::any(glm::notEqual(m, q, glm::epsilon<float>()));
-	bool S = glm::all(glm::equal(m, l, glm::epsilon<float>()));
+	bool R = m != q;
+	bool S = m == l;
 
 	return (S && !R) ? 0 : 1;
 }
@@ -48,10 +45,13 @@ int test_ctr()
 		{0, 1},
 		{2, 3},
 		{4, 5}};
-
-	Error += glm::all(glm::equal(m0, m2, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(m1, m2, glm::epsilon<float>())) ? 0 : 1;
-
+	
+	for(glm::length_t i = 0; i < m0.length(); ++i)
+		Error += glm::all(glm::equal(m0[i], m2[i])) ? 0 : 1;
+	
+	for(glm::length_t i = 0; i < m1.length(); ++i)
+		Error += glm::all(glm::equal(m1[i], m2[i])) ? 0 : 1;
+	
 	std::vector<glm::mat3x2> v1{
 		{0, 1, 2, 3, 4, 5},
 		{0, 1, 2, 3, 4, 5}
@@ -86,7 +86,8 @@ namespace cast
 		glm::mat3x2 B(A);
 		glm::mat3x2 Identity(1.0f);
 
-		Error += glm::all(glm::equal(B, Identity, glm::epsilon<float>())) ? 0 : 1;
+		for(glm::length_t i = 0, length = B.length(); i < length; ++i)
+			Error += glm::all(glm::equal(B[i], Identity[i])) ? 0 : 1;
 
 		return Error;
 	}
@@ -125,7 +126,7 @@ static int test_size()
 
 static int test_constexpr()
 {
-#if GLM_HAS_CONSTEXPR
+#if GLM_HAS_CONSTEXPR_CXX11
 	static_assert(glm::mat3x2::length() == 3, "GLM: Failed constexpr");
 #endif
 

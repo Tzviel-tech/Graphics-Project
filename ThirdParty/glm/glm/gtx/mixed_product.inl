@@ -1,4 +1,5 @@
 /// @ref gtx_mixed_product
+/// @file glm/gtx/mixed_product.inl
 
 namespace glm
 {

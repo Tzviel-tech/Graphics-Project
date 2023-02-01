@@ -1,46 +1,29 @@
-(Click "Preview" to turn any http URL into a clickable link)
+You may use the Issue Tracker to ask for help and submit bug reports, feature requests or suggestions. 
 
-1. PLEASE CAREFULLY READ: [FAQ](https://github.com/ocornut/imgui/blob/master/docs/FAQ.md)
+PLEASE CAREFULLY READ THIS DOCUMENT before doing so:
+[CONTRIBUTING.md](https://github.com/ocornut/imgui/blob/master/.github/CONTRIBUTING.md).
 
-2. PLEASE CAREFULLY READ: https://github.com/ocornut/imgui/issues/2261
+SELECT "PREVIEW CHANGES" TO TURN THE URL ABOVE INTO A CLICKABLE LINK.
 
-2. FOR FIRST-TIME USERS ISSUES COMPILING/LINKING/RUNNING/LOADING FONTS,  please use the [Discord server](http://discord.dearimgui.org).
-
-3. PLEASE MAKE SURE that you have: read the FAQ; explored the contents of `ShowDemoWindow()` including the Examples menu; searched among Issues; used your IDE to search for keywords in all sources and text files; and read the link provided in (1) (2).
-
-4. Be mindful that messages are being sent to the e-mail box of "Watching" users. Try to proof-read your messages before sending them. Edits are not seen by those users.
-
-5. Delete points 1-6 and PLEASE FILL THE TEMPLATE BELOW before submitting your issue.
-
-Thank you!
+(Delete everything above this section before submitting your issue. Please read the CONTRIBUTING.md file!)
 
 ----
 
-_(you may also go to Demo>About Window, and click "Config/Build Information" to obtain a bunch of detailed information that you can paste here)_
-
 **Version/Branch of Dear ImGui:**
 
-Version: XXX
-Branch: XXX _(master/viewport/docking/etc.)_
+XXX
 
-**Back-end/Renderer/Compiler/OS**
+**Back-end file/Renderer/OS:** _(if the question is related to inputs/rendering/build, otherwise delete this section)_
 
-Back-ends: imgui_impl_XXX.cpp + imgui_impl_XXX.cpp _(or specify if using a custom engine/back-end)_
-Compiler: XXX _(if the question is related to building or platform specific features)_
-Operating System: XXX
+XXX
 
-**My Issue/Question:**
+**My Issue/Question:** _(please provide context)_
 
-XXX _(please provide as much context as possible)_
-
-**Screenshots/Video**
-
-XXX _(you can drag files here)_
-
-**Standalone, minimal, complete and verifiable example:** _(see https://github.com/ocornut/imgui/issues/2261)_
+**Standalone, minimal, complete and verifiable example:** _(see CONTRIBUTING.md)_
 ```
-// Please do not forget this!
 ImGui::Begin("Example Bug");
 MoreCodeToExplainMyIssue();
 ImGui::End();
 ```
+
+**Screenshots/Video** _(you can drag files here)_

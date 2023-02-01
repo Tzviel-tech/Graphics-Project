@@ -1,4 +1,5 @@
 /// @ref gtx_matrix_factorisation
+/// @file glm/gtx/matrix_factorisation.inl
 
 namespace glm
 {

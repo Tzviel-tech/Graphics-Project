@@ -1,7 +1,4 @@
-#include <glm/ext/matrix_relational.hpp>
-#include <glm/ext/vector_relational.hpp>
-#include <glm/ext/scalar_relational.hpp>
-#include <glm/gtc/constants.hpp>
+#include <glm/gtc/epsilon.hpp>
 #include <glm/matrix.hpp>
 #include <glm/vector_relational.hpp>
 #include <glm/mat2x2.hpp>
@@ -28,8 +25,8 @@ int test_operators()
 	glm::mat2x2 o = m / x;
 	glm::mat2x2 p = x * m;
 	glm::mat2x2 q = m * x;
-	bool R = glm::any(glm::notEqual(m, q, glm::epsilon<float>()));
-	bool S = glm::all(glm::equal(m, l, glm::epsilon<float>()));
+	bool R = m != q;
+	bool S = m == l;
 
 	return (S && !R) ? 0 : 1;
 }
@@ -43,16 +40,16 @@ int test_inverse()
 		glm::mat2 const Inverse = glm::inverse(Matrix);
 		glm::mat2 const Identity = Matrix * Inverse;
 
-		Error += glm::all(glm::equal(Identity[0], glm::vec2(1.0f, 0.0f), glm::vec2(0.01f))) ? 0 : 1;
-		Error += glm::all(glm::equal(Identity[1], glm::vec2(0.0f, 1.0f), glm::vec2(0.01f))) ? 0 : 1;
+		Error += glm::all(glm::epsilonEqual(Identity[0], glm::vec2(1.0f, 0.0f), glm::vec2(0.01f))) ? 0 : 1;
+		Error += glm::all(glm::epsilonEqual(Identity[1], glm::vec2(0.0f, 1.0f), glm::vec2(0.01f))) ? 0 : 1;
 	}
 
 	{
 		glm::mat2 const Matrix(1, 2, 3, 4);
 		glm::mat2 const Identity = Matrix / Matrix;
 
-		Error += glm::all(glm::equal(Identity[0], glm::vec2(1.0f, 0.0f), glm::vec2(0.01f))) ? 0 : 1;
-		Error += glm::all(glm::equal(Identity[1], glm::vec2(0.0f, 1.0f), glm::vec2(0.01f))) ? 0 : 1;
+		Error += glm::all(glm::epsilonEqual(Identity[0], glm::vec2(1.0f, 0.0f), glm::vec2(0.01f))) ? 0 : 1;
+		Error += glm::all(glm::epsilonEqual(Identity[1], glm::vec2(0.0f, 1.0f), glm::vec2(0.01f))) ? 0 : 1;
 	}
 
 	return Error;
@@ -67,7 +64,8 @@ int test_ctr()
 		glm::highp_mat2x2 const B(A);
 		glm::mediump_mat2x2 const C(B);
 
-		Error += glm::all(glm::equal(A, C, glm::epsilon<float>())) ? 0 : 1;
+		for(glm::length_t i = 0; i < A.length(); ++i)
+			Error += glm::all(glm::equal(A[i], C[i])) ? 0 : 1;
 	}
 
 #if GLM_HAS_INITIALIZER_LISTS
@@ -81,8 +79,11 @@ int test_ctr()
 		{0, 1},
 		{2, 3}};
 
-	Error += glm::all(glm::equal(m0, m2, glm::epsilon<float>())) ? 0 : 1;
-	Error += glm::all(glm::equal(m1, m2, glm::epsilon<float>())) ? 0 : 1;
+	for(glm::length_t i = 0; i < m0.length(); ++i)
+		Error += glm::all(glm::equal(m0[i], m2[i])) ? 0 : 1;
+
+	for(glm::length_t i = 0; i < m1.length(); ++i)
+		Error += glm::all(glm::equal(m1[i], m2[i])) ? 0 : 1;
 
 	std::vector<glm::mat2x2> v1{
 		{0, 1, 2, 3},
@@ -116,7 +117,8 @@ namespace cast
 		glm::mat2 B(A);
 		glm::mat2 Identity(1.0f);
 
-		Error += glm::all(glm::equal(B, Identity, glm::epsilon<float>())) ? 0 : 1;
+		for(glm::length_t i = 0, length = B.length(); i < length; ++i)
+			Error += glm::all(glm::equal(B[i], Identity[i])) ? 0 : 1;
 
 		return Error;
 	}
@@ -155,7 +157,7 @@ int test_size()
 
 int test_constexpr()
 {
-#if GLM_HAS_CONSTEXPR
+#if GLM_HAS_CONSTEXPR_CXX11
 	static_assert(glm::mat2x2::length() == 2, "GLM: Failed constexpr");
 #endif
 

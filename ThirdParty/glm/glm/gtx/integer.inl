@@ -1,4 +1,5 @@
 /// @ref gtx_integer
+/// @file glm/gtx/integer.inl
 
 namespace glm
 {

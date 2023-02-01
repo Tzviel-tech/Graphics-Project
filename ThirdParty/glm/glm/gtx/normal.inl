@@ -1,4 +1,5 @@
 /// @ref gtx_normal
+/// @file glm/gtx/normal.inl
 
 namespace glm
 {

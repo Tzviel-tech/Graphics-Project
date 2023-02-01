@@ -1,4 +1,5 @@
 /// @ref gtx_type_trait
+/// @file glm/gtx/type_trait.inl
 
 namespace glm
 {
@@ -41,13 +42,13 @@ namespace glm
 
 	// tquat
 	template<typename T, qualifier Q>
-	bool const type<qua<T, Q> >::is_vec;
+	bool const type<tquat<T, Q> >::is_vec;
 	template<typename T, qualifier Q>
-	bool const type<qua<T, Q> >::is_mat;
+	bool const type<tquat<T, Q> >::is_mat;
 	template<typename T, qualifier Q>
-	bool const type<qua<T, Q> >::is_quat;
+	bool const type<tquat<T, Q> >::is_quat;
 	template<typename T, qualifier Q>
-	length_t const type<qua<T, Q> >::components;
+	length_t const type<tquat<T, Q> >::components;
 
 	// tdualquat
 	template<typename T, qualifier Q>

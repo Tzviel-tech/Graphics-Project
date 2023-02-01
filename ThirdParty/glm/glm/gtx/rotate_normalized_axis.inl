@@ -1,4 +1,5 @@
 /// @ref gtx_rotate_normalized_axis
+/// @file glm/gtx/rotate_normalized_axis.inl
 
 namespace glm
 {
@@ -40,9 +41,9 @@ namespace glm
 	}
 
 	template<typename T, qualifier Q>
-	GLM_FUNC_QUALIFIER qua<T, Q> rotateNormalizedAxis
+	GLM_FUNC_QUALIFIER tquat<T, Q> rotateNormalizedAxis
 	(
-		qua<T, Q> const& q,
+		tquat<T, Q> const& q,
 		T const& angle,
 		vec<3, T, Q> const& v
 	)
@@ -52,7 +53,7 @@ namespace glm
 		T const AngleRad(angle);
 		T const Sin = sin(AngleRad * T(0.5));
 
-		return q * qua<T, Q>(cos(AngleRad * static_cast<T>(0.5)), Tmp.x * Sin, Tmp.y * Sin, Tmp.z * Sin);
+		return q * tquat<T, Q>(cos(AngleRad * static_cast<T>(0.5)), Tmp.x * Sin, Tmp.y * Sin, Tmp.z * Sin);
 		//return gtc::quaternion::cross(q, tquat<T, Q>(cos(AngleRad * T(0.5)), Tmp.x * fSin, Tmp.y * fSin, Tmp.z * fSin));
 	}
 }//namespace glm

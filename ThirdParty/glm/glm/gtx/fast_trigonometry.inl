@@ -1,4 +1,5 @@
 /// @ref gtx_fast_trigonometry
+/// @file glm/gtx/fast_trigonometry.inl
 
 namespace glm{
 namespace detail
@@ -23,7 +24,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> cos_52s(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(cos_52s, x);
+		return detail::functor1<L, T, T, Q>::call(cos_52s, x);
 	}
 }//namespace detail
 
@@ -37,7 +38,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> wrapAngle(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(wrapAngle, x);
+		return detail::functor1<L, T, T, Q>::call(wrapAngle, x);
 	}
 
 	// cos
@@ -59,7 +60,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> fastCos(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(fastCos, x);
+		return detail::functor1<L, T, T, Q>::call(fastCos, x);
 	}
 
 	// sin
@@ -72,7 +73,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> fastSin(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(fastSin, x);
+		return detail::functor1<L, T, T, Q>::call(fastSin, x);
 	}
 
 	// tan
@@ -85,7 +86,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> fastTan(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(fastTan, x);
+		return detail::functor1<L, T, T, Q>::call(fastTan, x);
 	}
 
 	// asin
@@ -98,7 +99,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> fastAsin(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(fastAsin, x);
+		return detail::functor1<L, T, T, Q>::call(fastAsin, x);
 	}
 
 	// acos
@@ -111,7 +112,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> fastAcos(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(fastAcos, x);
+		return detail::functor1<L, T, T, Q>::call(fastAcos, x);
 	}
 
 	// atan
@@ -125,7 +126,7 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> fastAtan(vec<L, T, Q> const& y, vec<L, T, Q> const& x)
 	{
-		return detail::functor2<vec, L, T, Q>::call(fastAtan, y, x);
+		return detail::functor2<L, T, Q>::call(fastAtan, y, x);
 	}
 
 	template<typename T>
@@ -137,6 +138,6 @@ namespace detail
 	template<length_t L, typename T, qualifier Q>
 	GLM_FUNC_QUALIFIER vec<L, T, Q> fastAtan(vec<L, T, Q> const& x)
 	{
-		return detail::functor1<vec, L, T, T, Q>::call(fastAtan, x);
+		return detail::functor1<L, T, T, Q>::call(fastAtan, x);
 	}
 }//namespace glm

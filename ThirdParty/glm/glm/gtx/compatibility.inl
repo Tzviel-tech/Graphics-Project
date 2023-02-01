@@ -1,3 +1,6 @@
+/// @ref gtx_compatibility
+/// @file glm/gtx/compatibility.inl
+
 #include <limits>
 
 namespace glm
@@ -10,7 +13,7 @@ namespace glm
 #		if GLM_HAS_CXX11_STL
 			return std::isfinite(x) != 0;
 #		elif GLM_COMPILER & GLM_COMPILER_VC
-			return _finite(x) != 0;
+			return _finite(x);
 #		elif GLM_COMPILER & GLM_COMPILER_GCC && GLM_PLATFORM & GLM_PLATFORM_ANDROID
 			return _isfinite(x) != 0;
 #		else

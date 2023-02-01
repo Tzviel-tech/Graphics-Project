@@ -1,4 +1,5 @@
 /// @ref gtx_matrix_major_storage
+/// @file glm/gtx/matrix_major_storage.hpp
 
 namespace glm
 {

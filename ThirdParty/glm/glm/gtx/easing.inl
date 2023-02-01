@@ -1,4 +1,5 @@
 /// @ref gtx_easing
+/// @file glm/gtx/easing.inl
 
 #include <cmath>
 

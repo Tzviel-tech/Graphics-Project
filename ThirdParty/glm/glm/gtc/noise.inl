@@ -1,4 +1,5 @@
 /// @ref gtc_noise
+/// @file glm/gtc/noise.inl
 ///
 // Based on the work of Stefan Gustavson and Ashima Arts on "webgl-noise":
 // https://github.com/ashima/webgl-noise
@@ -732,8 +733,8 @@ namespace gtc
 		T const F4 = static_cast<T>(0.309016994374947451);
 
 		// First corner
-		vec<4, T, Q> i  = floor(v + dot(v, vec<4, T, Q>(F4)));
-		vec<4, T, Q> x0 = v -   i + dot(i, vec<4, T, Q>(C.x));
+		vec<4, T, Q> i  = floor(v + dot(v, vec4(F4)));
+		vec<4, T, Q> x0 = v -   i + dot(i, vec4(C.x));
 
 		// Other corners
 
