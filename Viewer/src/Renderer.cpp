@@ -27,7 +27,7 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 		for(int currentModelIndex = 0; currentModelIndex < modelCount; currentModelIndex++)
 		{
 			std::shared_ptr<MeshModel> currentModel = scene->GetModel(currentModelIndex);
-			currentModel->PlanarTexture();
+			//currentModel->PlanarTexture();
 			// Activate the 'colorShader' program (vertex and fragment shaders)
 			colorShader.use();
 
@@ -66,7 +66,7 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 
 void Renderer::LoadShaders()
 {
-	colorShader.loadShaders("vshader_color.glsl", "fshader_color.glsl");
+	colorShader.loadShaders("vshader_color.glsl", "toonshade_color.glsl");
 }
 
 void Renderer::LoadTextures()
