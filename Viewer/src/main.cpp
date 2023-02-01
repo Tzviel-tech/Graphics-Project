@@ -245,12 +245,12 @@ void HandleImguiInput()
 
 		if (imgui->KeysDown[83]) // s
 		{
-			scene->GetActiveModel()->TranslateModel(glm::vec3(0, 0, 0.02));
+			scene->GetActiveModel()->TranslateModel(glm::vec3(0, 0.02,0));
 		}
 
 		if (imgui->KeysDown[87]) // w
 		{
-			scene->GetActiveModel()->TranslateModel(glm::vec3(0, 0, -0.02));
+			scene->GetActiveModel()->TranslateModel(glm::vec3(0, -0.02, 0));
 		}
 	}
 

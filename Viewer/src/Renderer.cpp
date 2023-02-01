@@ -36,6 +36,7 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 			colorShader.setUniform("view", camera.GetViewTransformation());
 			colorShader.setUniform("projection", camera.GetProjectionTransformation());
 			colorShader.setUniform("material.textureMap", 0);
+			colorShader.setUniform("lightposition",scene->GetLight(0)->GetPosition( ));
 
 			// Set 'texture1' as the active texture at slot #0
 			texture1.bind(0);
@@ -49,7 +50,9 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 			// Unset 'texture1' as the active texture at slot #0
 			texture1.unbind(0);
 
-			colorShader.setUniform("color", glm::vec3(0,0,0));
+			colorShader.setUniform("color", glm::vec3(1,1,1));
+			colorShader.setUniform("lightcolor", glm::vec3(1, 1, 1));
+			colorShader.setUniform("ambientcolor", glm::vec3(1, 0, 0));
 
 			// Drag our model's faces (triangles) in line mode (wireframe)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

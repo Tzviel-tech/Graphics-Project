@@ -70,4 +70,11 @@ public:
 	void ScaleWorld(double factor);
 
 	GLuint GetVAO() const;
+	struct Matireal
+	{
+
+
+
+
+	};
 };
