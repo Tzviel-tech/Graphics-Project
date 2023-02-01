@@ -69,9 +69,9 @@ int main(int argc, char **argv)
 	Camera camera = Camera(eye, at, up, GetAspectRatio());
 	scene->AddCamera(camera);
 
-	scene->AddLight(std::make_shared<PointLight>(glm::vec3( 1, 1,15), glm::vec3(1, 1, 1)));
-	//scene->AddLight(std::make_shared<PointLight>(glm::vec3( 3, 5, 20),  glm::vec3(0, 0, 0)));
-	//scene->AddLight(std::make_shared<PointLight>(glm::vec3(-5, 0, 20),  glm::vec3(0, 0, 0)));
+	scene->AddLight(std::make_shared<PointLight>(glm::vec3( 0, 1, 15), glm::vec3(1, 1, 1)));
+	scene->AddLight(std::make_shared<PointLight>(glm::vec3( 0, 5, 5),  glm::vec3(0, 0, 0)));
+	scene->AddLight(std::make_shared<PointLight>(glm::vec3(-5, 0, 0),  glm::vec3(0, 0, 0)));
 
 	Renderer renderer;
 	renderer.LoadShaders();
