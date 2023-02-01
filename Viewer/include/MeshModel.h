@@ -36,7 +36,8 @@ protected:
 public:
 	MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> textureCoords, const std::string& modelName = "");
 	virtual ~MeshModel();
-
+	void PlanarTexture();
+	GLuint GetVbO() const;
 	const glm::mat4x4& GetWorldTransformation() const;
 	const glm::mat4x4& GetModelTransformation() const;
 

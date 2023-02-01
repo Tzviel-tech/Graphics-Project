@@ -63,7 +63,18 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	// unbind to make sure other code does not change it somewhere else
 	glBindVertexArray(0);
 }
+void MeshModel::PlanarTexture()
+{
+	for (Vertex& vertex : modelVertices)
+	{
+		vertex.textureCoords = glm::vec2(vertex.position[0], vertex.position[1]);
+	}
 
+	glBindVertexArray(GetVAO());
+	glBindBuffer(GL_VERTEX_ARRAY, GetVbO());
+	glBufferSubData(GL_ARRAY_BUFFER, 0, modelVertices.size() * sizeof(Vertex), &modelVertices[0]);
+	glBindVertexArray(0);
+}
 MeshModel::~MeshModel()
 {
 	glDeleteVertexArrays(1, &vao);
@@ -188,6 +199,10 @@ void MeshModel::ScaleWorld(double factor)
 GLuint MeshModel::GetVAO() const
 {
 	return vao;
+}
+GLuint MeshModel::GetVbO() const
+{
+	return vbo;
 }
 
 const std::vector<Vertex>& MeshModel::GetModelVertices()
