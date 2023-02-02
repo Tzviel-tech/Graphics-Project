@@ -6,7 +6,7 @@
 #include <string>
 #include <memory>
 #include "MeshModel.h"
-#include "AmbientLight.h"
+
 #include "PointLight.h"
 #include "Camera.h"
 
@@ -14,7 +14,6 @@ class Scene {
 private:
 	std::vector<std::shared_ptr<MeshModel>> models;
 	std::vector<std::shared_ptr<PointLight>> lights;
-	AmbientLight ambientLight;
 	std::vector<Camera> cameras;
 
 	int activeCameraIndex;
@@ -30,14 +29,14 @@ public:
 	void AddCamera(const Camera& camera);
 	int GetCameraCount() const;
 	Camera& GetCamera(int index);
-	const Camera& GetCamera(int index) const;
+   
 
 	void AddLight(const std::shared_ptr<PointLight>& light);
 	int GetLightCount() const;
 	std::shared_ptr<PointLight> GetLight(int index) const;
 	const std::vector<std::shared_ptr<PointLight>>& GetActiveLights() const;
 
-	const AmbientLight& GetAmbientLight();
+	
 
 	const Camera& GetActiveCamera() const;
 	Camera& GetActiveCamera();

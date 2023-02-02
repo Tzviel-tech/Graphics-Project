@@ -1,4 +1,5 @@
 #define _USE_MATH_DEFINES
+#define GLM_ENABLE_EXPERIMENTAL
 #include <cmath>
 
 #include <glad/glad.h>
@@ -26,7 +27,38 @@
 #include "AmbientLight.h"
 #include "PointLight.h"
 #include "Utils.h"
+float lightx;
+float lightz;
+float lighty;
+bool normals;
+bool material = false;
+bool drawlight = false;
+bool box;
+bool wbox;
+bool rec;
+bool newlight = false;
 bool addlight = false;
+static float nornalscale;
+static float cleft = 1;
+static float cright = 1;
+static float down = -1;
+static float up = 1;
+static float cnear = 1;
+static float cfar = -1;
+static float grey = 1;
+bool x = false, y = false, z = false, xW = false, yW = false, zW = false;
+bool WORLD_TRANSFOM;
+bool orthogonalP;
+bool movecamera;
+bool cameraworld;
+bool cameralocal;
+bool Z_buff;
+/**
+ * Fields
+ */
+bool show_demo_window = false;
+bool show_another_window = false;
+glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 double zoomFactor = 1;
 int windowWidth = 1280;
 int windowHeight = 720;
@@ -44,13 +76,12 @@ bool Setup(int windowWidth, int windowHeight, const char* windowName);
 void Cleanup();
 
 static void GlfwErrorCallback(int error, const char* description);
-void RenderFrame(GLFWwindow* window, std::shared_ptr<Scene> scene, Renderer& renderer, ImGuiIO& io);
 
 void glfw_OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 void glfw_OnFramebufferSize(GLFWwindow* window, int width, int height);
 
 float GetAspectRatio();
-void DrawImguiMenus();
+void DrawImguiMenus(Scene & scene);
 void HandleImguiInput();
 
 int main(int argc, char **argv)
@@ -63,20 +94,17 @@ int main(int argc, char **argv)
 	}
 
 	scene = std::make_shared<Scene>();
-	glm::vec3 eye = glm::vec3(0, 0, 10);
-	glm::vec3 at = glm::vec3(0, 0, 0);
-	glm::vec3 up = glm::vec3(0, 1, 0);
-	Camera camera = Camera(eye, at, up, GetAspectRatio());
+	Camera camera; 
 	scene->AddCamera(camera);
-
+	Utils u;
 	scene->AddLight(std::make_shared<PointLight>(glm::vec3(1, 1, 10), glm::vec3(1, 1, 1)));
 	scene->AddLight(std::make_shared<PointLight>(glm::vec3( 0, 5, 5),  glm::vec3(0, 0, 0)));
 	scene->AddLight(std::make_shared<PointLight>(glm::vec3(-5, 0, 0),  glm::vec3(0, 0, 0)));
-
+	std::shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/cow.obj");
 	Renderer renderer;
 	renderer.LoadShaders();
 	renderer.LoadTextures();
-
+	scene->AddModel(model);
 	while (!glfwWindowShouldClose(window))
 	{
 		// Poll and process events
@@ -86,10 +114,10 @@ int main(int argc, char **argv)
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		DrawImguiMenus();
+		DrawImguiMenus(*scene);
 		ImGui::Render();
 		HandleImguiInput();
-
+		scene->GetCamera(0).SetPTransform(cleft, cright, down, up, cnear, cfar);
 		// Clear the screen and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -195,73 +223,66 @@ void HandleImguiInput()
 	{
 		if (imgui->KeysDown[49]) // 1
 		{
-			scene->GetActiveModel()->RotateXModel(M_PI / 200);
+			scene->GetActiveModel()->rotate.x+=(M_PI / 200);
 		}
 
 		if (imgui->KeysDown[50]) // 2
 		{
-			scene->GetActiveModel()->RotateXModel(-M_PI / 200);
+			scene->GetActiveModel()->rotate.x += (-M_PI / 200);
 		}
 
 		if (imgui->KeysDown[51]) // 3
 		{
-			scene->GetActiveModel()->RotateYModel(M_PI / 200);
+			scene->GetActiveModel()->rotate.x += (M_PI / 200);
 		}
 
 		if (imgui->KeysDown[52]) // 4
 		{
-			scene->GetActiveModel()->RotateYModel(-M_PI / 200);
+			scene->GetActiveModel()->rotate.x += (-M_PI / 200);
 		}
 
 		if (imgui->KeysDown[53]) // 5
 		{
-			scene->GetActiveModel()->RotateZModel(M_PI / 200);
+			scene->GetActiveModel()->rotate.x += (M_PI / 200);
 		}
 
 		if (imgui->KeysDown[54]) // 6
 		{
-			scene->GetActiveModel()->RotateZModel(-M_PI / 200);
+			scene->GetActiveModel()->rotate.x += (-M_PI / 200);
 		}
 
 		if (imgui->KeysDown[45]) // -
 		{
-			scene->GetActiveModel()->ScaleModel(1 / 1.01);
+			scene->GetActiveModel()->rotate.x += (1 / 1.01);
 		}
 
 		if (imgui->KeysDown[61]) // +
 		{
-			scene->GetActiveModel()->ScaleModel(1.01);
+			scene->GetActiveModel()->rotate.x += (1.01);
 		}
 
 		if (imgui->KeysDown[65]) // a
 		{
-			scene->GetActiveModel()->TranslateModel(glm::vec3(-0.02, 0, 0));
+			scene->GetActiveModel()->trans += (glm::vec3(-0.02, 0, 0));
 		}
 
 		if (imgui->KeysDown[68]) // d
 		{
-			scene->GetActiveModel()->TranslateModel(glm::vec3(0.02, 0, 0));
+			scene->GetActiveModel()->trans += (glm::vec3(0.02, 0, 0));
 		}
 
 		if (imgui->KeysDown[83]) // s
 		{
-			scene->GetActiveModel()->TranslateModel(glm::vec3(0, 0.02,0));
+			scene->GetActiveModel()->trans += (glm::vec3(0, 0.02,0));
 		}
 
 		if (imgui->KeysDown[87]) // w
 		{
-			scene->GetActiveModel()->TranslateModel(glm::vec3(0, -0.02, 0));
+			scene->GetActiveModel()->trans += (glm::vec3(0, -0.02, 0));
 		}
 	}
 
-	if (!imgui->WantCaptureMouse)
-	{
-		if (zoomChanged)
-		{
-			scene->GetActiveCamera().Zoom(zoomFactor);
-			zoomChanged = false;
-		}
-	}
+	
 }
 
 void Cleanup()
@@ -282,7 +303,7 @@ void glfw_OnFramebufferSize(GLFWwindow* window, int width, int height)
 	windowWidth = width;
 	windowHeight = height;
 	glViewport(0, 0, windowWidth, windowHeight);
-	scene->GetActiveCamera().SetAspectRatio(GetAspectRatio());
+
 }
 
 void glfw_OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
@@ -297,185 +318,237 @@ float GetAspectRatio()
 	return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
 }
 
-void DrawImguiMenus()
+void DrawImguiMenus(Scene & scene)
 {
-	ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_Once);
+	ImGui::Begin("MeshViewer Menu");
+
+	// Menu Bar
+	if (ImGui::BeginMainMenuBar())
 	{
-		ImGui::Begin("Scene Menu");
-		if (ImGui::ColorEdit3("Clear Color", (float*)&clearColor))
+		if (ImGui::BeginMenu("File"))
 		{
-			glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+			if (ImGui::MenuItem("Open", "CTRL+O"))
+			{
+				nfdchar_t* outPath = NULL;
+				nfdresult_t result = NFD_OpenDialog("obj;png,jpg", NULL, &outPath);
+				if (result == NFD_OKAY)
+				{
+					scene.AddModel(Utils::LoadMeshModel(outPath));
+					free(outPath);
+				}
+				else if (result == NFD_CANCEL)
+				{
+				}
+				else
+				{
+				}
+
+			}
+			ImGui::EndMenu();
 		}
 
-		if (ImGui::CollapsingHeader("Cameras"))
-		{
-			if (ImGui::Button("Add Camera"))
-			{
+		// TODO: Add more menubar items (if you want to)
+		ImGui::EndMainMenuBar();
+	}
+	Camera& c = scene.GetActiveCamera();
+	std::shared_ptr<MeshModel> model =scene.GetModel(0);
+	// Controls
+	ImGui::ColorEdit3("Clear Color", (float*)&clear_color);
+	// TODO: Add more controls as needed
 
-				std::random_device rd;
-				std::mt19937 mt(rd());
-				std::uniform_real_distribution<double> dist(0, 2 * M_PI);
-				std::uniform_real_distribution<double> dist2(2, 10);
-				double angle = dist(mt);
-				double radius = dist2(mt);
+	ImGui::End();
 
-				glm::vec4 eye = glm::vec4(radius * glm::cos(angle), 0, radius * glm::sin(angle), 1);
-				glm::vec4 at = glm::vec4(0, 0, 0, 1);
-				glm::vec4 up = glm::vec4(0, 1, 0, 1);
-				scene->AddCamera(Camera(-scene->GetActiveCamera().GetEye(), at, up, GetAspectRatio()));
-			}
+	/**
+	 * Imgui demo - you can remove it once you are familiar with imgui
+	 */
 
-			const char** items;
-			std::vector<std::string> cameraStrings;
-			items = new const char*[scene->GetCameraCount()];
-			for (int i = 0; i < scene->GetCameraCount(); i++)
-			{
-				std::ostringstream s;
-				s << "Camera " << i;
-				std::string mystring = s.str();
-				cameraStrings.push_back(mystring);
-			}
+	 // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+	if (show_demo_window)
+		ImGui::ShowDemoWindow(&show_demo_window);
 
-			for (int i = 0; i < scene->GetCameraCount(); i++)
-			{
-				items[i] = cameraStrings[i].c_str();
-			}
+	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+	{
+		static float f = 0.0f;
+		static int counter = 0;
 
-			int currentCamera = scene->GetActiveCameraIndex();
-			ImGui::Combo("Active Camera", &currentCamera, items, scene->GetCameraCount());
+		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-			if (currentCamera != scene->GetActiveCameraIndex())
-			{
-				scene->SetActiveCameraIndex(currentCamera);
-				scene->GetActiveCamera().SetAspectRatio(GetAspectRatio());
-			}
+		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Another Window", &show_another_window);
 
-			delete items;
+		//ImGui::SliderFloat("float", &f, 0.0f, 5.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
-			int newProjectionType = scene->GetActiveCamera().IsPrespective() ? 0 : 1;
-			ImGui::RadioButton("Prespective", &newProjectionType, 0);
-			ImGui::RadioButton("Orthographic", &newProjectionType, 1);
-
-			if (newProjectionType == 0)
-			{
-				float fovy;
-				float zNear;
-				float zFar;
-
-				scene->GetActiveCamera().SwitchToPrespective();
-
-				if (ImGui::SliderFloat("Fovy", &fovy, 0.0f, M_PI))
-				{
-					scene->GetActiveCamera().SetFovy(fovy);
-				}
-
-				if (ImGui::SliderFloat("Near", &zNear, 1.0f, 10.0f))
-				{
-					scene->GetActiveCamera().SetNear(zNear);
-				}
-
-				if (ImGui::SliderFloat("Far", &zFar, 1.0f, 10.0f))
-				{
-					scene->GetActiveCamera().SetFar(zFar);
-				}
-			}
-			else if (newProjectionType == 1)
-			{
-				float height;
-				float zNear;
-				float zFar;
-
-				scene->GetActiveCamera().SwitchToOrthographic();
-
-				if (ImGui::SliderFloat("Height", &height, 0.0f, M_PI))
-				{
-					scene->GetActiveCamera().SetHeight(height);
-				}
-
-				if (ImGui::SliderFloat("Near", &zNear, 1.0f, 10.0f))
-				{
-					scene->GetActiveCamera().SetNear(zNear);
-				}
-
-				if (ImGui::SliderFloat("Far", &zFar, 1.0f, 10.0f))
-				{
-					scene->GetActiveCamera().SetFar(zFar);
-				}
-			}
-		}
-		
-		if (ImGui::CollapsingHeader("Models"))
-		{
-			const char** items;
-			std::vector<std::string> modelStrings;
-			items = new const char*[scene->GetModelCount()];
-			for (int i = 0; i < scene->GetModelCount(); i++)
-			{
-				std::ostringstream s;
-				s << scene->GetModel(i)->GetModelName();
-				std::string mystring = s.str();
-				modelStrings.push_back(mystring);
-			}
-
-			for (int i = 0; i < scene->GetModelCount(); i++)
-			{
-				items[i] = modelStrings[i].c_str();
-			}
-
-			int currentModelIndex = scene->GetActiveModelIndex();
-			ImGui::Combo("Active Model", &currentModelIndex, items, scene->GetModelCount());
-
-			if (currentModelIndex != scene->GetActiveModelIndex())
-			{
-				scene->SetActiveModelIndex(currentModelIndex);
-			}
-
-			delete items;
-
-			glm::vec3 modelColor = scene->GetActiveModel()->GetColor();
-			if (ImGui::ColorEdit3("Model Color", (float*)&modelColor))
-			{
-				scene->GetActiveModel()->SetColor(modelColor);
-			}
-
-			std::shared_ptr<MeshModel> meshModel = std::dynamic_pointer_cast<MeshModel>(scene->GetActiveModel());
-			if (meshModel)
-			{
-				//glm::vec4 normalColor = meshModel->GetNormalModel().GetColor();
-				//if (ImGui::ColorEdit3("Normal Color", (float*)&normalColor))
-				//{
-				//	meshModel->GetNormalModel().SetColor(normalColor);
-				//}
-			}
-		}
+		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+			counter++;
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
 
+	// 3. Show another simple window.
+	if (show_another_window)
 	{
-		ImGuiWindowFlags flags = ImGuiWindowFlags_NoFocusOnAppearing;
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("Open", "CTRL+O"))
-				{
-					nfdchar_t *outPath = NULL;
-					nfdresult_t result = NFD_OpenDialog("obj;png,jpg", NULL, &outPath);
-					if (result == NFD_OKAY) {
-						scene->AddModel(Utils::LoadMeshModel(outPath));
-						free(outPath);
-					}
-					else if (result == NFD_CANCEL) {
-					}
-					else {
-					}
-
-				}
-				ImGui::EndMenu();
-			}
-			ImGui::EndMainMenuBar();
-		}
+		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Text("Hello from another window!");
+		if (ImGui::Button("Close Me"))
+			show_another_window = false;
+		ImGui::End();
 	}
+
+
+
+
+	ImGui::Begin("decide local or world transfom:");
+	ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'W' to move up\n press 'S' to move down\n press 'D' to move left\n press 'A' to move right");
+	ImGui::SliderFloat("scale", &model->scalex, 1, 50);
+	ImGui::SliderFloat("translate x asix", &model->trans.x, -10, 15);
+	ImGui::SliderFloat("translate y asix", &model->trans.y, -10, 10);
+	ImGui::SliderFloat("translate z asix", &model->trans.z, -10, 10);
+	ImGui::SliderFloat("rotate x asix", &model->rotate.x, -360, 360);
+	ImGui::SliderFloat("rotate y asix", &model->rotate.y, -360, 360);
+	ImGui::SliderFloat("rotate z asix", &model->rotate.z, -360, 360);
+	ImGui::SliderFloat("scale normal", &nornalscale, 1, 50);
+
+	ImGui::Text("Press left mouse to rotate and decide rotation:");
+	ImGui::Checkbox("Rotate x", &x);
+	ImGui::Checkbox("Rotate y", &y);
+	ImGui::Checkbox("Rotate z", &z);
+	ImGui::Checkbox("World transfom", &WORLD_TRANSFOM);
+	ImGui::Checkbox("view volume", &orthogonalP);
+	ImGui::Checkbox("move camera", &movecamera);
+	ImGui::Checkbox("local cameraT", &cameralocal);
+	ImGui::Checkbox("world cameraT", &cameraworld);
+	ImGui::Checkbox("normals", &normals);
+	ImGui::Checkbox("prespective projection", &c.pres);
+	ImGui::Checkbox("bounding_boxlocal", &box);
+	ImGui::Checkbox("bounding_boxworld", &wbox);
+	ImGui::Checkbox("rectangle", &rec);
+	ImGui::Checkbox("change material", &material);
+	ImGui::Checkbox("Show grey Z:", &Z_buff);
+	ImGui::Checkbox("change light pos:", &addlight);
+	ImGui::Checkbox("drawlight rays", &drawlight);
+	if (ImGui::Button("Reset all to zero"))
+	{
+		model->rotate.x = 0;
+		model->rotate.y = 0;
+		model->rotate.z = 0;
+		model->trans.x = 0;
+		model->trans.y = 0;
+		model->trans.z = 0;
+		model->scalex = 1;
+	}
+	if (WORLD_TRANSFOM)
+	{
+		ImGui::Begin("decide world transfom:");
+		ImGui::Text("TO MOVE BY KEYS AND MOUSE:\n press 'U' to move up\n press 'J' to move down\n press 'H' to move left\n press 'K' to move right");
+		ImGui::SliderFloat("scale", &model->scalexW, 0, 2);
+		ImGui::SliderFloat("translate x asix", &model->transW.x, -10, 15);
+		ImGui::SliderFloat("translate y asix", &model->transW.y, -10, 10);
+		ImGui::SliderFloat("translate z asix", &model->transW.z, -10, 10);
+		ImGui::SliderFloat("rotate x asix", &model->rotateW.x, -360, 360);
+		ImGui::SliderFloat("rotate y asix", &model->rotateW.y, -360, 360);
+		ImGui::SliderFloat("rotate z asix", &model->rotateW.z, -360, 360);
+		ImGui::Text("Press left mouse to rotate and decide rotation:");
+		ImGui::Checkbox("Rotate x", &xW);
+		ImGui::Checkbox("Rotate y", &yW);
+		ImGui::Checkbox("Rotate z", &zW);
+		if (ImGui::Button("Reset all to zero"))
+		{
+			model->rotateW.x = 0;
+			model->rotateW.y = 0;
+			model->rotateW.z = 0;
+			model->transW.x = 0;
+			model->transW.y = 0;
+			model->transW.z = 0;
+			model->scalexW = 1;
+		}
+		ImGui::End();
+	}
+	
+	if (orthogonalP)
+	{
+		ImGui::Begin("decide view volume");
+		ImGui::SliderFloat("left", &cleft, -10, 10);
+		ImGui::SliderFloat("right", &cright, -10, 10);
+		ImGui::SliderFloat("down", &down, -10, 10);
+		ImGui::SliderFloat("up", &up, -10, 10);
+		ImGui::SliderFloat("near", &cnear, -360, 360);
+		ImGui::SliderFloat("far", &cfar, -360, 360);
+		ImGui::End();
+	}
+	if (movecamera)
+	{
+		ImGui::Begin("move camera");
+		ImGui::SliderFloat("a", &c.a, -10, 10);
+		ImGui::SliderFloat("b", &c.b, -10, 10);
+		ImGui::SliderFloat("c", &c.c, -10, 10);
+		ImGui::End();
+	}
+
+	//if (ImGui::BeginMenu("camera"))
+	//{
+	if (cameraworld)
+	{
+
+		ImGui::Begin("decide camera world transfom:");
+		ImGui::SliderFloat("scale", &c.scalexW, 0, 2);
+		ImGui::SliderFloat("translate x asix", &c.transW.x, -10, 15);
+		ImGui::SliderFloat("translate y asix", &c.transW.y, -10, 10);
+		ImGui::SliderFloat("translate z asix", &c.transW.z, -10, 10);
+		ImGui::SliderFloat("rotate x asix", &c.rotateW.x, -360, 360);
+		ImGui::SliderFloat("rotate y asix", &c.rotateW.y, -360, 360);
+		ImGui::SliderFloat("rotate z asix", &c.rotateW.z, -360, 360);
+		ImGui::Text("Press left mouse to rotate and decide rotation:");
+		ImGui::Checkbox("Rotate x", &xW);
+		ImGui::Checkbox("Rotate y", &yW);
+		ImGui::Checkbox("Rotate z", &zW);
+		if (ImGui::Button("Reset all to zero"))
+		{
+			c.rotateW.x = 0;
+			c.rotateW.y = 0;
+			c.rotateW.z = 0;
+			c.transW.x = 0;
+			c.transW.y = 0;
+			c.transW.z = 0;
+			c.scalexW = 1;
+		}
+		ImGui::End();
+
+	}
+	if (cameralocal)
+	{
+
+		ImGui::Begin("decide camera local transfom:");
+		ImGui::SliderFloat("scale", &c.scalex, 0, 2);
+		ImGui::SliderFloat("translate x asix", &c.trans.x, -10, 15);
+		ImGui::SliderFloat("translate y asix", &c.trans.y, -10, 10);
+		ImGui::SliderFloat("translate z asix", &c.trans.z, -10, 10);
+		ImGui::SliderFloat("rotate x asix", &c.rotate.x, -360, 360);
+		ImGui::SliderFloat("rotate y asix", &c.rotate.y, -360, 360);
+		ImGui::SliderFloat("rotate z asix", &c.rotate.z, -360, 360);
+		ImGui::Text("Press left mouse to rotate and decide rotation:");
+		ImGui::Checkbox("Rotate x", &x);
+		ImGui::Checkbox("Rotate y", &y);
+		ImGui::Checkbox("Rotate z", &z);
+
+		if (ImGui::Button("Reset"))
+		{
+			c.rotate.x = 0;
+			c.rotate.y = 0;
+			c.rotate.z = 0;
+			c.trans.x = 0;
+			c.trans.y = 0;
+			c.trans.z = 0;
+			c.scalex = 1;
+		}
+		ImGui::End();
+	}
+	//	}
+	
+
+	ImGui::End();
 }

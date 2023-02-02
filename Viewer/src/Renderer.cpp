@@ -30,9 +30,9 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 			currentModel->PlanarTexture();
 			// Activate the 'colorShader' program (vertex and fragment shaders)
 			colorShader.use();
-
+		
 			// Set the uniform variables
-			colorShader.setUniform("model", currentModel->GetWorldTransformation() * currentModel->GetModelTransformation());
+			colorShader.setUniform("model", currentModel->getTransform());
 			colorShader.setUniform("view", camera.GetViewTransformation());
 			colorShader.setUniform("projection", camera.GetProjectionTransformation());
 			colorShader.setUniform("camerapos", camera.eye);

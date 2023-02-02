@@ -39,10 +39,7 @@ Camera& Scene::GetCamera(int index)
 	return cameras[index];
 }
 
-const Camera& Scene::GetCamera(int index) const
-{
-	return cameras[index];
-}
+
 
 const Camera& Scene::GetActiveCamera() const
 {
@@ -102,7 +99,3 @@ const std::vector<std::shared_ptr<PointLight>>& Scene::GetActiveLights() const
 	return lights;
 }
 
-const AmbientLight& Scene::GetAmbientLight()
-{
-	return ambientLight;
-}

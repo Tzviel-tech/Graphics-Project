@@ -97,105 +97,7 @@ const std::string& MeshModel::GetModelName()
 	return modelName;
 }
 
-void MeshModel::SetWorldTransformation(const glm::mat4x4& worldTransform)
-{
-	this->worldTransform = worldTransform;
-}
 
-const glm::mat4x4& MeshModel::GetWorldTransformation() const
-{
-	return worldTransform;
-}
-
-void MeshModel::SetModelTransformation(const glm::mat4x4& worldTransform)
-{
-	this->modelTransform = worldTransform;
-}
-
-const glm::mat4x4& MeshModel::GetModelTransformation() const
-{
-	return modelTransform;
-}
-
-void MeshModel::TranslateModel(const glm::vec3& translationVector)
-{
-	modelTransform = Utils::TranslationMatrix(translationVector) * modelTransform;
-}
-
-void MeshModel::TranslateWorld(const glm::vec3& translationVector)
-{
-	worldTransform = Utils::TranslationMatrix(translationVector) * worldTransform;
-}
-
-void MeshModel::RotateXModel(double angle)
-{
-	modelTransform = Utils::XRotationMatrix(angle) * modelTransform;
-}
-
-void MeshModel::RotateYModel(double angle)
-{
-	modelTransform = Utils::YRotationMatrix(angle) * modelTransform;
-}
-
-void MeshModel::RotateZModel(double angle)
-{
-	modelTransform = Utils::ZRotationMatrix(angle) * modelTransform;
-}
-
-void MeshModel::ScaleXModel(double factor)
-{
-	modelTransform = Utils::XScalingMatrix(factor) * modelTransform;
-}
-
-void MeshModel::ScaleYModel(double factor)
-{
-	modelTransform = Utils::YScalingMatrix(factor) * modelTransform;
-}
-
-void MeshModel::ScaleZModel(double factor)
-{
-	modelTransform = Utils::ZScalingMatrix(factor) * modelTransform;
-}
-
-void MeshModel::ScaleModel(double factor)
-{
-	modelTransform = glm::scale(glm::mat4(1), glm::vec3(factor, factor, factor)) * modelTransform;
-}
-
-void MeshModel::RotateXWorld(double angle)
-{
-	worldTransform = Utils::XRotationMatrix(angle) * worldTransform;
-}
-
-void MeshModel::RotateYWorld(double angle)
-{
-	worldTransform = Utils::YRotationMatrix(angle) * worldTransform;
-}
-
-void MeshModel::RotateZWorld(double angle)
-{
-	worldTransform = Utils::ZRotationMatrix(angle) * worldTransform;
-}
-
-void MeshModel::ScaleXWorld(double factor)
-{
-	worldTransform = Utils::XScalingMatrix(factor) * worldTransform;
-}
-
-void MeshModel::ScaleYWorld(double factor)
-{
-	worldTransform = Utils::YScalingMatrix(factor) * worldTransform;
-}
-
-void MeshModel::ScaleZWorld(double factor)
-{
-	worldTransform = Utils::ZScalingMatrix(factor) * worldTransform;
-}
-
-void MeshModel::ScaleWorld(double factor)
-{
-	worldTransform = glm::scale(glm::mat4(1), glm::vec3(factor, factor, factor)) * worldTransform;
-}
 
 GLuint MeshModel::GetVAO() const
 {
@@ -210,3 +112,56 @@ const std::vector<Vertex>& MeshModel::GetModelVertices()
 {
 	return modelVertices;
 }
+void MeshModel::setLocalTranslate()
+{
+	localtransmat = glm::translate(glm::mat4(1), glm::vec3(trans.x, trans.y, trans.z));
+}
+
+void MeshModel::setlocalScale()
+{
+	localscalemat = glm::scale(glm::mat4(1), glm::vec3(scalex * 0.1, scalex * 0.1, scalex * 0.1));
+}
+void MeshModel::setLocalRotation()
+{
+	glm::mat4 localrotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotate.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat4 localrotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotate.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 localrotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotate.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	localrotation = localrotationMatrixz * localrotationMatrixy * localrotationMatrixx;
+}
+void MeshModel::setLocal()
+{
+	setLocalRotation();
+	setlocalScale();
+	setLocalTranslate();
+	local = localtransmat * localscalemat * localrotation;
+
+}
+void MeshModel::setWorldTranslate()
+{
+	Wtransmat = glm::translate(glm::mat4(1), glm::vec3(transW.x, transW.y, transW.z));
+}
+
+void MeshModel::setWorldScale()
+{
+	Wscalemat = glm::scale(glm::mat4(1), glm::vec3(scalexW, scalexW, scalexW));
+}
+void MeshModel::setWorldRotation()
+{
+	glm::mat4  WrotationMatrixx = glm::rotate(glm::mat4(1.0f), glm::radians(rotateW.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat4  WrotationMatrixy = glm::rotate(glm::mat4(1.0f), glm::radians(rotateW.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4  WrotationMatrixz = glm::rotate(glm::mat4(1.0f), glm::radians(rotateW.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	Wrotation = WrotationMatrixz * WrotationMatrixy * WrotationMatrixx;
+}
+void MeshModel::setWorld()
+{
+	setWorldRotation();
+	setWorldScale();
+	setWorldTranslate();
+	world = Wtransmat * Wscalemat * Wrotation;
+
+}
+
+
+
+
+

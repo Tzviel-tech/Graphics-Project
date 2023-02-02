@@ -38,12 +38,8 @@ public:
 	virtual ~MeshModel();
 	void PlanarTexture();
 	GLuint GetVbO() const;
-	const glm::mat4x4& GetWorldTransformation() const;
-	const glm::mat4x4& GetModelTransformation() const;
-
-	void SetWorldTransformation(const glm::mat4x4& worldTransform);
-	void SetModelTransformation(const glm::mat4x4& modelTransform);
-
+	
+	
 	const glm::vec3& GetColor() const;
 	void SetColor(const glm::vec3& color);
 
@@ -51,25 +47,35 @@ public:
 
 	const std::vector<Vertex>& GetModelVertices();
 
-	void TranslateModel(const glm::vec3& translationVector);
-	void TranslateWorld(const glm::vec3& translationVector);
+	void setLocalTranslate();
+	void setlocalScale();
+	void setLocalRotation();
+	void setWorld();
+	void setWorldTranslate();
+	void setWorldScale();
+	void setWorldRotation();
+	void setLocal();
+	glm::mat4& getLocal() { setLocal();return local; };
+	glm::mat4& getWorld() { setWorld();return world; };
+	glm::mat4 getTransform() { return getWorld() * getLocal(); };
+	//local running prameters
+	float scalex = 1;
+	glm::vec3 trans = glm::vec3(0.0f);
+	glm::vec3 rotate = glm::vec3(0.0f);
 
-	void RotateXModel(double angle);
-	void RotateYModel(double angle);
-	void RotateZModel(double angle);
-	void ScaleXModel(double factor);
-	void ScaleYModel(double factor);
-	void ScaleZModel(double factor);
-	void ScaleModel(double factor);
-
-	void RotateXWorld(double angle);
-	void RotateYWorld(double angle);
-	void RotateZWorld(double angle);
-	void ScaleXWorld(double factor);
-	void ScaleYWorld(double factor);
-	void ScaleZWorld(double factor);
-	void ScaleWorld(double factor);
-
+	//world running pramaters
+	float scalexW = 1;
+	glm::vec3 transW = glm::vec3(0.0f);
+	glm::vec3 rotateW = glm::vec3(0.0f);
+	glm::mat4 local = glm::mat4(1);
+	glm::mat4 world = glm::mat4(1);
+	glm::mat4 localscalemat = glm::mat4(1);
+	glm::mat4 localtransmat = glm::mat4(1);
+	glm::mat4 localrotation = glm::mat4(1);
+	glm::mat4 Wscalemat = glm::mat4(1);
+	glm::mat4 Wtransmat = glm::mat4(1);
+	glm::mat4 Wrotation = glm::mat4(1);
+	
 	GLuint GetVAO() const;
 	
 };

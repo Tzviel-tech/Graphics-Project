@@ -1,81 +1,58 @@
 #pragma once
-#include <memory>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
-#include "MeshModel.h"
-/*
- * Camera class. This class takes care of all the camera transformations and manipulations.
- */
+#include <glm/gtx/transform.hpp>
 class Camera
 {
-private:
-	glm::mat4x4 viewTransformation;
-	glm::mat4x4 projectionTransformation;
-
-	
-	glm::vec3 up;
-	glm::vec3 at;
-
-	glm::vec3 x;
-	glm::vec3 y;
-	glm::vec3 z;
-
-	float zoom;
-	float fovy;
-	float height;
-	float zNear;
-	float zFar;
-	float aspectRatio;
-
-	bool prespective;
-
 public:
-	Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up, const float aspectRatio);
-	~Camera();
-	glm::vec3 eye;
-	void SetOrthographicProjection(
-		const float height,
-		const float aspectRatio,
-		const float zNear,
-		const float zFar);
+	Camera();
+	virtual ~Camera();
 
-	void SetPerspectiveProjection(
-		const float fovy,
-		const float aspect,
-		const float zNear,
-		const float zFar);
+	void SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up);
+	const glm::mat4x4& GetProjectionTransformation()const;
+	void SetPTransform(float left, float right, float up, float down, float near, float far);
+	const glm::mat4x4& GetViewTransformation()const;
+	float a = 0;
+	float b = 0;
+	float c = 1;
+	void setLocalTranslate();
+	void setlocalScale();
+	void setLocalRotation();
+	void setWorld();
+	void setWorldTranslate();
+	void setWorldScale();
+	void setWorldRotation();
+	void setLocal();
+	glm::mat4& getLocal() { setLocal();return local; };
+	glm::mat4& getWorld() { setWorld();return world; };
+	glm::mat4 getTransform() { return getWorld() * getLocal(); };
+	//local running prameters
+	float scalex = 1;
+	glm::vec3 trans = glm::vec3(0.0f);
+	glm::vec3 rotate = glm::vec3(0.0f);
+	float windowsheight=1280;
+	float windowswidth=720;
+	glm::vec3 eye = glm::vec3(0, 0, 10);
+	glm::vec3 GetCameraEye()
+	{
+		return glm::vec3(a, b, c);
+	}
+	//world running pramaters
+	float scalexW = 1;
+	glm::vec3 transW = glm::vec3(0.0f);
+	glm::vec3 rotateW = glm::vec3(0.0f);
+	bool pres;
 
-	void UpdateProjectionMatrix();
+private:
+	glm::mat4 view_transformation;
+	glm::mat4 projection_transformation = glm::mat4(1);
+	glm::mat4 local = glm::mat4(1);
+	glm::mat4 world = glm::mat4(1);
+	glm::mat4 localscalemat = glm::mat4(1);
+	glm::mat4 localtransmat = glm::mat4(1);
+	glm::mat4 localrotation = glm::mat4(1);
+	glm::mat4 Wscalemat = glm::mat4(1);
+	glm::mat4 Wtransmat = glm::mat4(1);
+	glm::mat4 Wrotation = glm::mat4(1);
 
-	void SetNear(const float zNear);
-
-	void SetFar(const float zFar);
-
-	void SetFovy(const float fovy);
-
-	void SetHeight(const float height);
-
-	void Zoom(const float factor);
-
-	void SphericalRotate(const glm::vec2& sphericalDelta);
-
-	const glm::mat4x4& GetProjectionTransformation() const;
-
-	const glm::mat4x4& GetViewTransformation() const;
-
-	void SetAspectRatio(float aspectRatio);
-
-	void SwitchToPrespective();
-	void SwitchToOrthographic();
-
-	float GetNear();
-
-	float GetFar();
-
-	float GetFovy();
-
-	float GetHeight();
-
-	bool IsPrespective();
-
-	const glm::vec3& GetEye() const;
 };
