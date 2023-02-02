@@ -66,13 +66,13 @@ void Renderer::Render(const std::shared_ptr<Scene>& scene)
 
 void Renderer::LoadShaders()
 {
-	colorShader.loadShaders("vshader_color.glsl", "toonshade_color.glsl");
+	colorShader.loadShaders("vshader_color.glsl", "fshader_color.glsl");
 }
 
 void Renderer::LoadTextures()
 {
-	if (!texture1.loadTexture("bin\\Debug\\crate.jpg", true))
+	if (!texture1.loadTexture("bin\\Debug\\AB.jpg", true))
 	{
-		texture1.loadTexture("bin\\Release\\crate.jpg", true);
+		texture1.loadTexture("bin\\Release\\AB.jpg", true);
 	}
 }
