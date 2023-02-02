@@ -41,6 +41,7 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 		}
 	}
 
+
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 
@@ -67,7 +68,7 @@ void MeshModel::PlanarTexture()
 {
 	for (Vertex& vertex : modelVertices)
 	{
-		vertex.textureCoords = glm::vec2(vertex.position[0], vertex.position[1]);
+		vertex.textureCoords = glm::vec2(vertex.position.x, vertex.position.z);
 	}
 
 	glBindVertexArray(GetVAO());
