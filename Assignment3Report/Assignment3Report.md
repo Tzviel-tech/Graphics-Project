@@ -22,9 +22,15 @@ Here is the vertex shader:
 
 
 
-
-
 -----------------------------------------------part4+part5---------------------------------------------------------
+
+here is photo of new renderer:
+
+
+
+![bounding](r.png "bounding")
+
+
 
 
 Here i have implemented the fragment shader:
