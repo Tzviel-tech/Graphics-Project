@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 	scene->AddLight(std::make_shared<PointLight>(glm::vec3(15, 1, 10), glm::vec3(1, 1, 1)));
 	scene->AddLight(std::make_shared<PointLight>(glm::vec3( 0, 5, 5),  glm::vec3(0, 0, 0)));
 	scene->AddLight(std::make_shared<PointLight>(glm::vec3(-5, 0, 0),  glm::vec3(0, 0, 0)));
-	std::shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/homer_simpson.obj");
+	std::shared_ptr<MeshModel>model = u.LoadMeshModel("C:/Users/Tzviel/Desktop/MODELS/cow.obj");
 	Renderer renderer;
 	renderer.LoadShaders();
 	renderer.LoadTextures();
