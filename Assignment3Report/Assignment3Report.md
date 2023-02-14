@@ -1,4 +1,6 @@
 ----------------------------part1-----------------------------------
+
+
 Using the glGenTextures and glGenVertexArrays routines, the function generates a unique ID for each openGL texture and vertex array object.
 Using the glBindVertexArray method, we bind the VAO buffer to openGL. This buffer is the one in use right now.
 Data transport to the GPU is handled by the buffer buffer, but first we must allocate and bind the buffer using glGenBuffers, glBindBuffer, and glBufferData.
@@ -54,10 +56,6 @@ here i have implemented phong shading in the fragment shader so here are some re
 
 
 ![bounding](rabbit.png "bounding")
-
-
-![bounding](onecolor.png "bounding")
-
 
 
 -------------------------------------------------part7--------------------------------------------------
