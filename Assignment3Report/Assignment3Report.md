@@ -7,7 +7,7 @@ Data transport to the GPU is handled by the buffer buffer, but first we must all
 The data transmission is split into two sections and carried out in glBufferSubData and glBufferSubData.
 Now, we use the InitShader method to load and compile the shaders. It is the responsibility of this function to associate openGL data with GLSL variables.
 We must call the glUseProgram function with program in order to use this program (ID of program).
-Using glGetAttribLocation and glGetAttribLocation, you can pass data to the shader (vertex position and texture coordinates) and instruct it where to look for those variables.
+By using glGetAttribLocation and glGetAttribLocation, you can pass data to the shader (vertex position and texture coordinates) and instruct it where to look for those variables.
 glEnableVertexAttribArray and glEnableVertexAttribArray are used to enable certain variables.
 using glUniform1i to uniformly set variables.
 
